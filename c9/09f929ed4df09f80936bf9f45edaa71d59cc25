@@ -1,0 +1,65 @@
+README.md
+  s_e7adb637324e90::t_e7cc6a075c574e 3,5,8,11
+contracts_test.go
+  s_598e27b507d34c::t_fae21b2cff930b 20-23
+example_test.go
+  s_598e27b507d34c::t_501f0b3643b999 11
+generate.go
+  s_598e27b507d34c::t_6e2866b9d74069 10,12
+go.mod
+  s_598e27b507d34c::t_feaad0a42c6a9a 1
+internal/cmd/genmodels/main.go
+  s_598e27b507d34c::t_646411d797d6e6 17
+internal/cmd/genmodels/main_test.go
+  s_598e27b507d34c::t_fd8eb86f11b2a7 11,160,164
+internal/cmd/genservices/main.go
+  s_598e27b507d34c::t_e84f74774ee36e 18
+internal/cmd/genservices/render.go
+  s_598e27b507d34c::t_27e23355e2bbc3 13,19
+internal/cmd/mergespec/main.go
+  s_e7adb637324e90::t_f14aa77c9df029 9,87-89,147-202
+internal/cmd/mergespec/main_test.go
+  s_598e27b507d34c::t_2bd7f209c9704a 156-184
+models.gen.go
+  s_598e27b507d34c::t_bc732865cb52d0 5815-5936
+operations.json
+  s_598e27b507d34c::t_617d5034dbfb76 2448
+services.gen.go
+  s_598e27b507d34c::t_7fb98aabae279f 7492,7494
+spec/README.md
+  s_598e27b507d34c::t_1b839b487692fb 8-15
+spec/combined/v3.json
+  s_598e27b507d34c::t_07a44e5a492653 10360-10376,40449
+v1/models.gen.go
+  s_598e27b507d34c::t_1c243a15c2b797 7
+v1/services.gen.go
+  s_598e27b507d34c::t_032485d14ede2c 8
+v2/models.gen.go
+  s_598e27b507d34c::t_fe2f088360a577 7
+v2/services.gen.go
+  s_598e27b507d34c::t_9deb6686082109 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "c909f929ed4df09f80936bf9f45edaa71d59cc25",
+  "prompts": {},
+  "sessions": {
+    "s_598e27b507d34c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "77047a69-f126-4fd0-ae5f-5422017055e5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Javid Gulamaliyev <javidgulamaliyev@commonroom.io>"
+    },
+    "s_e7adb637324e90": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "13078d27-54c4-476e-acfa-383f51d41ff3",
+        "model": "unknown"
+      },
+      "human_author": "Javid Gulamaliyev <javidgulamaliyev@commonroom.io>"
+    }
+  }
+}
