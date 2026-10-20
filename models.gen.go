@@ -32,6 +32,19 @@ type ACULimitResponse struct {
 	UserID Optional[string] `json:"user_id,omitempty"`
 }
 
+// Validated list of active user metrics with ascending order and no overlapping periods.
+type ActiveUserMetricsListResponse []ActiveUserMetricsResponse
+
+// Single entry for active users over time.
+type ActiveUserMetricsResponse struct {
+	// JSON field "active_users".
+	ActiveUsers int64 `json:"active_users"`
+	// JSON field "end_time".
+	EndTime int64 `json:"end_time"`
+	// JSON field "start_time".
+	StartTime int64 `json:"start_time"`
+}
+
 // Kind of principal.
 type ActorResponseType string
 
@@ -52,32 +65,180 @@ type ActorResponse struct {
 	Type ActorResponseType `json:"type"`
 }
 
-// OpenAPI schema APIKeyResponse.
+// ACUs per product for one day; the buckets sum to the day's “acus“. “devin“ is ACUs from Devin sessions a person or service user started, including code-scan and on-call sessions. “automation“ is ACUs spent by automations: sessions an automation started plus its code steps that run without a session. “automation“ is “null“ where the per-product breakdown is not available.
+type AcusByProduct struct {
+	// JSON field "automation".
+	Automation Optional[float64] `json:"automation,omitempty"`
+	// JSON field "cascade".
+	Cascade float64 `json:"cascade"`
+	// JSON field "devin".
+	Devin float64 `json:"devin"`
+	// JSON field "review".
+	Review Optional[float64] `json:"review,omitempty"`
+	// JSON field "terminal".
+	Terminal float64 `json:"terminal"`
+}
+
+// OpenAPI schema AiGatewayMetric.
+type AiGatewayMetric string
+
+const (
+	// Value requests for AiGatewayMetric.
+	AiGatewayMetricRequests AiGatewayMetric = "requests"
+	// Value tokens for AiGatewayMetric.
+	AiGatewayMetricTokens AiGatewayMetric = "tokens"
+	// Value inter_delta_gap for AiGatewayMetric.
+	AiGatewayMetricInterDeltaGap AiGatewayMetric = "inter_delta_gap"
+	// Value request_itl for AiGatewayMetric.
+	AiGatewayMetricRequestItl AiGatewayMetric = "request_itl"
+	// Value ttft for AiGatewayMetric.
+	AiGatewayMetricTtft AiGatewayMetric = "ttft"
+	// Value e2e_latency for AiGatewayMetric.
+	AiGatewayMetricE2ELatency AiGatewayMetric = "e2e_latency"
+	// Value output_tps for AiGatewayMetric.
+	AiGatewayMetricOutputTps AiGatewayMetric = "output_tps"
+	// Value streaming_share for AiGatewayMetric.
+	AiGatewayMetricStreamingShare AiGatewayMetric = "streaming_share"
+)
+
+// OpenAPI schema AiGatewayMetricPointResponse.
+type AiGatewayMetricPointResponse struct {
+	// Actual complete bucket duration; null for boundary/in-progress or unknown-width buckets.
+	BucketDurationSeconds *int64 `json:"bucket_duration_seconds"`
+	// Counter per_second × 60 (including aggregate TPM); otherwise null.
+	PerMinute *float64 `json:"per_minute"`
+	// Counter value / complete bucket duration (QPS or aggregate token/s); otherwise null.
+	PerSecond *float64 `json:"per_second"`
+	// Actual bucket start, in Unix seconds.
+	Timestamp int64 `json:"timestamp"`
+	// Bucket value; null means no observation.
+	Value *float64 `json:"value"`
+}
+
+// Counter, distribution, or derived ratio.
+type AiGatewayMetricProvenanceResponseKind string
+
+const (
+	// Value counter for AiGatewayMetricProvenanceResponseKind.
+	AiGatewayMetricProvenanceResponseKindCounter AiGatewayMetricProvenanceResponseKind = "counter"
+	// Value distribution for AiGatewayMetricProvenanceResponseKind.
+	AiGatewayMetricProvenanceResponseKindDistribution AiGatewayMetricProvenanceResponseKind = "distribution"
+	// Value ratio for AiGatewayMetricProvenanceResponseKind.
+	AiGatewayMetricProvenanceResponseKindRatio AiGatewayMetricProvenanceResponseKind = "ratio"
+)
+
+// OpenAPI schema AiGatewayMetricProvenanceResponse.
+type AiGatewayMetricProvenanceResponse struct {
+	// JSON field "environment".
+	Environment *string `json:"environment,omitempty"`
+	// Counter, distribution, or derived ratio.
+	Kind AiGatewayMetricProvenanceResponseKind `json:"kind"`
+	// Source OTel instrument exported to Datadog.
+	MetricName string `json:"metric_name"`
+	// JSON field "scope".
+	Scope *string `json:"scope,omitempty"`
+	// JSON field "source".
+	Source *string `json:"source,omitempty"`
+}
+
+// OpenAPI schema AiGatewayMetricSeriesResponse.
+type AiGatewayMetricSeriesResponse struct {
+	// Fixed metric-specific dimensions.
+	Dimensions map[string]string `json:"dimensions"`
+	// Time-ordered actual buckets.
+	Points []AiGatewayMetricPointResponse `json:"points"`
+}
+
+// OpenAPI schema AiGatewayMetricsResponseAggregation.
+type AiGatewayMetricsResponseAggregation string
+
+const (
+	// Value sum for AiGatewayMetricsResponseAggregation.
+	AiGatewayMetricsResponseAggregationSum AiGatewayMetricsResponseAggregation = "sum"
+	// Value avg for AiGatewayMetricsResponseAggregation.
+	AiGatewayMetricsResponseAggregationAvg AiGatewayMetricsResponseAggregation = "avg"
+	// Value p50 for AiGatewayMetricsResponseAggregation.
+	AiGatewayMetricsResponseAggregationP50 AiGatewayMetricsResponseAggregation = "p50"
+	// Value p90 for AiGatewayMetricsResponseAggregation.
+	AiGatewayMetricsResponseAggregationP90 AiGatewayMetricsResponseAggregation = "p90"
+	// Value p95 for AiGatewayMetricsResponseAggregation.
+	AiGatewayMetricsResponseAggregationP95 AiGatewayMetricsResponseAggregation = "p95"
+	// Value p99 for AiGatewayMetricsResponseAggregation.
+	AiGatewayMetricsResponseAggregationP99 AiGatewayMetricsResponseAggregation = "p99"
+	// Value ratio for AiGatewayMetricsResponseAggregation.
+	AiGatewayMetricsResponseAggregationRatio AiGatewayMetricsResponseAggregation = "ratio"
+)
+
+// OpenAPI schema AiGatewayMetricsResponseUnit.
+type AiGatewayMetricsResponseUnit string
+
+const (
+	// Value request for AiGatewayMetricsResponseUnit.
+	AiGatewayMetricsResponseUnitRequest AiGatewayMetricsResponseUnit = "request"
+	// Value token for AiGatewayMetricsResponseUnit.
+	AiGatewayMetricsResponseUnitToken AiGatewayMetricsResponseUnit = "token"
+	// Value ms for AiGatewayMetricsResponseUnit.
+	AiGatewayMetricsResponseUnitMs AiGatewayMetricsResponseUnit = "ms"
+	// Value token/s for AiGatewayMetricsResponseUnit.
+	AiGatewayMetricsResponseUnitTokenS AiGatewayMetricsResponseUnit = "token/s"
+	// Value percent for AiGatewayMetricsResponseUnit.
+	AiGatewayMetricsResponseUnitPercent AiGatewayMetricsResponseUnit = "percent"
+)
+
+// OpenAPI schema AiGatewayMetricsResponse.
+type AiGatewayMetricsResponse struct {
+	// JSON field "aggregation".
+	Aggregation AiGatewayMetricsResponseAggregation `json:"aggregation"`
+	// Observed timestamp spacing; null if fewer than two timestamps.
+	EffectiveIntervalSeconds *int64 `json:"effective_interval_seconds"`
+	// JSON field "metric".
+	Metric AiGatewayMetric `json:"metric"`
+	// JSON field "provenance".
+	Provenance AiGatewayMetricProvenanceResponse `json:"provenance"`
+	// JSON field "requested_interval_seconds".
+	RequestedIntervalSeconds int64 `json:"requested_interval_seconds"`
+	// OTel measurements are independent of trace sampling; not lossless or billing-grade.
+	Sampled *bool `json:"sampled,omitempty"`
+	// JSON field "series".
+	Series []AiGatewayMetricSeriesResponse `json:"series"`
+	// Inclusive requested start.
+	TimeAfter int64 `json:"time_after"`
+	// Exclusive requested end.
+	TimeBefore int64 `json:"time_before"`
+	// JSON field "unit".
+	Unit AiGatewayMetricsResponseUnit `json:"unit"`
+}
+
+// Shared response model for API key details (used by both PAT and service user endpoints).
 type APIKeyResponse struct {
 	// JSON field "api_key_id".
-	APIKeyID *string `json:"api_key_id,omitempty"`
+	APIKeyID string `json:"api_key_id"`
 	// JSON field "api_key_name".
-	APIKeyName *string `json:"api_key_name,omitempty"`
+	APIKeyName string `json:"api_key_name"`
 	// JSON field "created_at".
-	CreatedAt *float64 `json:"created_at,omitempty"`
+	CreatedAt int64 `json:"created_at"`
 	// JSON field "expires_at".
-	ExpiresAt *float64 `json:"expires_at,omitempty"`
+	ExpiresAt *int64 `json:"expires_at"`
 	// JSON field "is_active".
-	IsActive *bool `json:"is_active,omitempty"`
+	IsActive bool `json:"is_active"`
 	// JSON field "last_used_at".
-	LastUsedAt *float64 `json:"last_used_at,omitempty"`
+	LastUsedAt *int64 `json:"last_used_at"`
 	// JSON field "revoked_at".
-	RevokedAt *float64 `json:"revoked_at,omitempty"`
+	RevokedAt *int64 `json:"revoked_at"`
 }
 
-// OpenAPI schema AttachmentUploadRequest.
-type AttachmentUploadRequest struct {
-	// JSON field "file".
-	File string `json:"file"`
+// Shared response model for API key creation/rotation (includes one-time token).
+type APIKeyWithTokenResponse struct {
+	// JSON field "api_key_id".
+	APIKeyID string `json:"api_key_id"`
+	// JSON field "api_key_name".
+	APIKeyName string `json:"api_key_name"`
+	// The raw API token. This is only shown once at creation/rotation time.
+	Token string `json:"token"`
 }
 
-// OpenAPI schema AttachmentUploadResponse.
-type AttachmentUploadResponse struct {
+// OpenAPI schema AttachmentResponse.
+type AttachmentResponse struct {
 	// JSON field "attachment_id".
 	AttachmentID string `json:"attachment_id"`
 	// JSON field "name".
@@ -86,26 +247,598 @@ type AttachmentUploadResponse struct {
 	URL string `json:"url"`
 }
 
+// OpenAPI schema AuditLogAction.
+type AuditLogAction string
+
+const (
+	// Value login for AuditLogAction.
+	AuditLogActionLogin AuditLogAction = "login"
+	// Value create_org for AuditLogAction.
+	AuditLogActionCreateOrg AuditLogAction = "create_org"
+	// Value update_org for AuditLogAction.
+	AuditLogActionUpdateOrg AuditLogAction = "update_org"
+	// Value delete_org for AuditLogAction.
+	AuditLogActionDeleteOrg AuditLogAction = "delete_org"
+	// Value revoke_all_enterprise_api_keys for AuditLogAction.
+	AuditLogActionRevokeAllEnterpriseAPIKeys AuditLogAction = "revoke_all_enterprise_api_keys"
+	// Value add_enterprise_member for AuditLogAction.
+	AuditLogActionAddEnterpriseMember AuditLogAction = "add_enterprise_member"
+	// Value delete_member for AuditLogAction.
+	AuditLogActionDeleteMember AuditLogAction = "delete_member"
+	// Value add_member for AuditLogAction.
+	AuditLogActionAddMember AuditLogAction = "add_member"
+	// Value assign_roles for AuditLogAction.
+	AuditLogActionAssignRoles AuditLogAction = "assign_roles"
+	// Value update_role for AuditLogAction.
+	AuditLogActionUpdateRole AuditLogAction = "update_role"
+	// Value create_role for AuditLogAction.
+	AuditLogActionCreateRole AuditLogAction = "create_role"
+	// Value delete_role for AuditLogAction.
+	AuditLogActionDeleteRole AuditLogAction = "delete_role"
+	// Value add_group_membership for AuditLogAction.
+	AuditLogActionAddGroupMembership AuditLogAction = "add_group_membership"
+	// Value update_group_membership for AuditLogAction.
+	AuditLogActionUpdateGroupMembership AuditLogAction = "update_group_membership"
+	// Value delete_group_membership for AuditLogAction.
+	AuditLogActionDeleteGroupMembership AuditLogAction = "delete_group_membership"
+	// Value create_idp_group for AuditLogAction.
+	AuditLogActionCreateIDPGroup AuditLogAction = "create_idp_group"
+	// Value update_idp_group for AuditLogAction.
+	AuditLogActionUpdateIDPGroup AuditLogAction = "update_idp_group"
+	// Value delete_idp_group for AuditLogAction.
+	AuditLogActionDeleteIDPGroup AuditLogAction = "delete_idp_group"
+	// Value add_idp_group_member for AuditLogAction.
+	AuditLogActionAddIDPGroupMember AuditLogAction = "add_idp_group_member"
+	// Value remove_idp_group_member for AuditLogAction.
+	AuditLogActionRemoveIDPGroupMember AuditLogAction = "remove_idp_group_member"
+	// Value create_scim_user for AuditLogAction.
+	AuditLogActionCreateScimUser AuditLogAction = "create_scim_user"
+	// Value update_scim_user for AuditLogAction.
+	AuditLogActionUpdateScimUser AuditLogAction = "update_scim_user"
+	// Value delete_scim_user for AuditLogAction.
+	AuditLogActionDeleteScimUser AuditLogAction = "delete_scim_user"
+	// Value create_knowledge for AuditLogAction.
+	AuditLogActionCreateKnowledge AuditLogAction = "create_knowledge"
+	// Value edit_knowledge for AuditLogAction.
+	AuditLogActionEditKnowledge AuditLogAction = "edit_knowledge"
+	// Value delete_knowledge for AuditLogAction.
+	AuditLogActionDeleteKnowledge AuditLogAction = "delete_knowledge"
+	// Value create_folder for AuditLogAction.
+	AuditLogActionCreateFolder AuditLogAction = "create_folder"
+	// Value update_folder for AuditLogAction.
+	AuditLogActionUpdateFolder AuditLogAction = "update_folder"
+	// Value delete_folder for AuditLogAction.
+	AuditLogActionDeleteFolder AuditLogAction = "delete_folder"
+	// Value create_session for AuditLogAction.
+	AuditLogActionCreateSession AuditLogAction = "create_session"
+	// Value sleep_session for AuditLogAction.
+	AuditLogActionSleepSession AuditLogAction = "sleep_session"
+	// Value terminate_session for AuditLogAction.
+	AuditLogActionTerminateSession AuditLogAction = "terminate_session"
+	// Value archive_session for AuditLogAction.
+	AuditLogActionArchiveSession AuditLogAction = "archive_session"
+	// Value unarchive_session for AuditLogAction.
+	AuditLogActionUnarchiveSession AuditLogAction = "unarchive_session"
+	// Value schedule_session_deletion for AuditLogAction.
+	AuditLogActionScheduleSessionDeletion AuditLogAction = "schedule_session_deletion"
+	// Value cancel_session_deletion for AuditLogAction.
+	AuditLogActionCancelSessionDeletion AuditLogAction = "cancel_session_deletion"
+	// Value send_message for AuditLogAction.
+	AuditLogActionSendMessage AuditLogAction = "send_message"
+	// Value authorize_ssh_access for AuditLogAction.
+	AuditLogActionAuthorizeSSHAccess AuditLogAction = "authorize_ssh_access"
+	// Value grant_ssh_access for AuditLogAction.
+	AuditLogActionGrantSSHAccess AuditLogAction = "grant_ssh_access"
+	// Value enroll_ssh_key for AuditLogAction.
+	AuditLogActionEnrollSSHKey AuditLogAction = "enroll_ssh_key"
+	// Value remove_ssh_key for AuditLogAction.
+	AuditLogActionRemoveSSHKey AuditLogAction = "remove_ssh_key"
+	// Value expose_port for AuditLogAction.
+	AuditLogActionExposePort AuditLogAction = "expose_port"
+	// Value request_local_tools_access for AuditLogAction.
+	AuditLogActionRequestLocalToolsAccess AuditLogAction = "request_local_tools_access"
+	// Value authorize_local_tools_access for AuditLogAction.
+	AuditLogActionAuthorizeLocalToolsAccess AuditLogAction = "authorize_local_tools_access"
+	// Value revoke_local_tools_access for AuditLogAction.
+	AuditLogActionRevokeLocalToolsAccess AuditLogAction = "revoke_local_tools_access"
+	// Value request_local_tools_approval_mode for AuditLogAction.
+	AuditLogActionRequestLocalToolsApprovalMode AuditLogAction = "request_local_tools_approval_mode"
+	// Value create_service_api_key for AuditLogAction.
+	AuditLogActionCreateServiceAPIKey AuditLogAction = "create_service_api_key"
+	// Value revoke_enterprise_api_key for AuditLogAction.
+	AuditLogActionRevokeEnterpriseAPIKey AuditLogAction = "revoke_enterprise_api_key"
+	// Value create_gitlab_integration for AuditLogAction.
+	AuditLogActionCreateGitlabIntegration AuditLogAction = "create_gitlab_integration"
+	// Value update_gitlab_integration for AuditLogAction.
+	AuditLogActionUpdateGitlabIntegration AuditLogAction = "update_gitlab_integration"
+	// Value reconnect_gitlab_integration for AuditLogAction.
+	AuditLogActionReconnectGitlabIntegration AuditLogAction = "reconnect_gitlab_integration"
+	// Value delete_gitlab_integration for AuditLogAction.
+	AuditLogActionDeleteGitlabIntegration AuditLogAction = "delete_gitlab_integration"
+	// Value create_perforce_integration for AuditLogAction.
+	AuditLogActionCreatePerforceIntegration AuditLogAction = "create_perforce_integration"
+	// Value update_perforce_integration for AuditLogAction.
+	AuditLogActionUpdatePerforceIntegration AuditLogAction = "update_perforce_integration"
+	// Value delete_perforce_integration for AuditLogAction.
+	AuditLogActionDeletePerforceIntegration AuditLogAction = "delete_perforce_integration"
+	// Value create_gitlab_app_config for AuditLogAction.
+	AuditLogActionCreateGitlabAppConfig AuditLogAction = "create_gitlab_app_config"
+	// Value delete_gitlab_app_config for AuditLogAction.
+	AuditLogActionDeleteGitlabAppConfig AuditLogAction = "delete_gitlab_app_config"
+	// Value create_bitbucket_app_config for AuditLogAction.
+	AuditLogActionCreateBitbucketAppConfig AuditLogAction = "create_bitbucket_app_config"
+	// Value delete_bitbucket_app_config for AuditLogAction.
+	AuditLogActionDeleteBitbucketAppConfig AuditLogAction = "delete_bitbucket_app_config"
+	// Value install_gitlab_webhook for AuditLogAction.
+	AuditLogActionInstallGitlabWebhook AuditLogAction = "install_gitlab_webhook"
+	// Value create_azure_devops_integration for AuditLogAction.
+	AuditLogActionCreateAzureDevopsIntegration AuditLogAction = "create_azure_devops_integration"
+	// Value reconnect_azure_devops_integration for AuditLogAction.
+	AuditLogActionReconnectAzureDevopsIntegration AuditLogAction = "reconnect_azure_devops_integration"
+	// Value delete_azure_devops_integration for AuditLogAction.
+	AuditLogActionDeleteAzureDevopsIntegration AuditLogAction = "delete_azure_devops_integration"
+	// Value create_tracker_connection for AuditLogAction.
+	AuditLogActionCreateTrackerConnection AuditLogAction = "create_tracker_connection"
+	// Value update_tracker_connection for AuditLogAction.
+	AuditLogActionUpdateTrackerConnection AuditLogAction = "update_tracker_connection"
+	// Value rotate_tracker_connection_token for AuditLogAction.
+	AuditLogActionRotateTrackerConnectionToken AuditLogAction = "rotate_tracker_connection_token"
+	// Value delete_tracker_connection for AuditLogAction.
+	AuditLogActionDeleteTrackerConnection AuditLogAction = "delete_tracker_connection"
+	// Value link_work_item for AuditLogAction.
+	AuditLogActionLinkWorkItem AuditLogAction = "link_work_item"
+	// Value unlink_work_item for AuditLogAction.
+	AuditLogActionUnlinkWorkItem AuditLogAction = "unlink_work_item"
+	// Value remove_repo_from_devin for AuditLogAction.
+	AuditLogActionRemoveRepoFromDevin AuditLogAction = "remove_repo_from_devin"
+	// Value update_enterprise_hypervisor_settings for AuditLogAction.
+	AuditLogActionUpdateEnterpriseHypervisorSettings AuditLogAction = "update_enterprise_hypervisor_settings"
+	// Value update_enterprise_settings for AuditLogAction.
+	AuditLogActionUpdateEnterpriseSettings AuditLogAction = "update_enterprise_settings"
+	// Value update_commit_signing_mode for AuditLogAction.
+	AuditLogActionUpdateCommitSigningMode AuditLogAction = "update_commit_signing_mode"
+	// Value update_commit_email for AuditLogAction.
+	AuditLogActionUpdateCommitEmail AuditLogAction = "update_commit_email"
+	// Value update_webhook_ip_access_list for AuditLogAction.
+	AuditLogActionUpdateWebhookIPAccessList AuditLogAction = "update_webhook_ip_access_list"
+	// Value update_git_manager_outpost_ip_access_list for AuditLogAction.
+	AuditLogActionUpdateGitManagerOutpostIPAccessList AuditLogAction = "update_git_manager_outpost_ip_access_list"
+	// Value update_org_settings for AuditLogAction.
+	AuditLogActionUpdateOrgSettings AuditLogAction = "update_org_settings"
+	// Value update_code_snippet_telemetry for AuditLogAction.
+	AuditLogActionUpdateCodeSnippetTelemetry AuditLogAction = "update_code_snippet_telemetry"
+	// Value update_local_controls for AuditLogAction.
+	AuditLogActionUpdateLocalControls AuditLogAction = "update_local_controls"
+	// Value update_local_enterprise_config for AuditLogAction.
+	AuditLogActionUpdateLocalEnterpriseConfig AuditLogAction = "update_local_enterprise_config"
+	// Value update_local_org_config for AuditLogAction.
+	AuditLogActionUpdateLocalOrgConfig AuditLogAction = "update_local_org_config"
+	// Value ai_guardrail_violation for AuditLogAction.
+	AuditLogActionAiGuardrailViolation AuditLogAction = "ai_guardrail_violation"
+	// Value update_ai_guardrail for AuditLogAction.
+	AuditLogActionUpdateAiGuardrail AuditLogAction = "update_ai_guardrail"
+	// Value approve_deploy for AuditLogAction.
+	AuditLogActionApproveDeploy AuditLogAction = "approve_deploy"
+	// Value approve_test_app for AuditLogAction.
+	AuditLogActionApproveTestApp AuditLogAction = "approve_test_app"
+	// Value permission_response for AuditLogAction.
+	AuditLogActionPermissionResponse AuditLogAction = "permission_response"
+	// Value search_query for AuditLogAction.
+	AuditLogActionSearchQuery AuditLogAction = "search_query"
+	// Value create_org_api_key for AuditLogAction.
+	AuditLogActionCreateOrgAPIKey AuditLogAction = "create_org_api_key"
+	// Value create_user_api_key for AuditLogAction.
+	AuditLogActionCreateUserAPIKey AuditLogAction = "create_user_api_key"
+	// Value view_org_api_key for AuditLogAction.
+	AuditLogActionViewOrgAPIKey AuditLogAction = "view_org_api_key"
+	// Value view_user_api_key for AuditLogAction.
+	AuditLogActionViewUserAPIKey AuditLogAction = "view_user_api_key"
+	// Value create_secret for AuditLogAction.
+	AuditLogActionCreateSecret AuditLogAction = "create_secret"
+	// Value update_secret for AuditLogAction.
+	AuditLogActionUpdateSecret AuditLogAction = "update_secret"
+	// Value delete_secret for AuditLogAction.
+	AuditLogActionDeleteSecret AuditLogAction = "delete_secret"
+	// Value create_playbook for AuditLogAction.
+	AuditLogActionCreatePlaybook AuditLogAction = "create_playbook"
+	// Value update_playbook for AuditLogAction.
+	AuditLogActionUpdatePlaybook AuditLogAction = "update_playbook"
+	// Value delete_playbook for AuditLogAction.
+	AuditLogActionDeletePlaybook AuditLogAction = "delete_playbook"
+	// Value create_billing_tag for AuditLogAction.
+	AuditLogActionCreateBillingTag AuditLogAction = "create_billing_tag"
+	// Value add_billing_tag_member for AuditLogAction.
+	AuditLogActionAddBillingTagMember AuditLogAction = "add_billing_tag_member"
+	// Value assign_billing_tag_session for AuditLogAction.
+	AuditLogActionAssignBillingTagSession AuditLogAction = "assign_billing_tag_session"
+	// Value enable_persona for AuditLogAction.
+	AuditLogActionEnablePersona AuditLogAction = "enable_persona"
+	// Value disable_persona for AuditLogAction.
+	AuditLogActionDisablePersona AuditLogAction = "disable_persona"
+	// Value delete_persona for AuditLogAction.
+	AuditLogActionDeletePersona AuditLogAction = "delete_persona"
+	// Value start_repo_setup for AuditLogAction.
+	AuditLogActionStartRepoSetup AuditLogAction = "start_repo_setup"
+	// Value delete_repo_setup for AuditLogAction.
+	AuditLogActionDeleteRepoSetup AuditLogAction = "delete_repo_setup"
+	// Value finish_repo_setup for AuditLogAction.
+	AuditLogActionFinishRepoSetup AuditLogAction = "finish_repo_setup"
+	// Value github_integration_deleted for AuditLogAction.
+	AuditLogActionGithubIntegrationDeleted AuditLogAction = "github_integration_deleted"
+	// Value create_github_integration for AuditLogAction.
+	AuditLogActionCreateGithubIntegration AuditLogAction = "create_github_integration"
+	// Value update_github_owned_public_repos_in_automations for AuditLogAction.
+	AuditLogActionUpdateGithubOwnedPublicReposInAutomations AuditLogAction = "update_github_owned_public_repos_in_automations"
+	// Value delete_github_integration for AuditLogAction.
+	AuditLogActionDeleteGithubIntegration AuditLogAction = "delete_github_integration"
+	// Value refresh_github_integration for AuditLogAction.
+	AuditLogActionRefreshGithubIntegration AuditLogAction = "refresh_github_integration"
+	// Value create_bitbucket_integration for AuditLogAction.
+	AuditLogActionCreateBitbucketIntegration AuditLogAction = "create_bitbucket_integration"
+	// Value update_bitbucket_integration for AuditLogAction.
+	AuditLogActionUpdateBitbucketIntegration AuditLogAction = "update_bitbucket_integration"
+	// Value delete_bitbucket_integration for AuditLogAction.
+	AuditLogActionDeleteBitbucketIntegration AuditLogAction = "delete_bitbucket_integration"
+	// Value create_gerrit_integration for AuditLogAction.
+	AuditLogActionCreateGerritIntegration AuditLogAction = "create_gerrit_integration"
+	// Value delete_gerrit_integration for AuditLogAction.
+	AuditLogActionDeleteGerritIntegration AuditLogAction = "delete_gerrit_integration"
+	// Value mcp_server_install for AuditLogAction.
+	AuditLogActionMcpServerInstall AuditLogAction = "mcp_server_install"
+	// Value mcp_server_update for AuditLogAction.
+	AuditLogActionMcpServerUpdate AuditLogAction = "mcp_server_update"
+	// Value mcp_server_enable for AuditLogAction.
+	AuditLogActionMcpServerEnable AuditLogAction = "mcp_server_enable"
+	// Value mcp_server_disable for AuditLogAction.
+	AuditLogActionMcpServerDisable AuditLogAction = "mcp_server_disable"
+	// Value mcp_server_delete for AuditLogAction.
+	AuditLogActionMcpServerDelete AuditLogAction = "mcp_server_delete"
+	// Value mcp_server_secret_link for AuditLogAction.
+	AuditLogActionMcpServerSecretLink AuditLogAction = "mcp_server_secret_link"
+	// Value mcp_server_secret_unlink for AuditLogAction.
+	AuditLogActionMcpServerSecretUnlink AuditLogAction = "mcp_server_secret_unlink"
+	// Value link_jira_agent_installation for AuditLogAction.
+	AuditLogActionLinkJiraAgentInstallation AuditLogAction = "link_jira_agent_installation"
+	// Value unlink_jira_agent_installation for AuditLogAction.
+	AuditLogActionUnlinkJiraAgentInstallation AuditLogAction = "unlink_jira_agent_installation"
+	// Value mcp_server_credential_set for AuditLogAction.
+	AuditLogActionMcpServerCredentialSet AuditLogAction = "mcp_server_credential_set"
+	// Value mcp_server_credential_delete for AuditLogAction.
+	AuditLogActionMcpServerCredentialDelete AuditLogAction = "mcp_server_credential_delete"
+	// Value mcp_server_oauth_initiate for AuditLogAction.
+	AuditLogActionMcpServerOauthInitiate AuditLogAction = "mcp_server_oauth_initiate"
+	// Value mcp_server_oauth_tokens_granted for AuditLogAction.
+	AuditLogActionMcpServerOauthTokensGranted AuditLogAction = "mcp_server_oauth_tokens_granted"
+	// Value mcp_server_oauth_tokens_revoked for AuditLogAction.
+	AuditLogActionMcpServerOauthTokensRevoked AuditLogAction = "mcp_server_oauth_tokens_revoked"
+	// Value mcp_enterprise_server_targets_update for AuditLogAction.
+	AuditLogActionMcpEnterpriseServerTargetsUpdate AuditLogAction = "mcp_enterprise_server_targets_update"
+	// Value mcp_enterprise_server_credential_set for AuditLogAction.
+	AuditLogActionMcpEnterpriseServerCredentialSet AuditLogAction = "mcp_enterprise_server_credential_set"
+	// Value mcp_enterprise_server_credential_delete for AuditLogAction.
+	AuditLogActionMcpEnterpriseServerCredentialDelete AuditLogAction = "mcp_enterprise_server_credential_delete"
+	// Value customer_network_ca_bundle_set for AuditLogAction.
+	AuditLogActionCustomerNetworkCaBundleSet AuditLogAction = "customer_network_ca_bundle_set"
+	// Value customer_network_ca_bundle_delete for AuditLogAction.
+	AuditLogActionCustomerNetworkCaBundleDelete AuditLogAction = "customer_network_ca_bundle_delete"
+	// Value create_mcp_validation_session for AuditLogAction.
+	AuditLogActionCreateMcpValidationSession AuditLogAction = "create_mcp_validation_session"
+	// Value mcp_server_tools_list_secrets_resolved for AuditLogAction.
+	AuditLogActionMcpServerToolsListSecretsResolved AuditLogAction = "mcp_server_tools_list_secrets_resolved"
+	// Value mcp_server_connect_secrets_resolved for AuditLogAction.
+	AuditLogActionMcpServerConnectSecretsResolved AuditLogAction = "mcp_server_connect_secrets_resolved"
+	// Value set_account_managed_plugins for AuditLogAction.
+	AuditLogActionSetAccountManagedPlugins AuditLogAction = "set_account_managed_plugins"
+	// Value set_org_managed_plugins for AuditLogAction.
+	AuditLogActionSetOrgManagedPlugins AuditLogAction = "set_org_managed_plugins"
+	// Value set_user_managed_plugins for AuditLogAction.
+	AuditLogActionSetUserManagedPlugins AuditLogAction = "set_user_managed_plugins"
+	// Value set_managed_plugin_bundle for AuditLogAction.
+	AuditLogActionSetManagedPluginBundle AuditLogAction = "set_managed_plugin_bundle"
+	// Value delete_managed_plugin_bundle for AuditLogAction.
+	AuditLogActionDeleteManagedPluginBundle AuditLogAction = "delete_managed_plugin_bundle"
+	// Value secure_mode_profile_created for AuditLogAction.
+	AuditLogActionSecureModeProfileCreated AuditLogAction = "secure_mode_profile_created"
+	// Value secure_mode_profile_updated for AuditLogAction.
+	AuditLogActionSecureModeProfileUpdated AuditLogAction = "secure_mode_profile_updated"
+	// Value secure_mode_profile_deleted for AuditLogAction.
+	AuditLogActionSecureModeProfileDeleted AuditLogAction = "secure_mode_profile_deleted"
+	// Value secure_mode_binding_created for AuditLogAction.
+	AuditLogActionSecureModeBindingCreated AuditLogAction = "secure_mode_binding_created"
+	// Value secure_mode_binding_updated for AuditLogAction.
+	AuditLogActionSecureModeBindingUpdated AuditLogAction = "secure_mode_binding_updated"
+	// Value secure_mode_binding_deleted for AuditLogAction.
+	AuditLogActionSecureModeBindingDeleted AuditLogAction = "secure_mode_binding_deleted"
+	// Value create_service_user for AuditLogAction.
+	AuditLogActionCreateServiceUser AuditLogAction = "create_service_user"
+	// Value update_service_user for AuditLogAction.
+	AuditLogActionUpdateServiceUser AuditLogAction = "update_service_user"
+	// Value delete_service_user for AuditLogAction.
+	AuditLogActionDeleteServiceUser AuditLogAction = "delete_service_user"
+	// Value assign_service_user_role for AuditLogAction.
+	AuditLogActionAssignServiceUserRole AuditLogAction = "assign_service_user_role"
+	// Value remove_service_user_role for AuditLogAction.
+	AuditLogActionRemoveServiceUserRole AuditLogAction = "remove_service_user_role"
+	// Value enable_service_user_for_automations for AuditLogAction.
+	AuditLogActionEnableServiceUserForAutomations AuditLogAction = "enable_service_user_for_automations"
+	// Value disable_service_user_for_automations for AuditLogAction.
+	AuditLogActionDisableServiceUserForAutomations AuditLogAction = "disable_service_user_for_automations"
+	// Value set_default_automation_service_user for AuditLogAction.
+	AuditLogActionSetDefaultAutomationServiceUser AuditLogAction = "set_default_automation_service_user"
+	// Value create_git_permission for AuditLogAction.
+	AuditLogActionCreateGitPermission AuditLogAction = "create_git_permission"
+	// Value delete_git_permission for AuditLogAction.
+	AuditLogActionDeleteGitPermission AuditLogAction = "delete_git_permission"
+	// Value update_git_permission for AuditLogAction.
+	AuditLogActionUpdateGitPermission AuditLogAction = "update_git_permission"
+	// Value update_provider_sync_policy for AuditLogAction.
+	AuditLogActionUpdateProviderSyncPolicy AuditLogAction = "update_provider_sync_policy"
+	// Value create_provider_sync_purge_preview for AuditLogAction.
+	AuditLogActionCreateProviderSyncPurgePreview AuditLogAction = "create_provider_sync_purge_preview"
+	// Value purge_provider_sync_human_access for AuditLogAction.
+	AuditLogActionPurgeProviderSyncHumanAccess AuditLogAction = "purge_provider_sync_human_access"
+	// Value git_pr_author_collaborator for AuditLogAction.
+	AuditLogActionGitPRAuthorCollaborator AuditLogAction = "git_pr_author_collaborator"
+	// Value git_pr_author_collaborator_denied for AuditLogAction.
+	AuditLogActionGitPRAuthorCollaboratorDenied AuditLogAction = "git_pr_author_collaborator_denied"
+	// Value git_pr_merge for AuditLogAction.
+	AuditLogActionGitPRMerge AuditLogAction = "git_pr_merge"
+	// Value git_pr_merge_denied for AuditLogAction.
+	AuditLogActionGitPRMergeDenied AuditLogAction = "git_pr_merge_denied"
+	// Value create_maintenance_task for AuditLogAction.
+	AuditLogActionCreateMaintenanceTask AuditLogAction = "create_maintenance_task"
+	// Value update_maintenance_task for AuditLogAction.
+	AuditLogActionUpdateMaintenanceTask AuditLogAction = "update_maintenance_task"
+	// Value delete_maintenance_task for AuditLogAction.
+	AuditLogActionDeleteMaintenanceTask AuditLogAction = "delete_maintenance_task"
+	// Value create_snapshot_script for AuditLogAction.
+	AuditLogActionCreateSnapshotScript AuditLogAction = "create_snapshot_script"
+	// Value schedule_snapshot_script for AuditLogAction.
+	AuditLogActionScheduleSnapshotScript AuditLogAction = "schedule_snapshot_script"
+	// Value execute_snapshot_script for AuditLogAction.
+	AuditLogActionExecuteSnapshotScript AuditLogAction = "execute_snapshot_script"
+	// Value update_repo_setup_steering_knowledge for AuditLogAction.
+	AuditLogActionUpdateRepoSetupSteeringKnowledge AuditLogAction = "update_repo_setup_steering_knowledge"
+	// Value delete_repo_setup_steering_knowledge for AuditLogAction.
+	AuditLogActionDeleteRepoSetupSteeringKnowledge AuditLogAction = "delete_repo_setup_steering_knowledge"
+	// Value set_org_group_limits for AuditLogAction.
+	AuditLogActionSetOrgGroupLimits AuditLogAction = "set_org_group_limits"
+	// Value create_join_request for AuditLogAction.
+	AuditLogActionCreateJoinRequest AuditLogAction = "create_join_request"
+	// Value approve_join_request for AuditLogAction.
+	AuditLogActionApproveJoinRequest AuditLogAction = "approve_join_request"
+	// Value automatic_join_event for AuditLogAction.
+	AuditLogActionAutomaticJoinEvent AuditLogAction = "automatic_join_event"
+	// Value reject_join_request for AuditLogAction.
+	AuditLogActionRejectJoinRequest AuditLogAction = "reject_join_request"
+	// Value create_seat_request for AuditLogAction.
+	AuditLogActionCreateSeatRequest AuditLogAction = "create_seat_request"
+	// Value approve_seat_request for AuditLogAction.
+	AuditLogActionApproveSeatRequest AuditLogAction = "approve_seat_request"
+	// Value decline_seat_request for AuditLogAction.
+	AuditLogActionDeclineSeatRequest AuditLogAction = "decline_seat_request"
+	// Value create_service_user_api_key for AuditLogAction.
+	AuditLogActionCreateServiceUserAPIKey AuditLogAction = "create_service_user_api_key"
+	// Value revoke_service_user_api_key for AuditLogAction.
+	AuditLogActionRevokeServiceUserAPIKey AuditLogAction = "revoke_service_user_api_key"
+	// Value rotate_service_user_api_key for AuditLogAction.
+	AuditLogActionRotateServiceUserAPIKey AuditLogAction = "rotate_service_user_api_key"
+	// Value create_pat for AuditLogAction.
+	AuditLogActionCreatePat AuditLogAction = "create_pat"
+	// Value revoke_pat for AuditLogAction.
+	AuditLogActionRevokePat AuditLogAction = "revoke_pat"
+	// Value rotate_pat for AuditLogAction.
+	AuditLogActionRotatePat AuditLogAction = "rotate_pat"
+	// Value update_pat_policy for AuditLogAction.
+	AuditLogActionUpdatePatPolicy AuditLogAction = "update_pat_policy"
+	// Value bulk_revoke_pats for AuditLogAction.
+	AuditLogActionBulkRevokePats AuditLogAction = "bulk_revoke_pats"
+	// Value policy_revoke_pat for AuditLogAction.
+	AuditLogActionPolicyRevokePat AuditLogAction = "policy_revoke_pat"
+	// Value create_pat_request for AuditLogAction.
+	AuditLogActionCreatePatRequest AuditLogAction = "create_pat_request"
+	// Value approve_pat_request for AuditLogAction.
+	AuditLogActionApprovePatRequest AuditLogAction = "approve_pat_request"
+	// Value deny_pat_request for AuditLogAction.
+	AuditLogActionDenyPatRequest AuditLogAction = "deny_pat_request"
+	// Value cancel_pat_request for AuditLogAction.
+	AuditLogActionCancelPatRequest AuditLogAction = "cancel_pat_request"
+	// Value complete_pat_request for AuditLogAction.
+	AuditLogActionCompletePatRequest AuditLogAction = "complete_pat_request"
+	// Value create_blueprint for AuditLogAction.
+	AuditLogActionCreateBlueprint AuditLogAction = "create_blueprint"
+	// Value create_blueprint_version for AuditLogAction.
+	AuditLogActionCreateBlueprintVersion AuditLogAction = "create_blueprint_version"
+	// Value rollback_blueprint_version for AuditLogAction.
+	AuditLogActionRollbackBlueprintVersion AuditLogAction = "rollback_blueprint_version"
+	// Value delete_blueprint for AuditLogAction.
+	AuditLogActionDeleteBlueprint AuditLogAction = "delete_blueprint"
+	// Value reorder_blueprints for AuditLogAction.
+	AuditLogActionReorderBlueprints AuditLogAction = "reorder_blueprints"
+	// Value create_enterprise_blueprint for AuditLogAction.
+	AuditLogActionCreateEnterpriseBlueprint AuditLogAction = "create_enterprise_blueprint"
+	// Value create_enterprise_blueprint_version for AuditLogAction.
+	AuditLogActionCreateEnterpriseBlueprintVersion AuditLogAction = "create_enterprise_blueprint_version"
+	// Value rollback_enterprise_blueprint_version for AuditLogAction.
+	AuditLogActionRollbackEnterpriseBlueprintVersion AuditLogAction = "rollback_enterprise_blueprint_version"
+	// Value delete_enterprise_blueprint for AuditLogAction.
+	AuditLogActionDeleteEnterpriseBlueprint AuditLogAction = "delete_enterprise_blueprint"
+	// Value accept_skill_pr for AuditLogAction.
+	AuditLogActionAcceptSkillPR AuditLogAction = "accept_skill_pr"
+	// Value trigger_blueprint_build for AuditLogAction.
+	AuditLogActionTriggerBlueprintBuild AuditLogAction = "trigger_blueprint_build"
+	// Value cancel_blueprint_build for AuditLogAction.
+	AuditLogActionCancelBlueprintBuild AuditLogAction = "cancel_blueprint_build"
+	// Value create_environment for AuditLogAction.
+	AuditLogActionCreateEnvironment AuditLogAction = "create_environment"
+	// Value update_environment for AuditLogAction.
+	AuditLogActionUpdateEnvironment AuditLogAction = "update_environment"
+	// Value delete_environment for AuditLogAction.
+	AuditLogActionDeleteEnvironment AuditLogAction = "delete_environment"
+	// Value upload_blueprint_file for AuditLogAction.
+	AuditLogActionUploadBlueprintFile AuditLogAction = "upload_blueprint_file"
+	// Value delete_blueprint_file for AuditLogAction.
+	AuditLogActionDeleteBlueprintFile AuditLogAction = "delete_blueprint_file"
+	// Value sync_repo_blueprints for AuditLogAction.
+	AuditLogActionSyncRepoBlueprints AuditLogAction = "sync_repo_blueprints"
+	// Value detach_blueprint_from_git for AuditLogAction.
+	AuditLogActionDetachBlueprintFromGit AuditLogAction = "detach_blueprint_from_git"
+	// Value create_blueprint_pr for AuditLogAction.
+	AuditLogActionCreateBlueprintPR AuditLogAction = "create_blueprint_pr"
+	// Value update_blueprint_settings for AuditLogAction.
+	AuditLogActionUpdateBlueprintSettings AuditLogAction = "update_blueprint_settings"
+	// Value pin_build for AuditLogAction.
+	AuditLogActionPinBuild AuditLogAction = "pin_build"
+	// Value unpin_build for AuditLogAction.
+	AuditLogActionUnpinBuild AuditLogAction = "unpin_build"
+	// Value delete_build for AuditLogAction.
+	AuditLogActionDeleteBuild AuditLogAction = "delete_build"
+	// Value trigger_automation for AuditLogAction.
+	AuditLogActionTriggerAutomation AuditLogAction = "trigger_automation"
+	// Value create_automation for AuditLogAction.
+	AuditLogActionCreateAutomation AuditLogAction = "create_automation"
+	// Value update_automation for AuditLogAction.
+	AuditLogActionUpdateAutomation AuditLogAction = "update_automation"
+	// Value delete_automation for AuditLogAction.
+	AuditLogActionDeleteAutomation AuditLogAction = "delete_automation"
+	// Value reset_automation_monitor for AuditLogAction.
+	AuditLogActionResetAutomationMonitor AuditLogAction = "reset_automation_monitor"
+	// Value update_automation_scratch for AuditLogAction.
+	AuditLogActionUpdateAutomationScratch AuditLogAction = "update_automation_scratch"
+	// Value regenerate_automation_webhook_secret for AuditLogAction.
+	AuditLogActionRegenerateAutomationWebhookSecret AuditLogAction = "regenerate_automation_webhook_secret"
+	// Value automation_target_write_approver for AuditLogAction.
+	AuditLogActionAutomationTargetWriteApprover AuditLogAction = "automation_target_write_approver"
+	// Value automation_target_write_approver_denied for AuditLogAction.
+	AuditLogActionAutomationTargetWriteApproverDenied AuditLogAction = "automation_target_write_approver_denied"
+	// Value acknowledge_session_hard_cap for AuditLogAction.
+	AuditLogActionAcknowledgeSessionHardCap AuditLogAction = "acknowledge_session_hard_cap"
+	// Value create_audit_log_export for AuditLogAction.
+	AuditLogActionCreateAuditLogExport AuditLogAction = "create_audit_log_export"
+	// Value update_audit_log_export for AuditLogAction.
+	AuditLogActionUpdateAuditLogExport AuditLogAction = "update_audit_log_export"
+	// Value delete_audit_log_export for AuditLogAction.
+	AuditLogActionDeleteAuditLogExport AuditLogAction = "delete_audit_log_export"
+	// Value start_code_scan for AuditLogAction.
+	AuditLogActionStartCodeScan AuditLogAction = "start_code_scan"
+	// Value switch_code_scan_profile for AuditLogAction.
+	AuditLogActionSwitchCodeScanProfile AuditLogAction = "switch_code_scan_profile"
+	// Value create_code_scan_profile for AuditLogAction.
+	AuditLogActionCreateCodeScanProfile AuditLogAction = "create_code_scan_profile"
+	// Value update_code_scan_profile for AuditLogAction.
+	AuditLogActionUpdateCodeScanProfile AuditLogAction = "update_code_scan_profile"
+	// Value update_code_scan_effort for AuditLogAction.
+	AuditLogActionUpdateCodeScanEffort AuditLogAction = "update_code_scan_effort"
+	// Value update_code_scan_finding_status for AuditLogAction.
+	AuditLogActionUpdateCodeScanFindingStatus AuditLogAction = "update_code_scan_finding_status"
+	// Value import_code_scan for AuditLogAction.
+	AuditLogActionImportCodeScan AuditLogAction = "import_code_scan"
+	// Value update_code_scan_platform for AuditLogAction.
+	AuditLogActionUpdateCodeScanPlatform AuditLogAction = "update_code_scan_platform"
+	// Value rehost_code_scan for AuditLogAction.
+	AuditLogActionRehostCodeScan AuditLogAction = "rehost_code_scan"
+	// Value create_outpost_pool for AuditLogAction.
+	AuditLogActionCreateOutpostPool AuditLogAction = "create_outpost_pool"
+	// Value update_outpost_pool for AuditLogAction.
+	AuditLogActionUpdateOutpostPool AuditLogAction = "update_outpost_pool"
+	// Value delete_outpost_pool for AuditLogAction.
+	AuditLogActionDeleteOutpostPool AuditLogAction = "delete_outpost_pool"
+	// Value claim_outpost_session for AuditLogAction.
+	AuditLogActionClaimOutpostSession AuditLogAction = "claim_outpost_session"
+	// Value release_outpost_session for AuditLogAction.
+	AuditLogActionReleaseOutpostSession AuditLogAction = "release_outpost_session"
+	// Value create_gateway for AuditLogAction.
+	AuditLogActionCreateGateway AuditLogAction = "create_gateway"
+	// Value regenerate_gateway_token for AuditLogAction.
+	AuditLogActionRegenerateGatewayToken AuditLogAction = "regenerate_gateway_token"
+	// Value update_gateway_hostnames for AuditLogAction.
+	AuditLogActionUpdateGatewayHostnames AuditLogAction = "update_gateway_hostnames"
+	// Value update_gateway_dial_address for AuditLogAction.
+	AuditLogActionUpdateGatewayDialAddress AuditLogAction = "update_gateway_dial_address"
+	// Value delete_gateway for AuditLogAction.
+	AuditLogActionDeleteGateway AuditLogAction = "delete_gateway"
+	// Value update_review_comment_language for AuditLogAction.
+	AuditLogActionUpdateReviewCommentLanguage AuditLogAction = "update_review_comment_language"
+	// Value report_pr_review_triage for AuditLogAction.
+	AuditLogActionReportPRReviewTriage AuditLogAction = "report_pr_review_triage"
+	// Value create_review_trigger for AuditLogAction.
+	AuditLogActionCreateReviewTrigger AuditLogAction = "create_review_trigger"
+	// Value update_review_trigger for AuditLogAction.
+	AuditLogActionUpdateReviewTrigger AuditLogAction = "update_review_trigger"
+	// Value delete_review_trigger for AuditLogAction.
+	AuditLogActionDeleteReviewTrigger AuditLogAction = "delete_review_trigger"
+	// Value create_review_profile for AuditLogAction.
+	AuditLogActionCreateReviewProfile AuditLogAction = "create_review_profile"
+	// Value update_review_profile for AuditLogAction.
+	AuditLogActionUpdateReviewProfile AuditLogAction = "update_review_profile"
+	// Value create_federated_identity_provider for AuditLogAction.
+	AuditLogActionCreateFederatedIdentityProvider AuditLogAction = "create_federated_identity_provider"
+	// Value update_federated_identity_provider for AuditLogAction.
+	AuditLogActionUpdateFederatedIdentityProvider AuditLogAction = "update_federated_identity_provider"
+	// Value delete_federated_identity_provider for AuditLogAction.
+	AuditLogActionDeleteFederatedIdentityProvider AuditLogAction = "delete_federated_identity_provider"
+	// Value create_federated_credential for AuditLogAction.
+	AuditLogActionCreateFederatedCredential AuditLogAction = "create_federated_credential"
+	// Value revoke_federated_credential for AuditLogAction.
+	AuditLogActionRevokeFederatedCredential AuditLogAction = "revoke_federated_credential"
+	// Value update_service_user_key_policy for AuditLogAction.
+	AuditLogActionUpdateServiceUserKeyPolicy AuditLogAction = "update_service_user_key_policy"
+	// Value exchange_federated_token for AuditLogAction.
+	AuditLogActionExchangeFederatedToken AuditLogAction = "exchange_federated_token"
+)
+
 // OpenAPI schema AuditLogResponse.
 type AuditLogResponse struct {
 	// JSON field "action".
-	Action *string `json:"action,omitempty"`
+	Action AuditLogAction `json:"action"`
 	// JSON field "audit_log_id".
-	AuditLogID *string `json:"audit_log_id,omitempty"`
+	AuditLogID string `json:"audit_log_id"`
 	// JSON field "created_at".
-	CreatedAt *float64 `json:"created_at,omitempty"`
+	CreatedAt int64 `json:"created_at"`
 	// JSON field "data".
-	Data *map[string]json.RawMessage `json:"data,omitempty"`
+	Data map[string]json.RawMessage `json:"data"`
 	// JSON field "org_id".
-	OrgID *string `json:"org_id,omitempty"`
+	OrgID *string `json:"org_id"`
 	// JSON field "service_user_id".
-	ServiceUserID *string `json:"service_user_id,omitempty"`
+	ServiceUserID *string `json:"service_user_id"`
 	// JSON field "service_user_name".
-	ServiceUserName *string `json:"service_user_name,omitempty"`
+	ServiceUserName *string `json:"service_user_name"`
 	// JSON field "user_email".
-	UserEmail *string `json:"user_email,omitempty"`
+	UserEmail *string `json:"user_email"`
 	// JSON field "user_id".
-	UserID *string `json:"user_id,omitempty"`
+	UserID *string `json:"user_id"`
+}
+
+// OpenAPI schema AutoScanScheduleCreateRequestEffort.
+type AutoScanScheduleCreateRequestEffort string
+
+const (
+	// Value normal for AutoScanScheduleCreateRequestEffort.
+	AutoScanScheduleCreateRequestEffortNormal AutoScanScheduleCreateRequestEffort = "normal"
+	// Value deep for AutoScanScheduleCreateRequestEffort.
+	AutoScanScheduleCreateRequestEffortDeep AutoScanScheduleCreateRequestEffort = "deep"
+)
+
+// Request to create a scan's recurring auto-scan schedule.
+type AutoScanScheduleCreateRequest struct {
+	// Effort to apply to future incremental runs of the scan, including the scheduled ones: 'normal' or 'deep'. Omit to keep the scan's current effort. Rejected with 409 while a scan run is active.
+	Effort Optional[AutoScanScheduleCreateRequestEffort] `json:"effort,omitempty"`
+	// Whether the schedule starts enabled.
+	Enabled *bool `json:"enabled,omitempty"`
+	// iCal RRULE string (e.g. "FREQ=DAILY") driving the schedule on which new commits are scanned.
+	Rrule string `json:"rrule"`
+}
+
+// The recurring auto-scan schedule configured for a code scan.
+type AutoScanScheduleResponse struct {
+	// ID of the automation backing the schedule.
+	AutomationID string `json:"automation_id"`
+	// Whether the schedule is enabled.
+	Enabled bool `json:"enabled"`
+	// iCal RRULE string driving the schedule.
+	Rrule string `json:"rrule"`
+	// The scan the schedule belongs to.
+	ScanID string `json:"scan_id"`
 }
 
 // OpenAPI schema AutomationComparisonConditionOperator.
@@ -926,14 +1659,6 @@ type AutomationMatchCondition struct {
 	Value string `json:"value"`
 }
 
-// OpenAPI schema AutomationMessageSessionActionType.
-type AutomationMessageSessionActionType string
-
-const (
-	// Value message_session for AutomationMessageSessionActionType.
-	AutomationMessageSessionActionTypeMessageSession AutomationMessageSessionActionType = "message_session"
-)
-
 // OpenAPI schema AutomationMessageSessionAction.
 type AutomationMessageSessionAction struct {
 	// When true, the first trigger creates a new long-running session owned by the automation and subsequent triggers message it.
@@ -943,16 +1668,8 @@ type AutomationMessageSessionAction struct {
 	// Must belong to the org; editing an automation containing this action requires write access to the target session (enable/disable-only edits exempt). Required unless auto_create is true, in which case it is set server-side once the first trigger creates the session; client-supplied values are ignored.
 	TargetDevinID Optional[string] `json:"target_devin_id,omitempty"`
 	// JSON field "type".
-	Type *AutomationMessageSessionActionType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
-
-// OpenAPI schema AutomationMessageSessionActionUpdateType.
-type AutomationMessageSessionActionUpdateType string
-
-const (
-	// Value message_session for AutomationMessageSessionActionUpdateType.
-	AutomationMessageSessionActionUpdateTypeMessageSession AutomationMessageSessionActionUpdateType = "message_session"
-)
 
 // OpenAPI schema AutomationMessageSessionActionUpdate.
 type AutomationMessageSessionActionUpdate struct {
@@ -963,16 +1680,8 @@ type AutomationMessageSessionActionUpdate struct {
 	// Must belong to the org; editing an automation containing this action requires write access to the target session (enable/disable-only edits exempt). Required unless auto_create is true, in which case it is set server-side once the first trigger creates the session; client-supplied values are ignored.
 	TargetDevinID Optional[string] `json:"target_devin_id,omitempty"`
 	// JSON field "type".
-	Type *AutomationMessageSessionActionUpdateType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
-
-// OpenAPI schema AutomationMonitorSessionActionType.
-type AutomationMonitorSessionActionType string
-
-const (
-	// Value monitor_session for AutomationMonitorSessionActionType.
-	AutomationMonitorSessionActionTypeMonitorSession AutomationMonitorSessionActionType = "monitor_session"
-)
 
 // OpenAPI schema AutomationMonitorSessionAction.
 type AutomationMonitorSessionAction struct {
@@ -981,16 +1690,8 @@ type AutomationMonitorSessionAction struct {
 	// Requires exactly one slack:message trigger on the same channel.
 	SlackMonitorConfig AutomationSlackMonitorConfig `json:"slack_monitor_config"`
 	// JSON field "type".
-	Type *AutomationMonitorSessionActionType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
-
-// OpenAPI schema AutomationMonitorSessionActionUpdateType.
-type AutomationMonitorSessionActionUpdateType string
-
-const (
-	// Value monitor_session for AutomationMonitorSessionActionUpdateType.
-	AutomationMonitorSessionActionUpdateTypeMonitorSession AutomationMonitorSessionActionUpdateType = "monitor_session"
-)
 
 // OpenAPI schema AutomationMonitorSessionActionUpdate.
 type AutomationMonitorSessionActionUpdate struct {
@@ -999,7 +1700,7 @@ type AutomationMonitorSessionActionUpdate struct {
 	// Requires exactly one slack:message trigger on the same channel. Required when creating or adding this action; on a merge-semantics update, omit it to keep the stored value (null is invalid).
 	SlackMonitorConfig Optional[AutomationSlackMonitorConfig] `json:"slack_monitor_config,omitempty"`
 	// JSON field "type".
-	Type *AutomationMonitorSessionActionUpdateType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
 
 // OpenAPI schema AutomationNetPolicyAllowItem.
@@ -1212,14 +1913,6 @@ type AutomationNumericCondition struct {
 	Value AutomationNumericConditionValue `json:"value"`
 }
 
-// OpenAPI schema AutomationRangeConditionOperator.
-type AutomationRangeConditionOperator string
-
-const (
-	// Value between for AutomationRangeConditionOperator.
-	AutomationRangeConditionOperatorBetween AutomationRangeConditionOperator = "between"
-)
-
 // OpenAPI schema AutomationRangeConditionValueItem.
 type AutomationRangeConditionValueItem struct{ raw json.RawMessage }
 
@@ -1299,25 +1992,17 @@ type AutomationRangeCondition struct {
 	// JSON field "field".
 	Field string `json:"field"`
 	// JSON field "operator".
-	Operator AutomationRangeConditionOperator `json:"operator"`
+	Operator string `json:"operator"`
 	// Inclusive [low, high] range.
 	Value [2]AutomationRangeConditionValueItem `json:"value"`
 }
-
-// OpenAPI schema AutomationRecurrenceConditionOperator.
-type AutomationRecurrenceConditionOperator string
-
-const (
-	// Value recurrence for AutomationRecurrenceConditionOperator.
-	AutomationRecurrenceConditionOperatorRecurrence AutomationRecurrenceConditionOperator = "recurrence"
-)
 
 // OpenAPI schema AutomationRecurrenceCondition.
 type AutomationRecurrenceCondition struct {
 	// JSON field "field".
 	Field string `json:"field"`
 	// JSON field "operator".
-	Operator AutomationRecurrenceConditionOperator `json:"operator"`
+	Operator string `json:"operator"`
 	// iCalendar RRULE for schedule:recurring's rrule field, e.g. FREQ=WEEKLY;BYDAY=MO;BYHOUR=9;BYMINUTE=0
 	Value string `json:"value"`
 }
@@ -1606,48 +2291,24 @@ type AutomationResponse struct {
 	UpdatedAt int64 `json:"updated_at"`
 }
 
-// OpenAPI schema AutomationRunAsCreatorType.
-type AutomationRunAsCreatorType string
-
-const (
-	// Value creator for AutomationRunAsCreatorType.
-	AutomationRunAsCreatorTypeCreator AutomationRunAsCreatorType = "creator"
-)
-
 // OpenAPI schema AutomationRunAsCreator.
 type AutomationRunAsCreator struct {
 	// JSON field "type".
-	Type *AutomationRunAsCreatorType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
-
-// OpenAPI schema AutomationRunAsOrganizationType.
-type AutomationRunAsOrganizationType string
-
-const (
-	// Value organization for AutomationRunAsOrganizationType.
-	AutomationRunAsOrganizationTypeOrganization AutomationRunAsOrganizationType = "organization"
-)
 
 // OpenAPI schema AutomationRunAsOrganization.
 type AutomationRunAsOrganization struct {
 	// JSON field "type".
-	Type *AutomationRunAsOrganizationType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
-
-// OpenAPI schema AutomationRunAsServiceUserType.
-type AutomationRunAsServiceUserType string
-
-const (
-	// Value service_user for AutomationRunAsServiceUserType.
-	AutomationRunAsServiceUserTypeServiceUser AutomationRunAsServiceUserType = "service_user"
-)
 
 // OpenAPI schema AutomationRunAsServiceUser.
 type AutomationRunAsServiceUser struct {
 	// JSON field "service_user_id".
 	ServiceUserID string `json:"service_user_id"`
 	// JSON field "type".
-	Type *AutomationRunAsServiceUserType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
 
 // OpenAPI schema AutomationSchemaFieldDefGranularity.
@@ -1796,7 +2457,7 @@ const (
 	AutomationSchemasResponseAvailableDevinModesItemSwe2Max AutomationSchemasResponseAvailableDevinModesItem = "swe-2-max"
 )
 
-// Stable mode to prefill session_settings.fallback_devin_mode with when a research preview is selected: the organization's default mode when it is stable and available, else the first available stable mode; null when none is available.
+// OpenAPI schema AutomationSchemasResponseDefaultFallbackDevinMode.
 type AutomationSchemasResponseDefaultFallbackDevinMode string
 
 const (
@@ -1906,7 +2567,7 @@ type AutomationSessionNotificationsConfig struct {
 	Teams Optional[AutomationSessionTeamsConfig] `json:"teams,omitempty"`
 }
 
-// Stable mode sessions start in when devin_mode is a research preview that is unavailable at run time. Required with a preview devin_mode (see schemas.default_fallback_devin_mode), rejected with a stable or null devin_mode; cleared with devin_mode.
+// OpenAPI schema AutomationSessionSettingsInputFallbackDevinMode.
 type AutomationSessionSettingsInputFallbackDevinMode string
 
 const (
@@ -1932,7 +2593,7 @@ type AutomationSessionSettingsInput struct {
 	NetPolicy Optional[AutomationNetPolicy] `json:"net_policy,omitempty"`
 }
 
-// Stable mode sessions start in when devin_mode is a research preview that is unavailable at run time. Required with a preview devin_mode (see schemas.default_fallback_devin_mode), rejected with a stable or null devin_mode; cleared with devin_mode.
+// OpenAPI schema AutomationSessionSettingsOutputFallbackDevinMode.
 type AutomationSessionSettingsOutputFallbackDevinMode string
 
 const (
@@ -2022,14 +2683,6 @@ type AutomationSlackNotification struct {
 	When AutomationSlackNotificationWhen `json:"when"`
 }
 
-// OpenAPI schema AutomationStartSessionActionInputType.
-type AutomationStartSessionActionInputType string
-
-const (
-	// Value start_session for AutomationStartSessionActionInputType.
-	AutomationStartSessionActionInputTypeStartSession AutomationStartSessionActionInputType = "start_session"
-)
-
 // OpenAPI schema AutomationStartSessionActionInput.
 type AutomationStartSessionActionInput struct {
 	// The single source of truth: plain text with inline reference tokens (@{owner}/{repo}, @{path}, @playbook:{id}, @skills:{name}, !{macro}, ${SECRET_NAME}). Kind-prefixed tokens are validated at save; unknown ids are a 400. The triggering event's payload is appended automatically.
@@ -2037,16 +2690,8 @@ type AutomationStartSessionActionInput struct {
 	// Config for the spawned session.
 	Session *AutomationSessionConfigInput `json:"session,omitempty"`
 	// JSON field "type".
-	Type *AutomationStartSessionActionInputType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
-
-// OpenAPI schema AutomationStartSessionActionOutputType.
-type AutomationStartSessionActionOutputType string
-
-const (
-	// Value start_session for AutomationStartSessionActionOutputType.
-	AutomationStartSessionActionOutputTypeStartSession AutomationStartSessionActionOutputType = "start_session"
-)
 
 // OpenAPI schema AutomationStartSessionActionOutput.
 type AutomationStartSessionActionOutput struct {
@@ -2055,16 +2700,8 @@ type AutomationStartSessionActionOutput struct {
 	// Config for the spawned session.
 	Session *AutomationSessionConfigOutput `json:"session,omitempty"`
 	// JSON field "type".
-	Type *AutomationStartSessionActionOutputType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
-
-// OpenAPI schema AutomationStartSessionActionUpdateType.
-type AutomationStartSessionActionUpdateType string
-
-const (
-	// Value start_session for AutomationStartSessionActionUpdateType.
-	AutomationStartSessionActionUpdateTypeStartSession AutomationStartSessionActionUpdateType = "start_session"
-)
 
 // OpenAPI schema AutomationStartSessionActionUpdate.
 type AutomationStartSessionActionUpdate struct {
@@ -2073,7 +2710,7 @@ type AutomationStartSessionActionUpdate struct {
 	// Config for the spawned session.
 	Session *AutomationSessionConfigInput `json:"session,omitempty"`
 	// JSON field "type".
-	Type *AutomationStartSessionActionUpdateType `json:"type,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
 
 // OpenAPI schema AutomationStringConditionOperator.
@@ -2240,7 +2877,7 @@ type AutomationTemplatesResponse struct {
 	Templates []AutomationTemplateResponse `json:"templates"`
 }
 
-// Allow spawned sessions to open 1:1 Slack DMs in the organization's connected workspaces. 'org_members' (enterprise accounts only) restricts DM targets to members of the organization; 'workspace' (non-enterprise accounts only) allows any eligible workspace member. Omit or null to disable DMs.
+// OpenAPI schema AutomationToolsSlackDmScope.
 type AutomationToolsSlackDmScope string
 
 const (
@@ -2248,14 +2885,6 @@ const (
 	AutomationToolsSlackDmScopeOrgMembers AutomationToolsSlackDmScope = "org_members"
 	// Value workspace for AutomationToolsSlackDmScope.
 	AutomationToolsSlackDmScopeWorkspace AutomationToolsSlackDmScope = "workspace"
-)
-
-// Allow spawned sessions to open 1:1 Microsoft Teams DMs. DMs only reach users who installed the Devin app in Teams personally. Capped by Teams Default Access and the governing security profile.
-type AutomationToolsTeamsDmScope string
-
-const (
-	// Value installed_users for AutomationToolsTeamsDmScope.
-	AutomationToolsTeamsDmScopeInstalledUsers AutomationToolsTeamsDmScope = "installed_users"
 )
 
 // OpenAPI schema AutomationTools.
@@ -2273,7 +2902,7 @@ type AutomationTools struct {
 	// Microsoft Teams channels the session's Teams tool may read and post to. Teams must have the Devin app installed. A single {team_id: '*', channel_id: '*'} entry grants every channel of every team the Devin app is installed in. The grant is capped by the organization's Teams Default Access; the channel of a teams:message trigger is always granted.
 	TeamsChannels *[]AutomationTeamsChannel `json:"teams_channels,omitempty"`
 	// Allow spawned sessions to open 1:1 Microsoft Teams DMs. DMs only reach users who installed the Devin app in Teams personally. Capped by Teams Default Access and the governing security profile.
-	TeamsDmScope Optional[AutomationToolsTeamsDmScope] `json:"teams_dm_scope,omitempty"`
+	TeamsDmScope Optional[string] `json:"teams_dm_scope,omitempty"`
 }
 
 // Trigger event type, e.g. 'github:pull_request'.
@@ -2620,7 +3249,7 @@ func (value AutomationUpdateRequestActionsItem) AsAutomationMonitorSessionAction
 	return result, true
 }
 
-// null resets to organization.
+// Identity the spawned sessions run under. organization: the org's automation identity. When the organization has a default service user for automations, sessions run as that service user and the response returns run_as service_user with its id; saving requires every permission that service user holds. Otherwise it is the System User in the app — sessions use system permissions, so MCP servers installed with a personal (user-scoped) connection cannot be selected, and switching an automation to organization removes them from its selection. creator: personal automation — runs with the creator's own permissions and is visible only to the creator and org admins; rejected for service-user-created automations. service_user: runs as the given service user, with its roles, grants and ACU limits; requires permission to manage that service user. Required on create; null on update resets to organization.
 type AutomationUpdateRequestRunAs struct{ raw json.RawMessage }
 
 // MarshalJSON writes the union's stored JSON value.
@@ -2718,7 +3347,7 @@ func (value AutomationUpdateRequestRunAs) AsAutomationRunAsServiceUser() (Automa
 	return result, true
 }
 
-// null resets to slack_users.
+// OpenAPI schema AutomationUpdateRequestSlackReplyAccess.
 type AutomationUpdateRequestSlackReplyAccess string
 
 const (
@@ -2730,7 +3359,7 @@ const (
 	AutomationUpdateRequestSlackReplyAccessExternalSlackUsers AutomationUpdateRequestSlackReplyAccess = "external_slack_users"
 )
 
-// null resets to teams_users.
+// OpenAPI schema AutomationUpdateRequestTeamsReplyAccess.
 type AutomationUpdateRequestTeamsReplyAccess string
 
 const (
@@ -2780,7 +3409,7 @@ type AutomationWebhookResponse struct {
 	URL string `json:"url"`
 }
 
-// Where the YAML is authored: 'git' (synced from .devin/blueprint.yaml in the repo) or 'database' (edited via the API/UI). Always null for enterprise- and org-tier blueprints.
+// OpenAPI schema BlueprintSource.
 type BlueprintSource string
 
 const (
@@ -2852,6 +3481,12 @@ type BlueprintList struct {
 	Data []Blueprint `json:"data"`
 }
 
+// OpenAPI schema BodyHandleUploadAttachmentV3OrganizationsOrgIDAttachmentsPost.
+type BodyHandleUploadAttachmentV3OrganizationsOrgIDAttachmentsPost struct {
+	// JSON field "file".
+	File string `json:"file"`
+}
+
 // OpenAPI schema BodyUploadEnterpriseBlueprintFileEndpointV3EnterpriseSnapshotSetupBlueprintsBlueprintIDFilesPost.
 type BodyUploadEnterpriseBlueprintFileEndpointV3EnterpriseSnapshotSetupBlueprintsBlueprintIDFilesPost struct {
 	// JSON field "file".
@@ -2918,212 +3553,622 @@ type BulkIndexRepositoriesRequest struct {
 	Repositories []RepositoryIndexingItem `json:"repositories"`
 }
 
-// OpenAPI schema CategoryMetricsSubcategoriesItem.
-type CategoryMetricsSubcategoriesItem struct {
-	// JSON field "acus".
-	Acus *float64 `json:"acus,omitempty"`
-	// JSON field "display_name".
-	DisplayName *string `json:"display_name,omitempty"`
-	// JSON field "sessions_count".
-	SessionsCount *float64 `json:"sessions_count,omitempty"`
-	// JSON field "subcategory_id".
-	SubcategoryID *string `json:"subcategory_id,omitempty"`
-}
-
 // OpenAPI schema CategoryMetrics.
 type CategoryMetrics struct {
 	// JSON field "acus".
-	Acus *float64 `json:"acus,omitempty"`
+	Acus float64 `json:"acus"`
 	// JSON field "category".
-	Category *string `json:"category,omitempty"`
+	Category string `json:"category"`
 	// JSON field "sessions_count".
-	SessionsCount *float64 `json:"sessions_count,omitempty"`
+	SessionsCount int64 `json:"sessions_count"`
 	// JSON field "subcategories".
-	Subcategories *[]CategoryMetricsSubcategoriesItem `json:"subcategories,omitempty"`
+	Subcategories []SubcategoryMetrics `json:"subcategories"`
 }
 
-// OpenAPI schema CodeScanAttachmentResponse.
+// A file attached to a code scan at creation.
 type CodeScanAttachmentResponse struct {
-	// JSON field "filename".
-	Filename *string `json:"filename,omitempty"`
-	// JSON field "url".
-	URL *string `json:"url,omitempty"`
+	// Name of the attached file.
+	Filename string `json:"filename"`
+	// Devin attachment URL of the file.
+	URL string `json:"url"`
 }
 
-// OpenAPI schema CodeScanFindingResponseReferenceSnippetsItem.
-type CodeScanFindingResponseReferenceSnippetsItem struct {
-	// JSON field "code".
-	Code *string `json:"code,omitempty"`
-	// JSON field "commentary".
-	Commentary *string `json:"commentary,omitempty"`
-	// JSON field "end_line".
-	EndLine *float64 `json:"end_line,omitempty"`
-	// JSON field "file_path".
-	FilePath *string `json:"file_path,omitempty"`
-	// JSON field "start_line".
-	StartLine *float64 `json:"start_line,omitempty"`
+// OpenAPI schema CodeScanCreateRequestDevinMode.
+type CodeScanCreateRequestDevinMode string
+
+const (
+	// Value fusion for CodeScanCreateRequestDevinMode.
+	CodeScanCreateRequestDevinModeFusion CodeScanCreateRequestDevinMode = "fusion"
+	// Value swe-2 for CodeScanCreateRequestDevinMode.
+	CodeScanCreateRequestDevinModeSwe2 CodeScanCreateRequestDevinMode = "swe-2"
+)
+
+// OpenAPI schema CodeScanCreateRequestEffort.
+type CodeScanCreateRequestEffort string
+
+const (
+	// Value normal for CodeScanCreateRequestEffort.
+	CodeScanCreateRequestEffortNormal CodeScanCreateRequestEffort = "normal"
+	// Value deep for CodeScanCreateRequestEffort.
+	CodeScanCreateRequestEffortDeep CodeScanCreateRequestEffort = "deep"
+)
+
+// OpenAPI schema CodeScanCreateRequestScanType.
+type CodeScanCreateRequestScanType string
+
+const (
+	// Value security for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeSecurity CodeScanCreateRequestScanType = "security"
+	// Value performance for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypePerformance CodeScanCreateRequestScanType = "performance"
+	// Value db-queries for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeDbQueries CodeScanCreateRequestScanType = "db-queries"
+	// Value test-coverage for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeTestCoverage CodeScanCreateRequestScanType = "test-coverage"
+	// Value dead-code for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeDeadCode CodeScanCreateRequestScanType = "dead-code"
+	// Value code-quality for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeCodeQuality CodeScanCreateRequestScanType = "code-quality"
+	// Value cleanup for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeCleanup CodeScanCreateRequestScanType = "cleanup"
+	// Value telemetry for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeTelemetry CodeScanCreateRequestScanType = "telemetry"
+	// Value accessibility for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeAccessibility CodeScanCreateRequestScanType = "accessibility"
+	// Value compliance for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeCompliance CodeScanCreateRequestScanType = "compliance"
+	// Value general for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeGeneral CodeScanCreateRequestScanType = "general"
+	// Value migration-docs for CodeScanCreateRequestScanType.
+	CodeScanCreateRequestScanTypeMigrationDocs CodeScanCreateRequestScanType = "migration-docs"
+)
+
+// Request body for starting a new code scan.
+type CodeScanCreateRequest struct {
+	// Commit to check out before scanning.
+	CommitSha Optional[string] `json:"commit_sha,omitempty"`
+	// Agent the scan's sessions run on: 'fusion' or 'swe-2' (SWE-2 Max for 'deep' effort, SWE-2 High for 'normal'). Applies only when the mode is enabled for the organization; otherwise, and when omitted, the scan runs on the default agent.
+	DevinMode Optional[CodeScanCreateRequestDevinMode] `json:"devin_mode,omitempty"`
+	// Scan effort: 'normal' (default) uses lower model reasoning effort with larger investigation batches; 'deep' runs the full pipeline.
+	Effort Optional[CodeScanCreateRequestEffort] `json:"effort,omitempty"`
+	// Git host of the repository, if known.
+	Host Optional[string] `json:"host,omitempty"`
+	// When true, the scan pauses for user review between threat modeling and investigation.
+	Interactive *bool `json:"interactive,omitempty"`
+	// BCP-47 language tag (e.g. 'ja') for the scan's user-facing output: finding titles, descriptions, and reports. Omitted means English.
+	Locale Optional[string] `json:"locale,omitempty"`
+	// Where the scan's sessions run: a platform label configured for the organization (e.g. 'linux', 'windows', 'macos') or the name of an outpost (BYOB) pool, case-insensitive; platforms take priority when a name matches both. Omitted means the organization default. Unrecognized values are rejected with a 400 whose error body lists the available platform labels and outpost pool names.
+	Platform Optional[string] `json:"platform,omitempty"`
+	// Scan profile to apply to the scan.
+	ProfileID Optional[string] `json:"profile_id,omitempty"`
+	// Full name of the repository to scan. Provide exactly one of repo_name or repos.
+	RepoName Optional[string] `json:"repo_name,omitempty"`
+	// Repositories covered by one scan; the first entry is the scan's primary repository. Provide exactly one of repo_name or repos.
+	Repos Optional[[]ScanRepoRequest] `json:"repos,omitempty"`
+	// Type of scan to run. Must match the profile's scan type when a profile is given; defaults to the profile's type, or 'security' for profile-less scans. Non-security types require a profile and are rejected without one.
+	ScanType Optional[CodeScanCreateRequestScanType] `json:"scan_type,omitempty"`
 }
 
-// OpenAPI schema CodeScanFindingResponse.
+// Effort applied to future incremental runs of the scan.
+type CodeScanEffortResponseEffort string
+
+const (
+	// Value normal for CodeScanEffortResponseEffort.
+	CodeScanEffortResponseEffortNormal CodeScanEffortResponseEffort = "normal"
+	// Value deep for CodeScanEffortResponseEffort.
+	CodeScanEffortResponseEffortDeep CodeScanEffortResponseEffort = "deep"
+)
+
+// Effort configured on a scan.
+type CodeScanEffortResponse struct {
+	// Effort applied to future incremental runs of the scan.
+	Effort CodeScanEffortResponseEffort `json:"effort"`
+	// Unique identifier for the scan.
+	ScanID string `json:"scan_id"`
+}
+
+// Effort to apply to future incremental runs of the scan: 'normal' uses lower model reasoning effort with larger investigation batches; 'deep' runs the full pipeline.
+type CodeScanEffortUpdateRequestEffort string
+
+const (
+	// Value normal for CodeScanEffortUpdateRequestEffort.
+	CodeScanEffortUpdateRequestEffortNormal CodeScanEffortUpdateRequestEffort = "normal"
+	// Value deep for CodeScanEffortUpdateRequestEffort.
+	CodeScanEffortUpdateRequestEffortDeep CodeScanEffortUpdateRequestEffort = "deep"
+)
+
+// Request to change the effort configured on a scan.
+type CodeScanEffortUpdateRequest struct {
+	// Effort to apply to future incremental runs of the scan: 'normal' uses lower model reasoning effort with larger investigation batches; 'deep' runs the full pipeline.
+	Effort CodeScanEffortUpdateRequestEffort `json:"effort"`
+}
+
+// OpenAPI schema CodeScanFindingResponseFixEffort.
+type CodeScanFindingResponseFixEffort string
+
+const (
+	// Value small for CodeScanFindingResponseFixEffort.
+	CodeScanFindingResponseFixEffortSmall CodeScanFindingResponseFixEffort = "small"
+	// Value large for CodeScanFindingResponseFixEffort.
+	CodeScanFindingResponseFixEffortLarge CodeScanFindingResponseFixEffort = "large"
+)
+
+// OpenAPI schema CodeScanFindingResponsePayoff.
+type CodeScanFindingResponsePayoff string
+
+const (
+	// Value quick_win for CodeScanFindingResponsePayoff.
+	CodeScanFindingResponsePayoffQuickWin CodeScanFindingResponsePayoff = "quick_win"
+	// Value big_fix for CodeScanFindingResponsePayoff.
+	CodeScanFindingResponsePayoffBigFix CodeScanFindingResponsePayoff = "big_fix"
+	// Value easy_fix for CodeScanFindingResponsePayoff.
+	CodeScanFindingResponsePayoffEasyFix CodeScanFindingResponsePayoff = "easy_fix"
+	// Value deprioritize for CodeScanFindingResponsePayoff.
+	CodeScanFindingResponsePayoffDeprioritize CodeScanFindingResponsePayoff = "deprioritize"
+)
+
+// Severity of the finding: critical, high, medium, or low.
+type CodeScanFindingResponseSeverity string
+
+const (
+	// Value critical for CodeScanFindingResponseSeverity.
+	CodeScanFindingResponseSeverityCritical CodeScanFindingResponseSeverity = "critical"
+	// Value high for CodeScanFindingResponseSeverity.
+	CodeScanFindingResponseSeverityHigh CodeScanFindingResponseSeverity = "high"
+	// Value medium for CodeScanFindingResponseSeverity.
+	CodeScanFindingResponseSeverityMedium CodeScanFindingResponseSeverity = "medium"
+	// Value low for CodeScanFindingResponseSeverity.
+	CodeScanFindingResponseSeverityLow CodeScanFindingResponseSeverity = "low"
+)
+
+// Finding status: open, dismissed, or resolved.
+type CodeScanFindingResponseStatus string
+
+const (
+	// Value open for CodeScanFindingResponseStatus.
+	CodeScanFindingResponseStatusOpen CodeScanFindingResponseStatus = "open"
+	// Value dismissed for CodeScanFindingResponseStatus.
+	CodeScanFindingResponseStatusDismissed CodeScanFindingResponseStatus = "dismissed"
+	// Value resolved for CodeScanFindingResponseStatus.
+	CodeScanFindingResponseStatusResolved CodeScanFindingResponseStatus = "resolved"
+)
+
+// OpenAPI schema CodeScanFindingResponseValidationResult.
+type CodeScanFindingResponseValidationResult string
+
+const (
+	// Value confirmed for CodeScanFindingResponseValidationResult.
+	CodeScanFindingResponseValidationResultConfirmed CodeScanFindingResponseValidationResult = "confirmed"
+	// Value false_positive for CodeScanFindingResponseValidationResult.
+	CodeScanFindingResponseValidationResultFalsePositive CodeScanFindingResponseValidationResult = "false_positive"
+	// Value inconclusive for CodeScanFindingResponseValidationResult.
+	CodeScanFindingResponseValidationResultInconclusive CodeScanFindingResponseValidationResult = "inconclusive"
+)
+
+// A single code scan finding.
 type CodeScanFindingResponse struct {
-	// JSON field "category".
-	Category *string `json:"category,omitempty"`
-	// JSON field "code_owners".
-	CodeOwners *[]string `json:"code_owners,omitempty"`
-	// JSON field "code_scan_run_id".
-	CodeScanRunID *string `json:"code_scan_run_id,omitempty"`
-	// JSON field "created_at".
-	CreatedAt *float64 `json:"created_at,omitempty"`
-	// JSON field "description".
-	Description *string `json:"description,omitempty"`
-	// JSON field "finding_id".
-	FindingID *string `json:"finding_id,omitempty"`
-	// JSON field "fix_effort".
-	FixEffort *string `json:"fix_effort,omitempty"`
-	// JSON field "note".
-	Note *string `json:"note,omitempty"`
-	// JSON field "orchestrator_session_id".
-	OrchestratorSessionID *string `json:"orchestrator_session_id,omitempty"`
-	// JSON field "payoff".
-	Payoff *string `json:"payoff,omitempty"`
-	// JSON field "pr_url".
-	PRURL *string `json:"pr_url,omitempty"`
-	// JSON field "recommendation".
-	Recommendation *string `json:"recommendation,omitempty"`
-	// JSON field "reference_snippets".
-	ReferenceSnippets *[]CodeScanFindingResponseReferenceSnippetsItem `json:"reference_snippets,omitempty"`
-	// JSON field "related_finding_ids".
+	// Category (rule name) the finding was classified under, if any.
+	Category *string `json:"category"`
+	// Code owners associated with the affected code.
+	CodeOwners []string `json:"code_owners"`
+	// Identifier of the scan run that produced the finding, if known.
+	CodeScanRunID *string `json:"code_scan_run_id"`
+	// When the finding was created (unix seconds).
+	CreatedAt int64 `json:"created_at"`
+	// Detailed description of the vulnerability, if any.
+	Description *string `json:"description"`
+	// Unique identifier for the finding.
+	FindingID string `json:"finding_id"`
+	// Size of the fix as rated by the scan: small or large. Null when the finding has not been rated.
+	FixEffort Optional[CodeScanFindingResponseFixEffort] `json:"fix_effort,omitempty"`
+	// Additional note attached to the finding, if any.
+	Note *string `json:"note"`
+	// Orchestrator session that ran the scan that produced the finding (the scan's Devin session), if any.
+	OrchestratorSessionID *string `json:"orchestrator_session_id"`
+	// Severity x fix_effort quadrant: quick_win (critical/high, small fix), big_fix (critical/high, large fix), easy_fix (medium/low, small fix), deprioritize (medium/low, large fix). Null when unrated.
+	Payoff Optional[CodeScanFindingResponsePayoff] `json:"payoff,omitempty"`
+	// URL of the remediation PR opened for this finding, if any.
+	PRURL *string `json:"pr_url"`
+	// Suggested remediation for the finding, if any.
+	Recommendation *string `json:"recommendation"`
+	// Code snippets referenced by the finding as supporting evidence.
+	ReferenceSnippets []CodeScanReferenceSnippetResponse `json:"reference_snippets"`
+	// Finding IDs of the other links in a realized attack chain. Set only on the chain's sink finding.
 	RelatedFindingIDs *[]string `json:"related_finding_ids,omitempty"`
-	// JSON field "repo_name".
-	RepoName *string `json:"repo_name,omitempty"`
-	// JSON field "scan_id".
-	ScanID *string `json:"scan_id,omitempty"`
-	// JSON field "session_id".
-	SessionID *string `json:"session_id,omitempty"`
-	// JSON field "severity".
-	Severity *string `json:"severity,omitempty"`
-	// JSON field "status".
-	Status *string `json:"status,omitempty"`
-	// JSON field "title".
-	Title *string `json:"title,omitempty"`
-	// JSON field "updated_at".
-	UpdatedAt *float64 `json:"updated_at,omitempty"`
-	// JSON field "validation_artifacts".
+	// Repository the finding was reported in.
+	RepoName string `json:"repo_name"`
+	// Identifier of the scan that produced the finding.
+	ScanID string `json:"scan_id"`
+	// Session that remediated the finding (and opened the PR), if any.
+	SessionID *string `json:"session_id"`
+	// Severity of the finding: critical, high, medium, or low.
+	Severity CodeScanFindingResponseSeverity `json:"severity"`
+	// Finding status: open, dismissed, or resolved.
+	Status CodeScanFindingResponseStatus `json:"status"`
+	// Title of the finding, if any.
+	Title *string `json:"title"`
+	// When the finding was last updated (unix seconds).
+	UpdatedAt int64 `json:"updated_at"`
+	// Attachment URLs recorded by runtime validation.
 	ValidationArtifacts *[]string `json:"validation_artifacts,omitempty"`
-	// JSON field "validation_evidence".
-	ValidationEvidence *string `json:"validation_evidence,omitempty"`
-	// JSON field "validation_result".
-	ValidationResult *string `json:"validation_result,omitempty"`
-	// JSON field "validation_session_id".
-	ValidationSessionID *string `json:"validation_session_id,omitempty"`
+	// Evidence summary recorded by runtime validation, if any.
+	ValidationEvidence Optional[string] `json:"validation_evidence,omitempty"`
+	// Recorded runtime validation outcome, if any: confirmed, false_positive, or inconclusive.
+	ValidationResult Optional[CodeScanFindingResponseValidationResult] `json:"validation_result,omitempty"`
+	// Session that recorded the runtime validation outcome, if any.
+	ValidationSessionID Optional[string] `json:"validation_session_id,omitempty"`
 }
 
-// OpenAPI schema CodeScanProfileResponse.
+// Response model for code scan metrics. All metrics are scoped to code scans created within the specified time range: findings and remediation PRs are attributed to the scan that produced them.
+type CodeScanMetricsResponse struct {
+	// Average time a PR is (or was) open, in seconds: creation to merge/close for finished PRs, creation to now for open PRs. Null when no PRs were created.
+	AvgPROpenDurationSeconds *float64 `json:"avg_pr_open_duration_seconds"`
+	// Average time from PR creation to merge, in seconds. Null when no PRs have been merged.
+	AvgPRTimeToMergeSeconds *float64 `json:"avg_pr_time_to_merge_seconds"`
+	// Number of open findings with critical severity.
+	OpenCriticalFindingsCount int64 `json:"open_critical_findings_count"`
+	// Number of open findings with high severity.
+	OpenHighFindingsCount int64 `json:"open_high_findings_count"`
+	// Number of open findings with low severity.
+	OpenLowFindingsCount int64 `json:"open_low_findings_count"`
+	// Number of open findings with medium severity.
+	OpenMediumFindingsCount int64 `json:"open_medium_findings_count"`
+	// Number of remediation PRs closed without being merged.
+	PRsClosedCount int64 `json:"prs_closed_count"`
+	// Number of PRs created by the scans' remediation sessions.
+	PRsCreatedCount int64 `json:"prs_created_count"`
+	// Number of remediation PRs merged.
+	PRsMergedCount int64 `json:"prs_merged_count"`
+	// Number of remediation PRs currently in the open state.
+	PRsOpenCount int64 `json:"prs_open_count"`
+	// Number of distinct repositories scanned.
+	ReposScannedCount int64 `json:"repos_scanned_count"`
+	// Number of code scans created within the specified time range.
+	ScansCount int64 `json:"scans_count"`
+}
+
+// Profile mode: discover or ingest.
+type CodeScanProfileDetailResponseMode string
+
+const (
+	// Value discover for CodeScanProfileDetailResponseMode.
+	CodeScanProfileDetailResponseModeDiscover CodeScanProfileDetailResponseMode = "discover"
+	// Value ingest for CodeScanProfileDetailResponseMode.
+	CodeScanProfileDetailResponseModeIngest CodeScanProfileDetailResponseMode = "ingest"
+)
+
+// Type of scan the profile configures.
+type CodeScanProfileDetailResponseScanType string
+
+const (
+	// Value security for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeSecurity CodeScanProfileDetailResponseScanType = "security"
+	// Value performance for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypePerformance CodeScanProfileDetailResponseScanType = "performance"
+	// Value db-queries for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeDbQueries CodeScanProfileDetailResponseScanType = "db-queries"
+	// Value test-coverage for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeTestCoverage CodeScanProfileDetailResponseScanType = "test-coverage"
+	// Value dead-code for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeDeadCode CodeScanProfileDetailResponseScanType = "dead-code"
+	// Value code-quality for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeCodeQuality CodeScanProfileDetailResponseScanType = "code-quality"
+	// Value cleanup for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeCleanup CodeScanProfileDetailResponseScanType = "cleanup"
+	// Value telemetry for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeTelemetry CodeScanProfileDetailResponseScanType = "telemetry"
+	// Value accessibility for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeAccessibility CodeScanProfileDetailResponseScanType = "accessibility"
+	// Value compliance for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeCompliance CodeScanProfileDetailResponseScanType = "compliance"
+	// Value general for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeGeneral CodeScanProfileDetailResponseScanType = "general"
+	// Value migration-docs for CodeScanProfileDetailResponseScanType.
+	CodeScanProfileDetailResponseScanTypeMigrationDocs CodeScanProfileDetailResponseScanType = "migration-docs"
+)
+
+// OpenAPI schema CodeScanProfileDetailResponseValidationSeveritiesItem.
+type CodeScanProfileDetailResponseValidationSeveritiesItem string
+
+const (
+	// Value critical for CodeScanProfileDetailResponseValidationSeveritiesItem.
+	CodeScanProfileDetailResponseValidationSeveritiesItemCritical CodeScanProfileDetailResponseValidationSeveritiesItem = "critical"
+	// Value high for CodeScanProfileDetailResponseValidationSeveritiesItem.
+	CodeScanProfileDetailResponseValidationSeveritiesItemHigh CodeScanProfileDetailResponseValidationSeveritiesItem = "high"
+	// Value medium for CodeScanProfileDetailResponseValidationSeveritiesItem.
+	CodeScanProfileDetailResponseValidationSeveritiesItemMedium CodeScanProfileDetailResponseValidationSeveritiesItem = "medium"
+	// Value low for CodeScanProfileDetailResponseValidationSeveritiesItem.
+	CodeScanProfileDetailResponseValidationSeveritiesItemLow CodeScanProfileDetailResponseValidationSeveritiesItem = "low"
+)
+
+// Whether the profile is owned by a single organization or shared across the whole account.
+type CodeScanProfileDetailResponseVisibility string
+
+const (
+	// Value org for CodeScanProfileDetailResponseVisibility.
+	CodeScanProfileDetailResponseVisibilityOrg CodeScanProfileDetailResponseVisibility = "org"
+	// Value account for CodeScanProfileDetailResponseVisibility.
+	CodeScanProfileDetailResponseVisibilityAccount CodeScanProfileDetailResponseVisibility = "account"
+)
+
+// Full details of a code scan profile, including its guidance.
+type CodeScanProfileDetailResponse struct {
+	// Guidance for the communication phase (acting on final findings, e.g. notifying owners or stakeholders), if any.
+	CommunicationGuidance Optional[string] `json:"communication_guidance,omitempty"`
+	// When the profile was created (unix seconds).
+	CreatedAt int64 `json:"created_at"`
+	// Description of the profile, if any.
+	Description *string `json:"description"`
+	// Glob patterns of files to exclude from the scan, if any.
+	ExcludeGlobs []string `json:"exclude_globs"`
+	// Glob patterns of files to include in the scan, if any.
+	IncludeGlobs []string `json:"include_globs"`
+	// Guidance describing the ingestion source, if any.
+	IngestionSourceGuidance *string `json:"ingestion_source_guidance"`
+	// Guidance for the investigation phase, if any.
+	InvestigationGuidance *string `json:"investigation_guidance"`
+	// Profile mode: discover or ingest.
+	Mode CodeScanProfileDetailResponseMode `json:"mode"`
+	// Name of the profile.
+	Name string `json:"name"`
+	// Organization that owns the profile. Null when the profile is shared account-wide.
+	OrgID *string `json:"org_id"`
+	// Guidance for the post-ingestion phase, if any.
+	PostIngestionGuidance *string `json:"post_ingestion_guidance"`
+	// Unique identifier for the profile.
+	ProfileID string `json:"profile_id"`
+	// Guidance for the remediation phase, if any.
+	RemediationGuidance *string `json:"remediation_guidance"`
+	// Guidance for the report phase, if any.
+	ReportGuidance *string `json:"report_guidance"`
+	// Repository-relative paths the scan is restricted to, if any. Null or empty means the whole repository.
+	ScanPaths Optional[[]string] `json:"scan_paths,omitempty"`
+	// Type of scan the profile configures.
+	ScanType CodeScanProfileDetailResponseScanType `json:"scan_type"`
+	// Guidance describing the threat model, if any.
+	ThreatModelGuidance *string `json:"threat_model_guidance"`
+	// Guidance for the triage phase, if any.
+	TriageGuidance *string `json:"triage_guidance"`
+	// Configuration specific to the profile's scan type, if any (e.g. a compliance profile's system, framework and criteria).
+	TypeConfig Optional[map[string]json.RawMessage] `json:"type_config,omitempty"`
+	// Guidance for the validation phase, if any.
+	ValidationGuidance *string `json:"validation_guidance"`
+	// Finding severities runtime validation covers. Null means the default.
+	ValidationSeverities Optional[[]CodeScanProfileDetailResponseValidationSeveritiesItem] `json:"validation_severities,omitempty"`
+	// Whether the profile is owned by a single organization or shared across the whole account.
+	Visibility CodeScanProfileDetailResponseVisibility `json:"visibility"`
+}
+
+// Summary of the profile a scan ran under.
 type CodeScanProfileResponse struct {
-	// JSON field "name".
-	Name *string `json:"name,omitempty"`
-	// JSON field "profile_id".
-	ProfileID *string `json:"profile_id,omitempty"`
+	// Name of the profile.
+	Name string `json:"name"`
+	// Unique identifier for the profile.
+	ProfileID string `json:"profile_id"`
 }
 
-// OpenAPI schema CodeScanProfileSummaryResponse.
+// Profile mode: discover or ingest.
+type CodeScanProfileSummaryResponseMode string
+
+const (
+	// Value discover for CodeScanProfileSummaryResponseMode.
+	CodeScanProfileSummaryResponseModeDiscover CodeScanProfileSummaryResponseMode = "discover"
+	// Value ingest for CodeScanProfileSummaryResponseMode.
+	CodeScanProfileSummaryResponseModeIngest CodeScanProfileSummaryResponseMode = "ingest"
+)
+
+// Type of scan the profile configures.
+type CodeScanProfileSummaryResponseScanType string
+
+const (
+	// Value security for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeSecurity CodeScanProfileSummaryResponseScanType = "security"
+	// Value performance for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypePerformance CodeScanProfileSummaryResponseScanType = "performance"
+	// Value db-queries for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeDbQueries CodeScanProfileSummaryResponseScanType = "db-queries"
+	// Value test-coverage for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeTestCoverage CodeScanProfileSummaryResponseScanType = "test-coverage"
+	// Value dead-code for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeDeadCode CodeScanProfileSummaryResponseScanType = "dead-code"
+	// Value code-quality for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeCodeQuality CodeScanProfileSummaryResponseScanType = "code-quality"
+	// Value cleanup for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeCleanup CodeScanProfileSummaryResponseScanType = "cleanup"
+	// Value telemetry for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeTelemetry CodeScanProfileSummaryResponseScanType = "telemetry"
+	// Value accessibility for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeAccessibility CodeScanProfileSummaryResponseScanType = "accessibility"
+	// Value compliance for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeCompliance CodeScanProfileSummaryResponseScanType = "compliance"
+	// Value general for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeGeneral CodeScanProfileSummaryResponseScanType = "general"
+	// Value migration-docs for CodeScanProfileSummaryResponseScanType.
+	CodeScanProfileSummaryResponseScanTypeMigrationDocs CodeScanProfileSummaryResponseScanType = "migration-docs"
+)
+
+// Whether the profile is owned by a single organization or shared across the whole account.
+type CodeScanProfileSummaryResponseVisibility string
+
+const (
+	// Value org for CodeScanProfileSummaryResponseVisibility.
+	CodeScanProfileSummaryResponseVisibilityOrg CodeScanProfileSummaryResponseVisibility = "org"
+	// Value account for CodeScanProfileSummaryResponseVisibility.
+	CodeScanProfileSummaryResponseVisibilityAccount CodeScanProfileSummaryResponseVisibility = "account"
+)
+
+// Summary of a code scan profile, without its guidance.
 type CodeScanProfileSummaryResponse struct {
-	// JSON field "created_at".
-	CreatedAt *float64 `json:"created_at,omitempty"`
-	// JSON field "description".
-	Description *string `json:"description,omitempty"`
-	// JSON field "mode".
-	Mode *string `json:"mode,omitempty"`
-	// JSON field "name".
-	Name *string `json:"name,omitempty"`
-	// JSON field "org_id".
-	OrgID *string `json:"org_id,omitempty"`
-	// JSON field "profile_id".
-	ProfileID *string `json:"profile_id,omitempty"`
-	// JSON field "scan_type".
-	ScanType *string `json:"scan_type,omitempty"`
-	// JSON field "visibility".
-	Visibility *string `json:"visibility,omitempty"`
+	// When the profile was created (unix seconds).
+	CreatedAt int64 `json:"created_at"`
+	// Description of the profile, if any.
+	Description *string `json:"description"`
+	// Profile mode: discover or ingest.
+	Mode CodeScanProfileSummaryResponseMode `json:"mode"`
+	// Name of the profile.
+	Name string `json:"name"`
+	// Organization that owns the profile. Null when the profile is shared account-wide.
+	OrgID *string `json:"org_id"`
+	// Unique identifier for the profile.
+	ProfileID string `json:"profile_id"`
+	// Type of scan the profile configures.
+	ScanType CodeScanProfileSummaryResponseScanType `json:"scan_type"`
+	// Whether the profile is owned by a single organization or shared across the whole account.
+	Visibility CodeScanProfileSummaryResponseVisibility `json:"visibility"`
 }
 
-// OpenAPI schema CodeScanResponseAttachmentsItem.
-type CodeScanResponseAttachmentsItem struct {
-	// JSON field "filename".
-	Filename *string `json:"filename,omitempty"`
-	// JSON field "url".
-	URL *string `json:"url,omitempty"`
+// Request to switch the profile linked to a scan.
+type CodeScanProfileSwitchRequest struct {
+	// Profile to apply to future incremental runs of the scan.
+	ProfileID string `json:"profile_id"`
 }
 
-// OpenAPI schema CodeScanResponseProfile.
-type CodeScanResponseProfile struct {
-	// JSON field "name".
-	Name *string `json:"name,omitempty"`
-	// JSON field "profile_id".
-	ProfileID *string `json:"profile_id,omitempty"`
+// Result of switching the profile linked to a scan.
+type CodeScanProfileSwitchResponse struct {
+	// Profile now linked to the scan, used for future incremental runs.
+	Profile CodeScanProfileResponse `json:"profile"`
+	// Unique identifier for the scan.
+	ScanID string `json:"scan_id"`
 }
 
-// OpenAPI schema CodeScanResponse.
+// A code snippet referenced by a finding as supporting evidence.
+type CodeScanReferenceSnippetResponse struct {
+	// The referenced source code, if captured.
+	Code Optional[string] `json:"code,omitempty"`
+	// Explanation of why this snippet is relevant to the finding.
+	Commentary string `json:"commentary"`
+	// Last line of the referenced range.
+	EndLine int64 `json:"end_line"`
+	// Path to the referenced file.
+	FilePath string `json:"file_path"`
+	// First line of the referenced range.
+	StartLine int64 `json:"start_line"`
+}
+
+// Scan effort: 'normal' uses lower model reasoning effort with larger investigation batches; 'deep' runs the full pipeline.
+type CodeScanResponseEffort string
+
+const (
+	// Value normal for CodeScanResponseEffort.
+	CodeScanResponseEffortNormal CodeScanResponseEffort = "normal"
+	// Value deep for CodeScanResponseEffort.
+	CodeScanResponseEffortDeep CodeScanResponseEffort = "deep"
+)
+
+// Type of scan, stamped at creation.
+type CodeScanResponseScanType string
+
+const (
+	// Value security for CodeScanResponseScanType.
+	CodeScanResponseScanTypeSecurity CodeScanResponseScanType = "security"
+	// Value performance for CodeScanResponseScanType.
+	CodeScanResponseScanTypePerformance CodeScanResponseScanType = "performance"
+	// Value db-queries for CodeScanResponseScanType.
+	CodeScanResponseScanTypeDbQueries CodeScanResponseScanType = "db-queries"
+	// Value test-coverage for CodeScanResponseScanType.
+	CodeScanResponseScanTypeTestCoverage CodeScanResponseScanType = "test-coverage"
+	// Value dead-code for CodeScanResponseScanType.
+	CodeScanResponseScanTypeDeadCode CodeScanResponseScanType = "dead-code"
+	// Value code-quality for CodeScanResponseScanType.
+	CodeScanResponseScanTypeCodeQuality CodeScanResponseScanType = "code-quality"
+	// Value cleanup for CodeScanResponseScanType.
+	CodeScanResponseScanTypeCleanup CodeScanResponseScanType = "cleanup"
+	// Value telemetry for CodeScanResponseScanType.
+	CodeScanResponseScanTypeTelemetry CodeScanResponseScanType = "telemetry"
+	// Value accessibility for CodeScanResponseScanType.
+	CodeScanResponseScanTypeAccessibility CodeScanResponseScanType = "accessibility"
+	// Value compliance for CodeScanResponseScanType.
+	CodeScanResponseScanTypeCompliance CodeScanResponseScanType = "compliance"
+	// Value general for CodeScanResponseScanType.
+	CodeScanResponseScanTypeGeneral CodeScanResponseScanType = "general"
+	// Value migration-docs for CodeScanResponseScanType.
+	CodeScanResponseScanTypeMigrationDocs CodeScanResponseScanType = "migration-docs"
+)
+
+// Scan status: waiting, pending, running, awaiting_user_input, completed, failed, or cancelled.
+type CodeScanResponseStatus string
+
+const (
+	// Value waiting for CodeScanResponseStatus.
+	CodeScanResponseStatusWaiting CodeScanResponseStatus = "waiting"
+	// Value pending for CodeScanResponseStatus.
+	CodeScanResponseStatusPending CodeScanResponseStatus = "pending"
+	// Value running for CodeScanResponseStatus.
+	CodeScanResponseStatusRunning CodeScanResponseStatus = "running"
+	// Value awaiting_user_input for CodeScanResponseStatus.
+	CodeScanResponseStatusAwaitingUserInput CodeScanResponseStatus = "awaiting_user_input"
+	// Value completed for CodeScanResponseStatus.
+	CodeScanResponseStatusCompleted CodeScanResponseStatus = "completed"
+	// Value failed for CodeScanResponseStatus.
+	CodeScanResponseStatusFailed CodeScanResponseStatus = "failed"
+	// Value cancelled for CodeScanResponseStatus.
+	CodeScanResponseStatusCancelled CodeScanResponseStatus = "cancelled"
+)
+
+// A single code scan.
 type CodeScanResponse struct {
-	// JSON field "attachments".
-	Attachments *[]CodeScanResponseAttachmentsItem `json:"attachments,omitempty"`
-	// JSON field "created_at".
-	CreatedAt *float64 `json:"created_at,omitempty"`
-	// JSON field "effort".
-	Effort *string `json:"effort,omitempty"`
-	// JSON field "host".
-	Host *string `json:"host,omitempty"`
-	// JSON field "org_id".
-	OrgID *string `json:"org_id,omitempty"`
-	// JSON field "outpost_pool_id".
-	OutpostPoolID *string `json:"outpost_pool_id,omitempty"`
-	// JSON field "platform".
-	Platform *string `json:"platform,omitempty"`
-	// JSON field "profile".
-	Profile *CodeScanResponseProfile `json:"profile,omitempty"`
-	// JSON field "repo_full_name".
-	RepoFullName *string `json:"repo_full_name,omitempty"`
-	// JSON field "repo_name".
-	RepoName *string `json:"repo_name,omitempty"`
-	// JSON field "scan_id".
-	ScanID *string `json:"scan_id,omitempty"`
-	// JSON field "scan_type".
-	ScanType *string `json:"scan_type,omitempty"`
-	// JSON field "status".
-	Status *string `json:"status,omitempty"`
-	// JSON field "url".
-	URL *string `json:"url,omitempty"`
-}
-
-// OpenAPI schema ConsumptionByDateResponseAcusByProduct.
-type ConsumptionByDateResponseAcusByProduct struct {
-	// JSON field "automation".
-	Automation *float64 `json:"automation,omitempty"`
-	// JSON field "cascade".
-	Cascade *float64 `json:"cascade,omitempty"`
-	// JSON field "devin".
-	Devin *float64 `json:"devin,omitempty"`
-	// JSON field "review".
-	Review *float64 `json:"review,omitempty"`
-	// JSON field "terminal".
-	Terminal *float64 `json:"terminal,omitempty"`
+	// Files attached to the scan when it was created.
+	Attachments *[]CodeScanAttachmentResponse `json:"attachments,omitempty"`
+	// When the scan was created (unix seconds).
+	CreatedAt int64 `json:"created_at"`
+	// Scan effort: 'normal' uses lower model reasoning effort with larger investigation batches; 'deep' runs the full pipeline.
+	Effort CodeScanResponseEffort `json:"effort"`
+	// Git host of the repository, if known.
+	Host *string `json:"host"`
+	// Organization the scan belongs to.
+	OrgID string `json:"org_id"`
+	// Outpost pool the scan's sessions run on, if one is set.
+	OutpostPoolID Optional[string] `json:"outpost_pool_id,omitempty"`
+	// Hosted platform label the scan's sessions run on. Null when the scan runs on an outpost pool or the organization default.
+	Platform Optional[string] `json:"platform,omitempty"`
+	// Profile the scan ran under, if any.
+	Profile *CodeScanProfileResponse `json:"profile"`
+	// Host-qualified identity of the primary repository (e.g. github.com/org/repo). Null for Perforce depots, which have no git host.
+	RepoFullName Optional[string] `json:"repo_full_name,omitempty"`
+	// Primary repository of the scan. Multi-repo scans cover additional repositories not listed here.
+	RepoName string `json:"repo_name"`
+	// Unique identifier for the scan.
+	ScanID string `json:"scan_id"`
+	// Type of scan, stamped at creation.
+	ScanType CodeScanResponseScanType `json:"scan_type"`
+	// Scan status: waiting, pending, running, awaiting_user_input, completed, failed, or cancelled.
+	Status CodeScanResponseStatus `json:"status"`
+	// URL of the scan's page in the Devin webapp.
+	URL string `json:"url"`
 }
 
 // OpenAPI schema ConsumptionByDateResponse.
 type ConsumptionByDateResponse struct {
 	// JSON field "acus".
-	Acus *float64 `json:"acus,omitempty"`
+	Acus float64 `json:"acus"`
 	// JSON field "acus_by_product".
-	AcusByProduct *ConsumptionByDateResponseAcusByProduct `json:"acus_by_product,omitempty"`
+	AcusByProduct AcusByProduct `json:"acus_by_product"`
 	// JSON field "date".
-	Date *float64 `json:"date,omitempty"`
+	Date int64 `json:"date"`
 }
 
 // OpenAPI schema ConsumptionCycle.
 type ConsumptionCycle struct {
 	// JSON field "after".
-	After *float64 `json:"after,omitempty"`
+	After int64 `json:"after"`
 	// JSON field "before".
-	Before *float64 `json:"before,omitempty"`
+	Before int64 `json:"before"`
+}
+
+// OpenAPI schema ConsumptionResponse.
+type ConsumptionResponse struct {
+	// JSON field "consumption_by_date".
+	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
+	// JSON field "total_acus".
+	TotalAcus float64 `json:"total_acus"`
+}
+
+// OpenAPI schema CreateAPIKeyRequest.
+type CreateAPIKeyRequest struct {
+	// Optional expiration as a UNIX timestamp in seconds. Must be in the future if provided.
+	ExpiresAt Optional[int64] `json:"expires_at,omitempty"`
+	// JSON field "name".
+	Name string `json:"name"`
 }
 
 // OpenAPI schema CreateEnterpriseBlueprintBody.
@@ -3132,7 +4177,7 @@ type CreateEnterpriseBlueprintBody struct {
 	Contents Optional[string] `json:"contents,omitempty"`
 }
 
-// Repo-tier only. 'git' reads .devin/blueprint.yaml (and its includes) from the repo's default branch and keeps the blueprint in sync with it; 'database' stores the YAML in Devin. Defaults to 'database' when omitted.
+// OpenAPI schema CreateOrgBlueprintBodySource.
 type CreateOrgBlueprintBodySource string
 
 const (
@@ -3152,86 +4197,12 @@ type CreateOrgBlueprintBody struct {
 	Source Optional[CreateOrgBlueprintBodySource] `json:"source,omitempty"`
 }
 
-// OpenAPI schema CreateSessionRequestDevinMode.
-type CreateSessionRequestDevinMode string
-
-const (
-	// Value normal for CreateSessionRequestDevinMode.
-	CreateSessionRequestDevinModeNormal CreateSessionRequestDevinMode = "normal"
-	// Value fast for CreateSessionRequestDevinMode.
-	CreateSessionRequestDevinModeFast CreateSessionRequestDevinMode = "fast"
-	// Value fusion for CreateSessionRequestDevinMode.
-	CreateSessionRequestDevinModeFusion CreateSessionRequestDevinMode = "fusion"
-	// Value lite for CreateSessionRequestDevinMode.
-	CreateSessionRequestDevinModeLite CreateSessionRequestDevinMode = "lite"
-	// Value ultra for CreateSessionRequestDevinMode.
-	CreateSessionRequestDevinModeUltra CreateSessionRequestDevinMode = "ultra"
-	// Value swe-2-medium for CreateSessionRequestDevinMode.
-	CreateSessionRequestDevinModeSwe2Medium CreateSessionRequestDevinMode = "swe-2-medium"
-	// Value swe-2-high for CreateSessionRequestDevinMode.
-	CreateSessionRequestDevinModeSwe2High CreateSessionRequestDevinMode = "swe-2-high"
-	// Value swe-2-max for CreateSessionRequestDevinMode.
-	CreateSessionRequestDevinModeSwe2Max CreateSessionRequestDevinMode = "swe-2-max"
-)
-
-// OpenAPI schema CreateSessionRequestSecurityProfile.
-type CreateSessionRequestSecurityProfile struct {
-	// JSON field "profile_id".
-	ProfileID *string `json:"profile_id,omitempty"`
-}
-
-// OpenAPI schema CreateSessionRequestSessionSecretsItem.
-type CreateSessionRequestSessionSecretsItem struct {
-	// JSON field "key".
-	Key string `json:"key"`
-	// JSON field "sensitive".
-	Sensitive bool `json:"sensitive"`
-	// JSON field "value".
-	Value string `json:"value"`
-}
-
-// OpenAPI schema CreateSessionRequest.
-type CreateSessionRequest struct {
-	// JSON field "attachment_urls".
-	AttachmentURLs Optional[[]string] `json:"attachment_urls,omitempty"`
-	// JSON field "bypass_approval".
-	BypassApproval Optional[bool] `json:"bypass_approval,omitempty"`
-	// JSON field "child_playbook_id".
-	ChildPlaybookID Optional[string] `json:"child_playbook_id,omitempty"`
-	// JSON field "create_as_user_id".
-	CreateAsUserID Optional[string] `json:"create_as_user_id,omitempty"`
-	// JSON field "devin_mode".
-	DevinMode Optional[CreateSessionRequestDevinMode] `json:"devin_mode,omitempty"`
-	// JSON field "knowledge_ids".
-	KnowledgeIDs Optional[[]string] `json:"knowledge_ids,omitempty"`
-	// JSON field "max_acu_limit".
-	MaxACULimit Optional[int64] `json:"max_acu_limit,omitempty"`
-	// JSON field "platform".
-	Platform Optional[string] `json:"platform,omitempty"`
-	// JSON field "playbook_id".
-	PlaybookID Optional[string] `json:"playbook_id,omitempty"`
-	// JSON field "prompt".
-	Prompt string `json:"prompt"`
-	// JSON field "repos".
-	Repos Optional[[]string] `json:"repos,omitempty"`
-	// JSON field "resumable".
-	Resumable *bool `json:"resumable,omitempty"`
-	// JSON field "secret_ids".
-	SecretIDs Optional[[]string] `json:"secret_ids,omitempty"`
-	// JSON field "security_profile".
-	SecurityProfile Optional[CreateSessionRequestSecurityProfile] `json:"security_profile,omitempty"`
-	// JSON field "session_links".
-	SessionLinks Optional[[]string] `json:"session_links,omitempty"`
-	// JSON field "session_secrets".
-	SessionSecrets Optional[[]CreateSessionRequestSessionSecretsItem] `json:"session_secrets,omitempty"`
-	// JSON field "structured_output_required".
-	StructuredOutputRequired Optional[bool] `json:"structured_output_required,omitempty"`
-	// JSON field "structured_output_schema".
-	StructuredOutputSchema Optional[map[string]json.RawMessage] `json:"structured_output_schema,omitempty"`
-	// JSON field "tags".
-	Tags Optional[[]string] `json:"tags,omitempty"`
-	// JSON field "title".
-	Title Optional[string] `json:"title,omitempty"`
+// OpenAPI schema CursorPaginationParams.
+type CursorPaginationParams struct {
+	// JSON field "after".
+	After Optional[string] `json:"after,omitempty"`
+	// JSON field "first".
+	First *int64 `json:"first,omitempty"`
 }
 
 // OpenAPI schema DefaultTagRequest.
@@ -3246,721 +4217,18 @@ type DefaultTagResponse struct {
 	DefaultTag *string `json:"default_tag"`
 }
 
-// OpenAPI schema EnterpriseConsumptionCyclesResponse.
-type EnterpriseConsumptionCyclesResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []ConsumptionCycle `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema EnterpriseConsumptionDailyOrganizationsResponse.
-type EnterpriseConsumptionDailyOrganizationsResponse struct {
-	// JSON field "consumption_by_date".
-	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
-	// JSON field "total_acus".
-	TotalAcus float64 `json:"total_acus"`
-}
-
-// OpenAPI schema EnterpriseConsumptionDailyResponse.
-type EnterpriseConsumptionDailyResponse struct {
-	// JSON field "consumption_by_date".
-	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
-	// JSON field "total_acus".
-	TotalAcus float64 `json:"total_acus"`
-}
-
-// OpenAPI schema EnterpriseConsumptionDailyServiceUsersResponse.
-type EnterpriseConsumptionDailyServiceUsersResponse struct {
-	// JSON field "consumption_by_date".
-	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
-	// JSON field "total_acus".
-	TotalAcus float64 `json:"total_acus"`
-}
-
-// OpenAPI schema EnterpriseConsumptionDailySessionsResponse.
-type EnterpriseConsumptionDailySessionsResponse struct {
-	// JSON field "consumption_by_date".
-	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
-	// JSON field "total_acus".
-	TotalAcus float64 `json:"total_acus"`
-}
-
-// OpenAPI schema EnterpriseConsumptionDailyUsersResponse.
-type EnterpriseConsumptionDailyUsersResponse struct {
-	// JSON field "consumption_by_date".
-	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
-	// JSON field "total_acus".
-	TotalAcus float64 `json:"total_acus"`
-}
-
-// OpenAPI schema EnterpriseDeleteEnterpriseServiceUserAPIKeyResponse.
-type EnterpriseDeleteEnterpriseServiceUserAPIKeyResponse struct {
-	// JSON field "api_key_id".
-	APIKeyID string `json:"api_key_id"`
-	// JSON field "api_key_name".
-	APIKeyName string `json:"api_key_name"`
-	// JSON field "created_at".
-	CreatedAt int64 `json:"created_at"`
-	// JSON field "expires_at".
-	ExpiresAt *int64 `json:"expires_at"`
-	// JSON field "is_active".
-	IsActive bool `json:"is_active"`
-	// JSON field "last_used_at".
-	LastUsedAt *int64 `json:"last_used_at"`
-	// JSON field "revoked_at".
-	RevokedAt *int64 `json:"revoked_at"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseAuditLogsResponse.
-type EnterpriseEnterpriseAuditLogsResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []AuditLogResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansFindingsResponse.
-type EnterpriseEnterpriseCodeScansFindingsResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []CodeScanFindingResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansListResponse.
-type EnterpriseEnterpriseCodeScansListResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []CodeScanResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansMetricsResponse.
-type EnterpriseEnterpriseCodeScansMetricsResponse struct {
-	// JSON field "avg_pr_open_duration_seconds".
-	AvgPROpenDurationSeconds *float64 `json:"avg_pr_open_duration_seconds"`
-	// JSON field "avg_pr_time_to_merge_seconds".
-	AvgPRTimeToMergeSeconds *float64 `json:"avg_pr_time_to_merge_seconds"`
-	// JSON field "open_critical_findings_count".
-	OpenCriticalFindingsCount int64 `json:"open_critical_findings_count"`
-	// JSON field "open_high_findings_count".
-	OpenHighFindingsCount int64 `json:"open_high_findings_count"`
-	// JSON field "open_low_findings_count".
-	OpenLowFindingsCount int64 `json:"open_low_findings_count"`
-	// JSON field "open_medium_findings_count".
-	OpenMediumFindingsCount int64 `json:"open_medium_findings_count"`
-	// JSON field "prs_closed_count".
-	PRsClosedCount int64 `json:"prs_closed_count"`
-	// JSON field "prs_created_count".
-	PRsCreatedCount int64 `json:"prs_created_count"`
-	// JSON field "prs_merged_count".
-	PRsMergedCount int64 `json:"prs_merged_count"`
-	// JSON field "prs_open_count".
-	PRsOpenCount int64 `json:"prs_open_count"`
-	// JSON field "repos_scanned_count".
-	ReposScannedCount int64 `json:"repos_scanned_count"`
-	// JSON field "scans_count".
-	ScansCount int64 `json:"scans_count"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansProfileResponseMode.
-type EnterpriseEnterpriseCodeScansProfileResponseMode string
-
-const (
-	// Value discover for EnterpriseEnterpriseCodeScansProfileResponseMode.
-	EnterpriseEnterpriseCodeScansProfileResponseModeDiscover EnterpriseEnterpriseCodeScansProfileResponseMode = "discover"
-	// Value ingest for EnterpriseEnterpriseCodeScansProfileResponseMode.
-	EnterpriseEnterpriseCodeScansProfileResponseModeIngest EnterpriseEnterpriseCodeScansProfileResponseMode = "ingest"
-)
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansProfileResponseScanType.
-type EnterpriseEnterpriseCodeScansProfileResponseScanType string
-
-const (
-	// Value security for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeSecurity EnterpriseEnterpriseCodeScansProfileResponseScanType = "security"
-	// Value performance for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypePerformance EnterpriseEnterpriseCodeScansProfileResponseScanType = "performance"
-	// Value db-queries for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeDbQueries EnterpriseEnterpriseCodeScansProfileResponseScanType = "db-queries"
-	// Value test-coverage for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeTestCoverage EnterpriseEnterpriseCodeScansProfileResponseScanType = "test-coverage"
-	// Value dead-code for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeDeadCode EnterpriseEnterpriseCodeScansProfileResponseScanType = "dead-code"
-	// Value code-quality for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeCodeQuality EnterpriseEnterpriseCodeScansProfileResponseScanType = "code-quality"
-	// Value cleanup for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeCleanup EnterpriseEnterpriseCodeScansProfileResponseScanType = "cleanup"
-	// Value telemetry for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeTelemetry EnterpriseEnterpriseCodeScansProfileResponseScanType = "telemetry"
-	// Value accessibility for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeAccessibility EnterpriseEnterpriseCodeScansProfileResponseScanType = "accessibility"
-	// Value compliance for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeCompliance EnterpriseEnterpriseCodeScansProfileResponseScanType = "compliance"
-	// Value general for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeGeneral EnterpriseEnterpriseCodeScansProfileResponseScanType = "general"
-	// Value migration-docs for EnterpriseEnterpriseCodeScansProfileResponseScanType.
-	EnterpriseEnterpriseCodeScansProfileResponseScanTypeMigrationDocs EnterpriseEnterpriseCodeScansProfileResponseScanType = "migration-docs"
-)
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem.
-type EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem string
-
-const (
-	// Value critical for EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem.
-	EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItemCritical EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem = "critical"
-	// Value high for EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem.
-	EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItemHigh EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem = "high"
-	// Value medium for EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem.
-	EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItemMedium EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem = "medium"
-	// Value low for EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem.
-	EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItemLow EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem = "low"
-)
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansProfileResponseVisibility.
-type EnterpriseEnterpriseCodeScansProfileResponseVisibility string
-
-const (
-	// Value org for EnterpriseEnterpriseCodeScansProfileResponseVisibility.
-	EnterpriseEnterpriseCodeScansProfileResponseVisibilityOrg EnterpriseEnterpriseCodeScansProfileResponseVisibility = "org"
-	// Value account for EnterpriseEnterpriseCodeScansProfileResponseVisibility.
-	EnterpriseEnterpriseCodeScansProfileResponseVisibilityAccount EnterpriseEnterpriseCodeScansProfileResponseVisibility = "account"
-)
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansProfileResponse.
-type EnterpriseEnterpriseCodeScansProfileResponse struct {
-	// JSON field "communication_guidance".
-	CommunicationGuidance Optional[string] `json:"communication_guidance,omitempty"`
-	// JSON field "created_at".
-	CreatedAt int64 `json:"created_at"`
-	// JSON field "description".
-	Description *string `json:"description"`
-	// JSON field "exclude_globs".
-	ExcludeGlobs []string `json:"exclude_globs"`
-	// JSON field "include_globs".
-	IncludeGlobs []string `json:"include_globs"`
-	// JSON field "ingestion_source_guidance".
-	IngestionSourceGuidance *string `json:"ingestion_source_guidance"`
-	// JSON field "investigation_guidance".
-	InvestigationGuidance *string `json:"investigation_guidance"`
-	// JSON field "mode".
-	Mode EnterpriseEnterpriseCodeScansProfileResponseMode `json:"mode"`
-	// JSON field "name".
-	Name string `json:"name"`
-	// JSON field "org_id".
-	OrgID *string `json:"org_id"`
-	// JSON field "post_ingestion_guidance".
-	PostIngestionGuidance *string `json:"post_ingestion_guidance"`
-	// JSON field "profile_id".
-	ProfileID string `json:"profile_id"`
-	// JSON field "remediation_guidance".
-	RemediationGuidance *string `json:"remediation_guidance"`
-	// JSON field "report_guidance".
-	ReportGuidance *string `json:"report_guidance"`
-	// JSON field "scan_paths".
-	ScanPaths Optional[[]string] `json:"scan_paths,omitempty"`
-	// JSON field "scan_type".
-	ScanType EnterpriseEnterpriseCodeScansProfileResponseScanType `json:"scan_type"`
-	// JSON field "threat_model_guidance".
-	ThreatModelGuidance *string `json:"threat_model_guidance"`
-	// JSON field "triage_guidance".
-	TriageGuidance *string `json:"triage_guidance"`
-	// JSON field "type_config".
-	TypeConfig Optional[map[string]json.RawMessage] `json:"type_config,omitempty"`
-	// JSON field "validation_guidance".
-	ValidationGuidance *string `json:"validation_guidance"`
-	// JSON field "validation_severities".
-	ValidationSeverities Optional[[]EnterpriseEnterpriseCodeScansProfileResponseValidationSeveritiesItem] `json:"validation_severities,omitempty"`
-	// JSON field "visibility".
-	Visibility EnterpriseEnterpriseCodeScansProfileResponseVisibility `json:"visibility"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansRemediateResponse.
-type EnterpriseEnterpriseCodeScansRemediateResponse struct {
-	// JSON field "finding_id".
-	FindingID string `json:"finding_id"`
-	// JSON field "session_id".
-	SessionID string `json:"session_id"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansStartRequestEffort.
-type EnterpriseEnterpriseCodeScansStartRequestEffort string
-
-const (
-	// Value normal for EnterpriseEnterpriseCodeScansStartRequestEffort.
-	EnterpriseEnterpriseCodeScansStartRequestEffortNormal EnterpriseEnterpriseCodeScansStartRequestEffort = "normal"
-	// Value deep for EnterpriseEnterpriseCodeScansStartRequestEffort.
-	EnterpriseEnterpriseCodeScansStartRequestEffortDeep EnterpriseEnterpriseCodeScansStartRequestEffort = "deep"
-)
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansStartRequestScanType.
-type EnterpriseEnterpriseCodeScansStartRequestScanType string
-
-const (
-	// Value security for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeSecurity EnterpriseEnterpriseCodeScansStartRequestScanType = "security"
-	// Value performance for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypePerformance EnterpriseEnterpriseCodeScansStartRequestScanType = "performance"
-	// Value db-queries for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeDbQueries EnterpriseEnterpriseCodeScansStartRequestScanType = "db-queries"
-	// Value test-coverage for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeTestCoverage EnterpriseEnterpriseCodeScansStartRequestScanType = "test-coverage"
-	// Value dead-code for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeDeadCode EnterpriseEnterpriseCodeScansStartRequestScanType = "dead-code"
-	// Value code-quality for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeCodeQuality EnterpriseEnterpriseCodeScansStartRequestScanType = "code-quality"
-	// Value cleanup for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeCleanup EnterpriseEnterpriseCodeScansStartRequestScanType = "cleanup"
-	// Value telemetry for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeTelemetry EnterpriseEnterpriseCodeScansStartRequestScanType = "telemetry"
-	// Value accessibility for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeAccessibility EnterpriseEnterpriseCodeScansStartRequestScanType = "accessibility"
-	// Value compliance for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeCompliance EnterpriseEnterpriseCodeScansStartRequestScanType = "compliance"
-	// Value general for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeGeneral EnterpriseEnterpriseCodeScansStartRequestScanType = "general"
-	// Value migration-docs for EnterpriseEnterpriseCodeScansStartRequestScanType.
-	EnterpriseEnterpriseCodeScansStartRequestScanTypeMigrationDocs EnterpriseEnterpriseCodeScansStartRequestScanType = "migration-docs"
-)
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansStartRequest.
-type EnterpriseEnterpriseCodeScansStartRequest struct {
-	// JSON field "commit_sha".
-	CommitSha Optional[string] `json:"commit_sha,omitempty"`
-	// JSON field "effort".
-	Effort Optional[EnterpriseEnterpriseCodeScansStartRequestEffort] `json:"effort,omitempty"`
-	// JSON field "host".
-	Host Optional[string] `json:"host,omitempty"`
-	// JSON field "interactive".
-	Interactive *bool `json:"interactive,omitempty"`
-	// JSON field "platform".
-	Platform Optional[string] `json:"platform,omitempty"`
-	// JSON field "profile_id".
-	ProfileID Optional[string] `json:"profile_id,omitempty"`
-	// JSON field "repo_name".
-	RepoName Optional[string] `json:"repo_name,omitempty"`
-	// JSON field "repos".
-	Repos Optional[[]ScanRepoRequest] `json:"repos,omitempty"`
-	// JSON field "scan_type".
-	ScanType Optional[EnterpriseEnterpriseCodeScansStartRequestScanType] `json:"scan_type,omitempty"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansStartResponseEffort.
-type EnterpriseEnterpriseCodeScansStartResponseEffort string
-
-const (
-	// Value normal for EnterpriseEnterpriseCodeScansStartResponseEffort.
-	EnterpriseEnterpriseCodeScansStartResponseEffortNormal EnterpriseEnterpriseCodeScansStartResponseEffort = "normal"
-	// Value deep for EnterpriseEnterpriseCodeScansStartResponseEffort.
-	EnterpriseEnterpriseCodeScansStartResponseEffortDeep EnterpriseEnterpriseCodeScansStartResponseEffort = "deep"
-)
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansStartResponseScanType.
-type EnterpriseEnterpriseCodeScansStartResponseScanType string
-
-const (
-	// Value security for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeSecurity EnterpriseEnterpriseCodeScansStartResponseScanType = "security"
-	// Value performance for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypePerformance EnterpriseEnterpriseCodeScansStartResponseScanType = "performance"
-	// Value db-queries for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeDbQueries EnterpriseEnterpriseCodeScansStartResponseScanType = "db-queries"
-	// Value test-coverage for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeTestCoverage EnterpriseEnterpriseCodeScansStartResponseScanType = "test-coverage"
-	// Value dead-code for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeDeadCode EnterpriseEnterpriseCodeScansStartResponseScanType = "dead-code"
-	// Value code-quality for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeCodeQuality EnterpriseEnterpriseCodeScansStartResponseScanType = "code-quality"
-	// Value cleanup for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeCleanup EnterpriseEnterpriseCodeScansStartResponseScanType = "cleanup"
-	// Value telemetry for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeTelemetry EnterpriseEnterpriseCodeScansStartResponseScanType = "telemetry"
-	// Value accessibility for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeAccessibility EnterpriseEnterpriseCodeScansStartResponseScanType = "accessibility"
-	// Value compliance for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeCompliance EnterpriseEnterpriseCodeScansStartResponseScanType = "compliance"
-	// Value general for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeGeneral EnterpriseEnterpriseCodeScansStartResponseScanType = "general"
-	// Value migration-docs for EnterpriseEnterpriseCodeScansStartResponseScanType.
-	EnterpriseEnterpriseCodeScansStartResponseScanTypeMigrationDocs EnterpriseEnterpriseCodeScansStartResponseScanType = "migration-docs"
-)
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansStartResponseStatus.
-type EnterpriseEnterpriseCodeScansStartResponseStatus string
-
-const (
-	// Value waiting for EnterpriseEnterpriseCodeScansStartResponseStatus.
-	EnterpriseEnterpriseCodeScansStartResponseStatusWaiting EnterpriseEnterpriseCodeScansStartResponseStatus = "waiting"
-	// Value pending for EnterpriseEnterpriseCodeScansStartResponseStatus.
-	EnterpriseEnterpriseCodeScansStartResponseStatusPending EnterpriseEnterpriseCodeScansStartResponseStatus = "pending"
-	// Value running for EnterpriseEnterpriseCodeScansStartResponseStatus.
-	EnterpriseEnterpriseCodeScansStartResponseStatusRunning EnterpriseEnterpriseCodeScansStartResponseStatus = "running"
-	// Value awaiting_user_input for EnterpriseEnterpriseCodeScansStartResponseStatus.
-	EnterpriseEnterpriseCodeScansStartResponseStatusAwaitingUserInput EnterpriseEnterpriseCodeScansStartResponseStatus = "awaiting_user_input"
-	// Value completed for EnterpriseEnterpriseCodeScansStartResponseStatus.
-	EnterpriseEnterpriseCodeScansStartResponseStatusCompleted EnterpriseEnterpriseCodeScansStartResponseStatus = "completed"
-	// Value failed for EnterpriseEnterpriseCodeScansStartResponseStatus.
-	EnterpriseEnterpriseCodeScansStartResponseStatusFailed EnterpriseEnterpriseCodeScansStartResponseStatus = "failed"
-	// Value cancelled for EnterpriseEnterpriseCodeScansStartResponseStatus.
-	EnterpriseEnterpriseCodeScansStartResponseStatusCancelled EnterpriseEnterpriseCodeScansStartResponseStatus = "cancelled"
-)
-
-// OpenAPI schema EnterpriseEnterpriseCodeScansStartResponse.
-type EnterpriseEnterpriseCodeScansStartResponse struct {
-	// JSON field "created_at".
-	CreatedAt int64 `json:"created_at"`
-	// JSON field "effort".
-	Effort EnterpriseEnterpriseCodeScansStartResponseEffort `json:"effort"`
-	// JSON field "host".
-	Host *string `json:"host"`
+// Identity information for an authenticated Devin brain session.
+type DevinBrainUserSelf struct {
+	// JSON field "creator_service_user_id".
+	CreatorServiceUserID Optional[string] `json:"creator_service_user_id,omitempty"`
+	// JSON field "devin_id".
+	DevinID string `json:"devin_id"`
 	// JSON field "org_id".
 	OrgID string `json:"org_id"`
-	// JSON field "outpost_pool_id".
-	OutpostPoolID Optional[string] `json:"outpost_pool_id,omitempty"`
-	// JSON field "platform".
-	Platform Optional[string] `json:"platform,omitempty"`
-	// JSON field "profile".
-	Profile *CodeScanProfileResponse `json:"profile"`
-	// JSON field "repo_full_name".
-	RepoFullName Optional[string] `json:"repo_full_name,omitempty"`
-	// JSON field "repo_name".
-	RepoName string `json:"repo_name"`
-	// JSON field "scan_id".
-	ScanID string `json:"scan_id"`
-	// JSON field "scan_type".
-	ScanType EnterpriseEnterpriseCodeScansStartResponseScanType `json:"scan_type"`
-	// JSON field "status".
-	Status EnterpriseEnterpriseCodeScansStartResponseStatus `json:"status"`
-	// JSON field "url".
-	URL string `json:"url"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseGuardrailViolationsResponse.
-type EnterpriseEnterpriseGuardrailViolationsResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []GuardrailViolationResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema EnterpriseEnterpriseQueueResponseStatus.
-type EnterpriseEnterpriseQueueResponseStatus string
-
-const (
-	// Value normal for EnterpriseEnterpriseQueueResponseStatus.
-	EnterpriseEnterpriseQueueResponseStatusNormal EnterpriseEnterpriseQueueResponseStatus = "normal"
-	// Value elevated for EnterpriseEnterpriseQueueResponseStatus.
-	EnterpriseEnterpriseQueueResponseStatusElevated EnterpriseEnterpriseQueueResponseStatus = "elevated"
-	// Value high for EnterpriseEnterpriseQueueResponseStatus.
-	EnterpriseEnterpriseQueueResponseStatusHigh EnterpriseEnterpriseQueueResponseStatus = "high"
-)
-
-// OpenAPI schema EnterpriseEnterpriseQueueResponse.
-type EnterpriseEnterpriseQueueResponse struct {
-	// JSON field "queue_size".
-	QueueSize int64 `json:"queue_size"`
-	// JSON field "status".
-	Status EnterpriseEnterpriseQueueResponseStatus `json:"status"`
-}
-
-// OpenAPI schema EnterpriseGetEnterprisePRReviewsResponseStatus.
-type EnterpriseGetEnterprisePRReviewsResponseStatus string
-
-const (
-	// Value pending for EnterpriseGetEnterprisePRReviewsResponseStatus.
-	EnterpriseGetEnterprisePRReviewsResponseStatusPending EnterpriseGetEnterprisePRReviewsResponseStatus = "pending"
-	// Value running for EnterpriseGetEnterprisePRReviewsResponseStatus.
-	EnterpriseGetEnterprisePRReviewsResponseStatusRunning EnterpriseGetEnterprisePRReviewsResponseStatus = "running"
-	// Value completed for EnterpriseGetEnterprisePRReviewsResponseStatus.
-	EnterpriseGetEnterprisePRReviewsResponseStatusCompleted EnterpriseGetEnterprisePRReviewsResponseStatus = "completed"
-	// Value errored for EnterpriseGetEnterprisePRReviewsResponseStatus.
-	EnterpriseGetEnterprisePRReviewsResponseStatusErrored EnterpriseGetEnterprisePRReviewsResponseStatus = "errored"
-	// Value cancelled for EnterpriseGetEnterprisePRReviewsResponseStatus.
-	EnterpriseGetEnterprisePRReviewsResponseStatusCancelled EnterpriseGetEnterprisePRReviewsResponseStatus = "cancelled"
-	// Value skipped for EnterpriseGetEnterprisePRReviewsResponseStatus.
-	EnterpriseGetEnterprisePRReviewsResponseStatusSkipped EnterpriseGetEnterprisePRReviewsResponseStatus = "skipped"
-)
-
-// OpenAPI schema EnterpriseGetEnterprisePRReviewsResponse.
-type EnterpriseGetEnterprisePRReviewsResponse struct {
-	// JSON field "commit_sha".
-	CommitSha string `json:"commit_sha"`
-	// JSON field "created_at".
-	CreatedAt string `json:"created_at"`
-	// JSON field "pr_number".
-	PRNumber int64 `json:"pr_number"`
-	// JSON field "repo_path".
-	RepoPath string `json:"repo_path"`
-	// JSON field "status".
-	Status EnterpriseGetEnterprisePRReviewsResponseStatus `json:"status"`
-}
-
-// OpenAPI schema EnterpriseGetEnterpriseServiceUserAPIKeysResponse.
-type EnterpriseGetEnterpriseServiceUserAPIKeysResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []APIKeyResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema EnterpriseHypervisorsResponse.
-type EnterpriseHypervisorsResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []HypervisorResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema EnterpriseMetricsActiveUsersResponse.
-type EnterpriseMetricsActiveUsersResponse struct {
-	// JSON field "active_users".
-	ActiveUsers int64 `json:"active_users"`
-	// JSON field "end_time".
-	EndTime int64 `json:"end_time"`
-	// JSON field "start_time".
-	StartTime int64 `json:"start_time"`
-}
-
-// OpenAPI schema EnterpriseMetricsDauResponseItem.
-type EnterpriseMetricsDauResponseItem struct {
-	// JSON field "active_users".
-	ActiveUsers int64 `json:"active_users"`
-	// JSON field "end_time".
-	EndTime int64 `json:"end_time"`
-	// JSON field "start_time".
-	StartTime int64 `json:"start_time"`
-}
-
-// OpenAPI schema EnterpriseMetricsDauResponse.
-type EnterpriseMetricsDauResponse []EnterpriseMetricsDauResponseItem
-
-// OpenAPI schema EnterpriseMetricsMauResponseItem.
-type EnterpriseMetricsMauResponseItem struct {
-	// JSON field "active_users".
-	ActiveUsers int64 `json:"active_users"`
-	// JSON field "end_time".
-	EndTime int64 `json:"end_time"`
-	// JSON field "start_time".
-	StartTime int64 `json:"start_time"`
-}
-
-// OpenAPI schema EnterpriseMetricsMauResponse.
-type EnterpriseMetricsMauResponse []EnterpriseMetricsMauResponseItem
-
-// OpenAPI schema EnterpriseMetricsPRsResponse.
-type EnterpriseMetricsPRsResponse struct {
-	// JSON field "prs_closed_count".
-	PRsClosedCount int64 `json:"prs_closed_count"`
-	// JSON field "prs_created_count".
-	PRsCreatedCount int64 `json:"prs_created_count"`
-	// JSON field "prs_merged_count".
-	PRsMergedCount int64 `json:"prs_merged_count"`
-	// JSON field "prs_opened_count".
-	PRsOpenedCount int64 `json:"prs_opened_count"`
-	// JSON field "prs_taken_over_closed_count".
-	PRsTakenOverClosedCount *int64 `json:"prs_taken_over_closed_count,omitempty"`
-	// JSON field "prs_taken_over_count".
-	PRsTakenOverCount *int64 `json:"prs_taken_over_count,omitempty"`
-	// JSON field "prs_taken_over_merged_count".
-	PRsTakenOverMergedCount *int64 `json:"prs_taken_over_merged_count,omitempty"`
-	// JSON field "prs_taken_over_opened_count".
-	PRsTakenOverOpenedCount *int64 `json:"prs_taken_over_opened_count,omitempty"`
-}
-
-// OpenAPI schema EnterpriseMetricsSearchesResponse.
-type EnterpriseMetricsSearchesResponse struct {
-	// JSON field "searches_created_count".
-	SearchesCreatedCount int64 `json:"searches_created_count"`
-}
-
-// OpenAPI schema EnterpriseMetricsSessionsByCategoryResponse.
-type EnterpriseMetricsSessionsByCategoryResponse struct {
-	// JSON field "categories".
-	Categories []CategoryMetrics `json:"categories"`
-}
-
-// OpenAPI schema EnterpriseMetricsSessionsResponse.
-type EnterpriseMetricsSessionsResponse struct {
-	// JSON field "avg_acus_per_session".
-	AvgAcusPerSession float64 `json:"avg_acus_per_session"`
-	// JSON field "sessions_created_by_origin".
-	SessionsCreatedByOrigin SessionCountsByOrigin `json:"sessions_created_by_origin"`
-	// JSON field "sessions_created_by_size".
-	SessionsCreatedBySize SessionCountsBySize `json:"sessions_created_by_size"`
-	// JSON field "sessions_created_count".
-	SessionsCreatedCount int64 `json:"sessions_created_count"`
-	// JSON field "sessions_created_with_playbook_count".
-	SessionsCreatedWithPlaybookCount int64 `json:"sessions_created_with_playbook_count"`
-	// JSON field "sessions_created_with_search_count".
-	SessionsCreatedWithSearchCount int64 `json:"sessions_created_with_search_count"`
-	// JSON field "sessions_with_merged_prs_by_size".
-	SessionsWithMergedPRsBySize SessionCountsBySize `json:"sessions_with_merged_prs_by_size"`
-	// JSON field "sessions_with_merged_prs_count".
-	SessionsWithMergedPRsCount int64 `json:"sessions_with_merged_prs_count"`
-}
-
-// OpenAPI schema EnterpriseMetricsUsageResponse.
-type EnterpriseMetricsUsageResponse struct {
-	// JSON field "prs_created_count".
-	PRsCreatedCount int64 `json:"prs_created_count"`
-	// JSON field "prs_merged_count".
-	PRsMergedCount int64 `json:"prs_merged_count"`
-	// JSON field "searches_count".
-	SearchesCount int64 `json:"searches_count"`
-	// JSON field "sessions_count".
-	SessionsCount int64 `json:"sessions_count"`
-}
-
-// OpenAPI schema EnterpriseMetricsWauResponseItem.
-type EnterpriseMetricsWauResponseItem struct {
-	// JSON field "active_users".
-	ActiveUsers int64 `json:"active_users"`
-	// JSON field "end_time".
-	EndTime int64 `json:"end_time"`
-	// JSON field "start_time".
-	StartTime int64 `json:"start_time"`
-}
-
-// OpenAPI schema EnterpriseMetricsWauResponse.
-type EnterpriseMetricsWauResponse []EnterpriseMetricsWauResponseItem
-
-// OpenAPI schema EnterpriseOrganizationsAuditLogsResponse.
-type EnterpriseOrganizationsAuditLogsResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []AuditLogResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema EnterpriseOrganizationsGuardrailViolationsResponse.
-type EnterpriseOrganizationsGuardrailViolationsResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []GuardrailViolationResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema EnterpriseOrganizationsMetricsUsageResponse.
-type EnterpriseOrganizationsMetricsUsageResponse struct {
-	// JSON field "prs_created_count".
-	PRsCreatedCount int64 `json:"prs_created_count"`
-	// JSON field "prs_merged_count".
-	PRsMergedCount int64 `json:"prs_merged_count"`
-	// JSON field "searches_count".
-	SearchesCount int64 `json:"searches_count"`
-	// JSON field "sessions_count".
-	SessionsCount int64 `json:"sessions_count"`
-}
-
-// OpenAPI schema EnterprisePostEnterprisePRReviewsRequest.
-type EnterprisePostEnterprisePRReviewsRequest struct {
-	// JSON field "pr_url".
-	PRURL string `json:"pr_url"`
-}
-
-// OpenAPI schema EnterprisePostEnterprisePRReviewsResponseStatus.
-type EnterprisePostEnterprisePRReviewsResponseStatus string
-
-const (
-	// Value pending for EnterprisePostEnterprisePRReviewsResponseStatus.
-	EnterprisePostEnterprisePRReviewsResponseStatusPending EnterprisePostEnterprisePRReviewsResponseStatus = "pending"
-	// Value running for EnterprisePostEnterprisePRReviewsResponseStatus.
-	EnterprisePostEnterprisePRReviewsResponseStatusRunning EnterprisePostEnterprisePRReviewsResponseStatus = "running"
-	// Value completed for EnterprisePostEnterprisePRReviewsResponseStatus.
-	EnterprisePostEnterprisePRReviewsResponseStatusCompleted EnterprisePostEnterprisePRReviewsResponseStatus = "completed"
-	// Value errored for EnterprisePostEnterprisePRReviewsResponseStatus.
-	EnterprisePostEnterprisePRReviewsResponseStatusErrored EnterprisePostEnterprisePRReviewsResponseStatus = "errored"
-	// Value cancelled for EnterprisePostEnterprisePRReviewsResponseStatus.
-	EnterprisePostEnterprisePRReviewsResponseStatusCancelled EnterprisePostEnterprisePRReviewsResponseStatus = "cancelled"
-	// Value skipped for EnterprisePostEnterprisePRReviewsResponseStatus.
-	EnterprisePostEnterprisePRReviewsResponseStatusSkipped EnterprisePostEnterprisePRReviewsResponseStatus = "skipped"
-)
-
-// OpenAPI schema EnterprisePostEnterprisePRReviewsResponse.
-type EnterprisePostEnterprisePRReviewsResponse struct {
-	// JSON field "commit_sha".
-	CommitSha string `json:"commit_sha"`
-	// JSON field "created_at".
-	CreatedAt string `json:"created_at"`
-	// JSON field "pr_number".
-	PRNumber int64 `json:"pr_number"`
-	// JSON field "repo_path".
-	RepoPath string `json:"repo_path"`
-	// JSON field "status".
-	Status EnterprisePostEnterprisePRReviewsResponseStatus `json:"status"`
-}
-
-// OpenAPI schema EnterprisePostEnterpriseServiceUserAPIKeysRequest.
-type EnterprisePostEnterpriseServiceUserAPIKeysRequest struct {
-	// JSON field "expires_at".
-	ExpiresAt Optional[int64] `json:"expires_at,omitempty"`
-	// JSON field "name".
-	Name string `json:"name"`
-}
-
-// OpenAPI schema EnterprisePostEnterpriseServiceUserAPIKeysResponse.
-type EnterprisePostEnterpriseServiceUserAPIKeysResponse struct {
-	// JSON field "api_key_id".
-	APIKeyID string `json:"api_key_id"`
-	// JSON field "api_key_name".
-	APIKeyName string `json:"api_key_name"`
-	// JSON field "token".
-	Token string `json:"token"`
-}
-
-// OpenAPI schema EnterpriseRotateEnterpriseServiceUserAPIKeyRequest.
-type EnterpriseRotateEnterpriseServiceUserAPIKeyRequest struct {
-	// JSON field "new_key_expires_at".
-	NewKeyExpiresAt Optional[int64] `json:"new_key_expires_at,omitempty"`
-	// JSON field "revoke_current".
-	RevokeCurrent *bool `json:"revoke_current,omitempty"`
-}
-
-// OpenAPI schema EnterpriseRotateEnterpriseServiceUserAPIKeyResponse.
-type EnterpriseRotateEnterpriseServiceUserAPIKeyResponse struct {
-	// JSON field "api_key_id".
-	APIKeyID string `json:"api_key_id"`
-	// JSON field "api_key_name".
-	APIKeyName string `json:"api_key_name"`
-	// JSON field "token".
-	Token string `json:"token"`
+	// JSON field "principal_type".
+	PrincipalType string `json:"principal_type"`
+	// JSON field "user_id".
+	UserID string `json:"user_id"`
 }
 
 // OpenAPI schema EnterpriseUser.
@@ -4140,43 +4408,43 @@ type GitPermissionUpdateRequest struct {
 // OpenAPI schema GuardrailViolationResponse.
 type GuardrailViolationResponse struct {
 	// JSON field "action_taken".
-	ActionTaken *string `json:"action_taken,omitempty"`
+	ActionTaken string `json:"action_taken"`
 	// JSON field "confidence_score".
-	ConfidenceScore *float64 `json:"confidence_score,omitempty"`
+	ConfidenceScore float64 `json:"confidence_score"`
 	// JSON field "created_at".
-	CreatedAt *float64 `json:"created_at,omitempty"`
+	CreatedAt int64 `json:"created_at"`
 	// JSON field "event_id".
-	EventID *string `json:"event_id,omitempty"`
+	EventID string `json:"event_id"`
 	// JSON field "guardrail_id".
-	GuardrailID *string `json:"guardrail_id,omitempty"`
+	GuardrailID string `json:"guardrail_id"`
 	// JSON field "guardrail_name".
-	GuardrailName *string `json:"guardrail_name,omitempty"`
+	GuardrailName string `json:"guardrail_name"`
 	// JSON field "org_id".
-	OrgID *string `json:"org_id,omitempty"`
+	OrgID string `json:"org_id"`
 	// JSON field "reasoning".
-	Reasoning *string `json:"reasoning,omitempty"`
+	Reasoning string `json:"reasoning"`
 	// JSON field "session_id".
-	SessionID *string `json:"session_id,omitempty"`
+	SessionID *string `json:"session_id"`
 	// JSON field "user_message".
-	UserMessage *string `json:"user_message,omitempty"`
+	UserMessage string `json:"user_message"`
 	// JSON field "violation_id".
-	ViolationID *float64 `json:"violation_id,omitempty"`
+	ViolationID int64 `json:"violation_id"`
 }
 
 // OpenAPI schema HypervisorResponse.
 type HypervisorResponse struct {
 	// JSON field "cloud_provider_instance_id".
-	CloudProviderInstanceID *string `json:"cloud_provider_instance_id,omitempty"`
+	CloudProviderInstanceID *string `json:"cloud_provider_instance_id"`
 	// JSON field "created_at".
-	CreatedAt *float64 `json:"created_at,omitempty"`
+	CreatedAt *int64 `json:"created_at"`
 	// JSON field "hypervisor_id".
-	HypervisorID *string `json:"hypervisor_id,omitempty"`
+	HypervisorID string `json:"hypervisor_id"`
 	// JSON field "last_heartbeat".
-	LastHeartbeat *float64 `json:"last_heartbeat,omitempty"`
+	LastHeartbeat *int64 `json:"last_heartbeat"`
 	// JSON field "status".
-	Status *string `json:"status,omitempty"`
+	Status string `json:"status"`
 	// JSON field "utilization_percentage".
-	UtilizationPercentage *float64 `json:"utilization_percentage,omitempty"`
+	UtilizationPercentage float64 `json:"utilization_percentage"`
 }
 
 // OpenAPI schema IDPGroup.
@@ -4239,24 +4507,6 @@ type IDPRoleAssignment struct {
 type IndexRepositoryRequest struct {
 	// JSON field "branch_names".
 	BranchNames *[]string `json:"branch_names,omitempty"`
-}
-
-// OpenAPI schema InsightsGenerationResponseStatus.
-type InsightsGenerationResponseStatus string
-
-const (
-	// Value started for InsightsGenerationResponseStatus.
-	InsightsGenerationResponseStatusStarted InsightsGenerationResponseStatus = "started"
-	// Value already_exists for InsightsGenerationResponseStatus.
-	InsightsGenerationResponseStatusAlreadyExists InsightsGenerationResponseStatus = "already_exists"
-)
-
-// OpenAPI schema InsightsGenerationResponse.
-type InsightsGenerationResponse struct {
-	// JSON field "session_id".
-	SessionID string `json:"session_id"`
-	// JSON field "status".
-	Status InsightsGenerationResponseStatus `json:"status"`
 }
 
 // OpenAPI schema IPAccessListAddRequest.
@@ -4335,64 +4585,104 @@ type KnowledgeNoteResponse struct {
 
 // OpenAPI schema NewScanBudget.
 type NewScanBudget struct {
-	// JSON field "acu_limit".
-	ACULimit *float64 `json:"acu_limit,omitempty"`
+	// Per-cycle ACU limit of a new budget that pays for the scan, its child sessions and its remediations.
+	ACULimit int64 `json:"acu_limit"`
 }
 
-// OpenAPI schema OrgGetOrganizationDefaultPlatformResponse.
-type OrgGetOrganizationDefaultPlatformResponse struct {
-	// JSON field "outpost_pool_id".
+// OpenAPI schema OrgCodeScanCreateRequestDevinMode.
+type OrgCodeScanCreateRequestDevinMode string
+
+const (
+	// Value fusion for OrgCodeScanCreateRequestDevinMode.
+	OrgCodeScanCreateRequestDevinModeFusion OrgCodeScanCreateRequestDevinMode = "fusion"
+	// Value swe-2 for OrgCodeScanCreateRequestDevinMode.
+	OrgCodeScanCreateRequestDevinModeSwe2 OrgCodeScanCreateRequestDevinMode = "swe-2"
+)
+
+// OpenAPI schema OrgCodeScanCreateRequestEffort.
+type OrgCodeScanCreateRequestEffort string
+
+const (
+	// Value normal for OrgCodeScanCreateRequestEffort.
+	OrgCodeScanCreateRequestEffortNormal OrgCodeScanCreateRequestEffort = "normal"
+	// Value deep for OrgCodeScanCreateRequestEffort.
+	OrgCodeScanCreateRequestEffortDeep OrgCodeScanCreateRequestEffort = "deep"
+)
+
+// OpenAPI schema OrgCodeScanCreateRequestScanType.
+type OrgCodeScanCreateRequestScanType string
+
+const (
+	// Value security for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeSecurity OrgCodeScanCreateRequestScanType = "security"
+	// Value performance for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypePerformance OrgCodeScanCreateRequestScanType = "performance"
+	// Value db-queries for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeDbQueries OrgCodeScanCreateRequestScanType = "db-queries"
+	// Value test-coverage for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeTestCoverage OrgCodeScanCreateRequestScanType = "test-coverage"
+	// Value dead-code for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeDeadCode OrgCodeScanCreateRequestScanType = "dead-code"
+	// Value code-quality for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeCodeQuality OrgCodeScanCreateRequestScanType = "code-quality"
+	// Value cleanup for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeCleanup OrgCodeScanCreateRequestScanType = "cleanup"
+	// Value telemetry for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeTelemetry OrgCodeScanCreateRequestScanType = "telemetry"
+	// Value accessibility for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeAccessibility OrgCodeScanCreateRequestScanType = "accessibility"
+	// Value compliance for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeCompliance OrgCodeScanCreateRequestScanType = "compliance"
+	// Value general for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeGeneral OrgCodeScanCreateRequestScanType = "general"
+	// Value migration-docs for OrgCodeScanCreateRequestScanType.
+	OrgCodeScanCreateRequestScanTypeMigrationDocs OrgCodeScanCreateRequestScanType = "migration-docs"
+)
+
+// Request body for starting a new code scan.
+type OrgCodeScanCreateRequest struct {
+	// Commit to check out before scanning.
+	CommitSha Optional[string] `json:"commit_sha,omitempty"`
+	// Agent the scan's sessions run on: 'fusion' or 'swe-2' (SWE-2 Max for 'deep' effort, SWE-2 High for 'normal'). Applies only when the mode is enabled for the organization; otherwise, and when omitted, the scan runs on the default agent.
+	DevinMode Optional[OrgCodeScanCreateRequestDevinMode] `json:"devin_mode,omitempty"`
+	// Scan effort: 'normal' (default) uses lower model reasoning effort with larger investigation batches; 'deep' runs the full pipeline.
+	Effort Optional[OrgCodeScanCreateRequestEffort] `json:"effort,omitempty"`
+	// Git host of the repository, if known.
+	Host Optional[string] `json:"host,omitempty"`
+	// When true, the scan pauses for user review between threat modeling and investigation.
+	Interactive *bool `json:"interactive,omitempty"`
+	// BCP-47 language tag (e.g. 'ja') for the scan's user-facing output: finding titles, descriptions, and reports. Omitted means English.
+	Locale Optional[string] `json:"locale,omitempty"`
+	// Give the scan its own ACU budget. Requires the ManageAccountServiceUsers and ManageAcuLimits permissions.
+	NewBudget Optional[NewScanBudget] `json:"new_budget,omitempty"`
+	// Where the scan's sessions run: a platform label configured for the organization (e.g. 'linux', 'windows', 'macos') or the name of an outpost (BYOB) pool, case-insensitive; platforms take priority when a name matches both. Omitted means the organization default. Unrecognized values are rejected with a 400 whose error body lists the available platform labels and outpost pool names.
+	Platform Optional[string] `json:"platform,omitempty"`
+	// Scan profile to apply to the scan.
+	ProfileID Optional[string] `json:"profile_id,omitempty"`
+	// Full name of the repository to scan. Provide exactly one of repo_name or repos.
+	RepoName Optional[string] `json:"repo_name,omitempty"`
+	// Repositories covered by one scan; the first entry is the scan's primary repository. Provide exactly one of repo_name or repos.
+	Repos Optional[[]ScanRepoRequest] `json:"repos,omitempty"`
+	// Type of scan to run. Must match the profile's scan type when a profile is given; defaults to the profile's type, or 'security' for profile-less scans. Non-security types require a profile and are rejected without one.
+	ScanType Optional[OrgCodeScanCreateRequestScanType] `json:"scan_type,omitempty"`
+}
+
+// The organization's default placement for new sessions.
+type OrgDefaultPlatformResponse struct {
+	// Outpost pool new sessions run on by default. Null when the default is a hosted platform or unset.
 	OutpostPoolID *string `json:"outpost_pool_id"`
-	// JSON field "outpost_pool_name".
+	// Name of the default outpost pool. Null when the default is not an outpost pool, or the pool is no longer available to the organization.
 	OutpostPoolName *string `json:"outpost_pool_name"`
-	// JSON field "platform".
+	// Hosted platform label (e.g. 'linux', 'windows') new sessions run on by default. Null when the default is an outpost pool or unset.
 	Platform *string `json:"platform"`
 }
 
-// OpenAPI schema OrgGetOrganizationUserResponse.
-type OrgGetOrganizationUserResponse struct {
-	// JSON field "email".
-	Email *string `json:"email"`
-	// JSON field "idp_role_assignments".
-	IDPRoleAssignments *[]IDPRoleAssignment `json:"idp_role_assignments,omitempty"`
-	// JSON field "name".
-	Name *string `json:"name"`
-	// JSON field "role_assignments".
-	RoleAssignments []RoleAssignment `json:"role_assignments"`
-	// JSON field "user_id".
-	UserID string `json:"user_id"`
-}
-
-// OpenAPI schema OrgGetOrganizationsPRReviewsResponseStatus.
-type OrgGetOrganizationsPRReviewsResponseStatus string
-
-const (
-	// Value pending for OrgGetOrganizationsPRReviewsResponseStatus.
-	OrgGetOrganizationsPRReviewsResponseStatusPending OrgGetOrganizationsPRReviewsResponseStatus = "pending"
-	// Value running for OrgGetOrganizationsPRReviewsResponseStatus.
-	OrgGetOrganizationsPRReviewsResponseStatusRunning OrgGetOrganizationsPRReviewsResponseStatus = "running"
-	// Value completed for OrgGetOrganizationsPRReviewsResponseStatus.
-	OrgGetOrganizationsPRReviewsResponseStatusCompleted OrgGetOrganizationsPRReviewsResponseStatus = "completed"
-	// Value errored for OrgGetOrganizationsPRReviewsResponseStatus.
-	OrgGetOrganizationsPRReviewsResponseStatusErrored OrgGetOrganizationsPRReviewsResponseStatus = "errored"
-	// Value cancelled for OrgGetOrganizationsPRReviewsResponseStatus.
-	OrgGetOrganizationsPRReviewsResponseStatusCancelled OrgGetOrganizationsPRReviewsResponseStatus = "cancelled"
-	// Value skipped for OrgGetOrganizationsPRReviewsResponseStatus.
-	OrgGetOrganizationsPRReviewsResponseStatusSkipped OrgGetOrganizationsPRReviewsResponseStatus = "skipped"
-)
-
-// OpenAPI schema OrgGetOrganizationsPRReviewsResponse.
-type OrgGetOrganizationsPRReviewsResponse struct {
-	// JSON field "commit_sha".
-	CommitSha string `json:"commit_sha"`
-	// JSON field "created_at".
-	CreatedAt string `json:"created_at"`
-	// JSON field "pr_number".
-	PRNumber int64 `json:"pr_number"`
-	// JSON field "repo_path".
-	RepoPath string `json:"repo_path"`
-	// JSON field "status".
-	Status OrgGetOrganizationsPRReviewsResponseStatus `json:"status"`
+// Set the organization's default placement for new sessions. Send at most one of “platform“ and “outpost_pool_id“; send both as null (for example “{}“) to clear the default.
+type OrgDefaultPlatformUpdateRequest struct {
+	// ID of a shared outpost pool available to the organization.
+	OutpostPoolID Optional[string] `json:"outpost_pool_id,omitempty"`
+	// A hosted platform label configured for the organization (e.g. 'linux', 'windows', 'macos') or the name of a shared outpost pool, case-insensitive; platforms take priority when a name matches both. Unrecognized values are rejected with a 400 that lists the available platforms and outpost pools.
+	Platform Optional[string] `json:"platform,omitempty"`
 }
 
 // OpenAPI schema OrgGroupConfig.
@@ -4407,409 +4697,6 @@ type OrgGroupConfig struct {
 type OrgGroupsConfig struct {
 	// JSON field "groups".
 	Groups map[string]OrgGroupConfig `json:"groups"`
-}
-
-// OpenAPI schema OrgListOrganizationIDPUsersResponse.
-type OrgListOrganizationIDPUsersResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []IDPGroupUser `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema OrgListOrganizationUsersResponse.
-type OrgListOrganizationUsersResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []User `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema OrgOrganizationsCodeScansListResponse.
-type OrgOrganizationsCodeScansListResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []CodeScanResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema OrgOrganizationsCodeScansProfilesResponse.
-type OrgOrganizationsCodeScansProfilesResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []CodeScanProfileSummaryResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema OrgOrganizationsCodeScansRemediateResponse.
-type OrgOrganizationsCodeScansRemediateResponse struct {
-	// JSON field "finding_id".
-	FindingID string `json:"finding_id"`
-	// JSON field "session_id".
-	SessionID string `json:"session_id"`
-}
-
-// OpenAPI schema OrgOrganizationsCodeScansStartRequestDevinMode.
-type OrgOrganizationsCodeScansStartRequestDevinMode string
-
-const (
-	// Value fusion for OrgOrganizationsCodeScansStartRequestDevinMode.
-	OrgOrganizationsCodeScansStartRequestDevinModeFusion OrgOrganizationsCodeScansStartRequestDevinMode = "fusion"
-	// Value swe-2 for OrgOrganizationsCodeScansStartRequestDevinMode.
-	OrgOrganizationsCodeScansStartRequestDevinModeSwe2 OrgOrganizationsCodeScansStartRequestDevinMode = "swe-2"
-)
-
-// OpenAPI schema OrgOrganizationsCodeScansStartRequestEffort.
-type OrgOrganizationsCodeScansStartRequestEffort string
-
-const (
-	// Value normal for OrgOrganizationsCodeScansStartRequestEffort.
-	OrgOrganizationsCodeScansStartRequestEffortNormal OrgOrganizationsCodeScansStartRequestEffort = "normal"
-	// Value deep for OrgOrganizationsCodeScansStartRequestEffort.
-	OrgOrganizationsCodeScansStartRequestEffortDeep OrgOrganizationsCodeScansStartRequestEffort = "deep"
-)
-
-// OpenAPI schema OrgOrganizationsCodeScansStartRequestScanType.
-type OrgOrganizationsCodeScansStartRequestScanType string
-
-const (
-	// Value security for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeSecurity OrgOrganizationsCodeScansStartRequestScanType = "security"
-	// Value performance for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypePerformance OrgOrganizationsCodeScansStartRequestScanType = "performance"
-	// Value db-queries for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeDbQueries OrgOrganizationsCodeScansStartRequestScanType = "db-queries"
-	// Value test-coverage for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeTestCoverage OrgOrganizationsCodeScansStartRequestScanType = "test-coverage"
-	// Value dead-code for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeDeadCode OrgOrganizationsCodeScansStartRequestScanType = "dead-code"
-	// Value code-quality for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeCodeQuality OrgOrganizationsCodeScansStartRequestScanType = "code-quality"
-	// Value cleanup for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeCleanup OrgOrganizationsCodeScansStartRequestScanType = "cleanup"
-	// Value telemetry for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeTelemetry OrgOrganizationsCodeScansStartRequestScanType = "telemetry"
-	// Value accessibility for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeAccessibility OrgOrganizationsCodeScansStartRequestScanType = "accessibility"
-	// Value compliance for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeCompliance OrgOrganizationsCodeScansStartRequestScanType = "compliance"
-	// Value general for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeGeneral OrgOrganizationsCodeScansStartRequestScanType = "general"
-	// Value migration-docs for OrgOrganizationsCodeScansStartRequestScanType.
-	OrgOrganizationsCodeScansStartRequestScanTypeMigrationDocs OrgOrganizationsCodeScansStartRequestScanType = "migration-docs"
-)
-
-// OpenAPI schema OrgOrganizationsCodeScansStartRequest.
-type OrgOrganizationsCodeScansStartRequest struct {
-	// JSON field "commit_sha".
-	CommitSha Optional[string] `json:"commit_sha,omitempty"`
-	// JSON field "devin_mode".
-	DevinMode Optional[OrgOrganizationsCodeScansStartRequestDevinMode] `json:"devin_mode,omitempty"`
-	// JSON field "effort".
-	Effort Optional[OrgOrganizationsCodeScansStartRequestEffort] `json:"effort,omitempty"`
-	// JSON field "host".
-	Host Optional[string] `json:"host,omitempty"`
-	// JSON field "interactive".
-	Interactive *bool `json:"interactive,omitempty"`
-	// JSON field "locale".
-	Locale Optional[string] `json:"locale,omitempty"`
-	// JSON field "new_budget".
-	NewBudget Optional[NewScanBudget] `json:"new_budget,omitempty"`
-	// JSON field "platform".
-	Platform Optional[string] `json:"platform,omitempty"`
-	// JSON field "profile_id".
-	ProfileID Optional[string] `json:"profile_id,omitempty"`
-	// JSON field "repo_name".
-	RepoName Optional[string] `json:"repo_name,omitempty"`
-	// JSON field "repos".
-	Repos Optional[[]ScanRepoRequest] `json:"repos,omitempty"`
-	// JSON field "scan_type".
-	ScanType Optional[OrgOrganizationsCodeScansStartRequestScanType] `json:"scan_type,omitempty"`
-}
-
-// OpenAPI schema OrgOrganizationsCodeScansStartResponseEffort.
-type OrgOrganizationsCodeScansStartResponseEffort string
-
-const (
-	// Value normal for OrgOrganizationsCodeScansStartResponseEffort.
-	OrgOrganizationsCodeScansStartResponseEffortNormal OrgOrganizationsCodeScansStartResponseEffort = "normal"
-	// Value deep for OrgOrganizationsCodeScansStartResponseEffort.
-	OrgOrganizationsCodeScansStartResponseEffortDeep OrgOrganizationsCodeScansStartResponseEffort = "deep"
-)
-
-// OpenAPI schema OrgOrganizationsCodeScansStartResponseScanType.
-type OrgOrganizationsCodeScansStartResponseScanType string
-
-const (
-	// Value security for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeSecurity OrgOrganizationsCodeScansStartResponseScanType = "security"
-	// Value performance for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypePerformance OrgOrganizationsCodeScansStartResponseScanType = "performance"
-	// Value db-queries for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeDbQueries OrgOrganizationsCodeScansStartResponseScanType = "db-queries"
-	// Value test-coverage for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeTestCoverage OrgOrganizationsCodeScansStartResponseScanType = "test-coverage"
-	// Value dead-code for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeDeadCode OrgOrganizationsCodeScansStartResponseScanType = "dead-code"
-	// Value code-quality for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeCodeQuality OrgOrganizationsCodeScansStartResponseScanType = "code-quality"
-	// Value cleanup for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeCleanup OrgOrganizationsCodeScansStartResponseScanType = "cleanup"
-	// Value telemetry for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeTelemetry OrgOrganizationsCodeScansStartResponseScanType = "telemetry"
-	// Value accessibility for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeAccessibility OrgOrganizationsCodeScansStartResponseScanType = "accessibility"
-	// Value compliance for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeCompliance OrgOrganizationsCodeScansStartResponseScanType = "compliance"
-	// Value general for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeGeneral OrgOrganizationsCodeScansStartResponseScanType = "general"
-	// Value migration-docs for OrgOrganizationsCodeScansStartResponseScanType.
-	OrgOrganizationsCodeScansStartResponseScanTypeMigrationDocs OrgOrganizationsCodeScansStartResponseScanType = "migration-docs"
-)
-
-// OpenAPI schema OrgOrganizationsCodeScansStartResponseStatus.
-type OrgOrganizationsCodeScansStartResponseStatus string
-
-const (
-	// Value waiting for OrgOrganizationsCodeScansStartResponseStatus.
-	OrgOrganizationsCodeScansStartResponseStatusWaiting OrgOrganizationsCodeScansStartResponseStatus = "waiting"
-	// Value pending for OrgOrganizationsCodeScansStartResponseStatus.
-	OrgOrganizationsCodeScansStartResponseStatusPending OrgOrganizationsCodeScansStartResponseStatus = "pending"
-	// Value running for OrgOrganizationsCodeScansStartResponseStatus.
-	OrgOrganizationsCodeScansStartResponseStatusRunning OrgOrganizationsCodeScansStartResponseStatus = "running"
-	// Value awaiting_user_input for OrgOrganizationsCodeScansStartResponseStatus.
-	OrgOrganizationsCodeScansStartResponseStatusAwaitingUserInput OrgOrganizationsCodeScansStartResponseStatus = "awaiting_user_input"
-	// Value completed for OrgOrganizationsCodeScansStartResponseStatus.
-	OrgOrganizationsCodeScansStartResponseStatusCompleted OrgOrganizationsCodeScansStartResponseStatus = "completed"
-	// Value failed for OrgOrganizationsCodeScansStartResponseStatus.
-	OrgOrganizationsCodeScansStartResponseStatusFailed OrgOrganizationsCodeScansStartResponseStatus = "failed"
-	// Value cancelled for OrgOrganizationsCodeScansStartResponseStatus.
-	OrgOrganizationsCodeScansStartResponseStatusCancelled OrgOrganizationsCodeScansStartResponseStatus = "cancelled"
-)
-
-// OpenAPI schema OrgOrganizationsCodeScansStartResponse.
-type OrgOrganizationsCodeScansStartResponse struct {
-	// JSON field "attachments".
-	Attachments *[]CodeScanAttachmentResponse `json:"attachments,omitempty"`
-	// JSON field "created_at".
-	CreatedAt int64 `json:"created_at"`
-	// JSON field "effort".
-	Effort OrgOrganizationsCodeScansStartResponseEffort `json:"effort"`
-	// JSON field "host".
-	Host *string `json:"host"`
-	// JSON field "org_id".
-	OrgID string `json:"org_id"`
-	// JSON field "outpost_pool_id".
-	OutpostPoolID Optional[string] `json:"outpost_pool_id,omitempty"`
-	// JSON field "platform".
-	Platform Optional[string] `json:"platform,omitempty"`
-	// JSON field "profile".
-	Profile *CodeScanProfileResponse `json:"profile"`
-	// JSON field "repo_full_name".
-	RepoFullName Optional[string] `json:"repo_full_name,omitempty"`
-	// JSON field "repo_name".
-	RepoName string `json:"repo_name"`
-	// JSON field "scan_id".
-	ScanID string `json:"scan_id"`
-	// JSON field "scan_type".
-	ScanType OrgOrganizationsCodeScansStartResponseScanType `json:"scan_type"`
-	// JSON field "status".
-	Status OrgOrganizationsCodeScansStartResponseStatus `json:"status"`
-	// JSON field "url".
-	URL string `json:"url"`
-}
-
-// OpenAPI schema OrgOrganizationsConsumptionDailyResponse.
-type OrgOrganizationsConsumptionDailyResponse struct {
-	// JSON field "consumption_by_date".
-	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
-	// JSON field "total_acus".
-	TotalAcus float64 `json:"total_acus"`
-}
-
-// OpenAPI schema OrgOrganizationsConsumptionDailyServiceUsersResponse.
-type OrgOrganizationsConsumptionDailyServiceUsersResponse struct {
-	// JSON field "consumption_by_date".
-	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
-	// JSON field "total_acus".
-	TotalAcus float64 `json:"total_acus"`
-}
-
-// OpenAPI schema OrgOrganizationsConsumptionDailySessionsResponse.
-type OrgOrganizationsConsumptionDailySessionsResponse struct {
-	// JSON field "consumption_by_date".
-	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
-	// JSON field "total_acus".
-	TotalAcus float64 `json:"total_acus"`
-}
-
-// OpenAPI schema OrgOrganizationsConsumptionDailyUsersResponse.
-type OrgOrganizationsConsumptionDailyUsersResponse struct {
-	// JSON field "consumption_by_date".
-	ConsumptionByDate []ConsumptionByDateResponse `json:"consumption_by_date"`
-	// JSON field "total_acus".
-	TotalAcus float64 `json:"total_acus"`
-}
-
-// OpenAPI schema OrgOrganizationsMetricsActiveUsersResponse.
-type OrgOrganizationsMetricsActiveUsersResponse struct {
-	// JSON field "active_users".
-	ActiveUsers int64 `json:"active_users"`
-	// JSON field "end_time".
-	EndTime int64 `json:"end_time"`
-	// JSON field "start_time".
-	StartTime int64 `json:"start_time"`
-}
-
-// OpenAPI schema OrgOrganizationsMetricsDauResponseItem.
-type OrgOrganizationsMetricsDauResponseItem struct {
-	// JSON field "active_users".
-	ActiveUsers int64 `json:"active_users"`
-	// JSON field "end_time".
-	EndTime int64 `json:"end_time"`
-	// JSON field "start_time".
-	StartTime int64 `json:"start_time"`
-}
-
-// OpenAPI schema OrgOrganizationsMetricsDauResponse.
-type OrgOrganizationsMetricsDauResponse []OrgOrganizationsMetricsDauResponseItem
-
-// OpenAPI schema OrgOrganizationsMetricsMauResponseItem.
-type OrgOrganizationsMetricsMauResponseItem struct {
-	// JSON field "active_users".
-	ActiveUsers int64 `json:"active_users"`
-	// JSON field "end_time".
-	EndTime int64 `json:"end_time"`
-	// JSON field "start_time".
-	StartTime int64 `json:"start_time"`
-}
-
-// OpenAPI schema OrgOrganizationsMetricsMauResponse.
-type OrgOrganizationsMetricsMauResponse []OrgOrganizationsMetricsMauResponseItem
-
-// OpenAPI schema OrgOrganizationsMetricsPRsResponse.
-type OrgOrganizationsMetricsPRsResponse struct {
-	// JSON field "prs_closed_count".
-	PRsClosedCount int64 `json:"prs_closed_count"`
-	// JSON field "prs_created_count".
-	PRsCreatedCount int64 `json:"prs_created_count"`
-	// JSON field "prs_merged_count".
-	PRsMergedCount int64 `json:"prs_merged_count"`
-	// JSON field "prs_opened_count".
-	PRsOpenedCount int64 `json:"prs_opened_count"`
-	// JSON field "prs_taken_over_closed_count".
-	PRsTakenOverClosedCount *int64 `json:"prs_taken_over_closed_count,omitempty"`
-	// JSON field "prs_taken_over_count".
-	PRsTakenOverCount *int64 `json:"prs_taken_over_count,omitempty"`
-	// JSON field "prs_taken_over_merged_count".
-	PRsTakenOverMergedCount *int64 `json:"prs_taken_over_merged_count,omitempty"`
-	// JSON field "prs_taken_over_opened_count".
-	PRsTakenOverOpenedCount *int64 `json:"prs_taken_over_opened_count,omitempty"`
-}
-
-// OpenAPI schema OrgOrganizationsMetricsSearchesResponse.
-type OrgOrganizationsMetricsSearchesResponse struct {
-	// JSON field "searches_created_count".
-	SearchesCreatedCount int64 `json:"searches_created_count"`
-}
-
-// OpenAPI schema OrgOrganizationsMetricsSessionsResponse.
-type OrgOrganizationsMetricsSessionsResponse struct {
-	// JSON field "avg_acus_per_session".
-	AvgAcusPerSession float64 `json:"avg_acus_per_session"`
-	// JSON field "sessions_created_by_origin".
-	SessionsCreatedByOrigin SessionCountsByOrigin `json:"sessions_created_by_origin"`
-	// JSON field "sessions_created_by_size".
-	SessionsCreatedBySize SessionCountsBySize `json:"sessions_created_by_size"`
-	// JSON field "sessions_created_count".
-	SessionsCreatedCount int64 `json:"sessions_created_count"`
-	// JSON field "sessions_created_with_playbook_count".
-	SessionsCreatedWithPlaybookCount int64 `json:"sessions_created_with_playbook_count"`
-	// JSON field "sessions_created_with_search_count".
-	SessionsCreatedWithSearchCount int64 `json:"sessions_created_with_search_count"`
-	// JSON field "sessions_with_merged_prs_by_size".
-	SessionsWithMergedPRsBySize SessionCountsBySize `json:"sessions_with_merged_prs_by_size"`
-	// JSON field "sessions_with_merged_prs_count".
-	SessionsWithMergedPRsCount int64 `json:"sessions_with_merged_prs_count"`
-}
-
-// OpenAPI schema OrgOrganizationsMetricsUsageOrgResponse.
-type OrgOrganizationsMetricsUsageOrgResponse struct {
-	// JSON field "prs_created_count".
-	PRsCreatedCount int64 `json:"prs_created_count"`
-	// JSON field "prs_merged_count".
-	PRsMergedCount int64 `json:"prs_merged_count"`
-	// JSON field "searches_count".
-	SearchesCount int64 `json:"searches_count"`
-	// JSON field "sessions_count".
-	SessionsCount int64 `json:"sessions_count"`
-}
-
-// OpenAPI schema OrgOrganizationsMetricsWauResponseItem.
-type OrgOrganizationsMetricsWauResponseItem struct {
-	// JSON field "active_users".
-	ActiveUsers int64 `json:"active_users"`
-	// JSON field "end_time".
-	EndTime int64 `json:"end_time"`
-	// JSON field "start_time".
-	StartTime int64 `json:"start_time"`
-}
-
-// OpenAPI schema OrgOrganizationsMetricsWauResponse.
-type OrgOrganizationsMetricsWauResponse []OrgOrganizationsMetricsWauResponseItem
-
-// OpenAPI schema OrgPostOrganizationsPRReviewsRequest.
-type OrgPostOrganizationsPRReviewsRequest struct {
-	// JSON field "pr_url".
-	PRURL string `json:"pr_url"`
-}
-
-// OpenAPI schema OrgPostOrganizationsPRReviewsResponseStatus.
-type OrgPostOrganizationsPRReviewsResponseStatus string
-
-const (
-	// Value pending for OrgPostOrganizationsPRReviewsResponseStatus.
-	OrgPostOrganizationsPRReviewsResponseStatusPending OrgPostOrganizationsPRReviewsResponseStatus = "pending"
-	// Value running for OrgPostOrganizationsPRReviewsResponseStatus.
-	OrgPostOrganizationsPRReviewsResponseStatusRunning OrgPostOrganizationsPRReviewsResponseStatus = "running"
-	// Value completed for OrgPostOrganizationsPRReviewsResponseStatus.
-	OrgPostOrganizationsPRReviewsResponseStatusCompleted OrgPostOrganizationsPRReviewsResponseStatus = "completed"
-	// Value errored for OrgPostOrganizationsPRReviewsResponseStatus.
-	OrgPostOrganizationsPRReviewsResponseStatusErrored OrgPostOrganizationsPRReviewsResponseStatus = "errored"
-	// Value cancelled for OrgPostOrganizationsPRReviewsResponseStatus.
-	OrgPostOrganizationsPRReviewsResponseStatusCancelled OrgPostOrganizationsPRReviewsResponseStatus = "cancelled"
-	// Value skipped for OrgPostOrganizationsPRReviewsResponseStatus.
-	OrgPostOrganizationsPRReviewsResponseStatusSkipped OrgPostOrganizationsPRReviewsResponseStatus = "skipped"
-)
-
-// OpenAPI schema OrgPostOrganizationsPRReviewsResponse.
-type OrgPostOrganizationsPRReviewsResponse struct {
-	// JSON field "commit_sha".
-	CommitSha string `json:"commit_sha"`
-	// JSON field "created_at".
-	CreatedAt string `json:"created_at"`
-	// JSON field "pr_number".
-	PRNumber int64 `json:"pr_number"`
-	// JSON field "repo_path".
-	RepoPath string `json:"repo_path"`
-	// JSON field "status".
-	Status OrgPostOrganizationsPRReviewsResponseStatus `json:"status"`
 }
 
 // OpenAPI schema OrganizationCreateRequest.
@@ -4860,6 +4747,30 @@ type PaginatedResponseACULimitResponse struct {
 	Total Optional[int64] `json:"total,omitempty"`
 }
 
+// OpenAPI schema PaginatedResponseAPIKeyResponse.
+type PaginatedResponseAPIKeyResponse struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []APIKeyResponse `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
+// OpenAPI schema PaginatedResponseAuditLogResponse.
+type PaginatedResponseAuditLogResponse struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []AuditLogResponse `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
 // OpenAPI schema PaginatedResponseAutomationResponse.
 type PaginatedResponseAutomationResponse struct {
 	// Cursor to fetch the next page, or None if this is the last page.
@@ -4880,6 +4791,54 @@ type PaginatedResponseBuild struct {
 	HasNextPage *bool `json:"has_next_page,omitempty"`
 	// JSON field "items".
 	Items []Build `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
+// OpenAPI schema PaginatedResponseCodeScanFindingResponse.
+type PaginatedResponseCodeScanFindingResponse struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []CodeScanFindingResponse `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
+// OpenAPI schema PaginatedResponseCodeScanProfileSummaryResponse.
+type PaginatedResponseCodeScanProfileSummaryResponse struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []CodeScanProfileSummaryResponse `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
+// OpenAPI schema PaginatedResponseCodeScanResponse.
+type PaginatedResponseCodeScanResponse struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []CodeScanResponse `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
+// OpenAPI schema PaginatedResponseConsumptionCycle.
+type PaginatedResponseConsumptionCycle struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []ConsumptionCycle `json:"items"`
 	// Optional total count (can be omitted for performance).
 	Total Optional[int64] `json:"total,omitempty"`
 }
@@ -4928,6 +4887,30 @@ type PaginatedResponseGitPermissionResponse struct {
 	HasNextPage *bool `json:"has_next_page,omitempty"`
 	// JSON field "items".
 	Items []GitPermissionResponse `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
+// OpenAPI schema PaginatedResponseGuardrailViolationResponse.
+type PaginatedResponseGuardrailViolationResponse struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []GuardrailViolationResponse `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
+// OpenAPI schema PaginatedResponseHypervisorResponse.
+type PaginatedResponseHypervisorResponse struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []HypervisorResponse `json:"items"`
 	// Optional total count (can be omitted for performance).
 	Total Optional[int64] `json:"total,omitempty"`
 }
@@ -5076,6 +5059,42 @@ type PaginatedResponseServiceUser struct {
 	Total Optional[int64] `json:"total,omitempty"`
 }
 
+// OpenAPI schema PaginatedResponseSessionInsightsResponse.
+type PaginatedResponseSessionInsightsResponse struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []SessionInsightsResponse `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
+// OpenAPI schema PaginatedResponseSessionMessage.
+type PaginatedResponseSessionMessage struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []SessionMessage `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
+// OpenAPI schema PaginatedResponseSessionResponse.
+type PaginatedResponseSessionResponse struct {
+	// Cursor to fetch the next page, or None if this is the last page.
+	EndCursor Optional[string] `json:"end_cursor,omitempty"`
+	// Whether there are more items available after this page.
+	HasNextPage *bool `json:"has_next_page,omitempty"`
+	// JSON field "items".
+	Items []SessionResponse `json:"items"`
+	// Optional total count (can be omitted for performance).
+	Total Optional[int64] `json:"total,omitempty"`
+}
+
 // OpenAPI schema PaginatedResponseUser.
 type PaginatedResponseUser struct {
 	// Cursor to fetch the next page, or None if this is the last page.
@@ -5088,40 +5107,24 @@ type PaginatedResponseUser struct {
 	Total Optional[int64] `json:"total,omitempty"`
 }
 
-// OpenAPI schema PaginatedSessionInsightsResponse.
-type PaginatedSessionInsightsResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []SessionInsightsResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema PaginatedSessionMessages.
-type PaginatedSessionMessages struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []SessionMessage `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
-}
-
-// OpenAPI schema PaginatedSessionResponse.
-type PaginatedSessionResponse struct {
-	// JSON field "end_cursor".
-	EndCursor Optional[string] `json:"end_cursor,omitempty"`
-	// JSON field "has_next_page".
-	HasNextPage *bool `json:"has_next_page,omitempty"`
-	// JSON field "items".
-	Items []SessionResponse `json:"items"`
-	// JSON field "total".
-	Total Optional[int64] `json:"total,omitempty"`
+// Identity information for an authenticated PAT user.
+type PatUserSelf struct {
+	// JSON field "api_key_id".
+	APIKeyID string `json:"api_key_id"`
+	// JSON field "api_key_name".
+	APIKeyName string `json:"api_key_name"`
+	// Organization the caller's Devin Cloud sessions run in: the one named with x-cog-org-id, or without it the first organization visible to the user. Either way only an organization in which the user may use Devin sessions, and never an enterprise's primary organization. Null when there is none.
+	DevinSessionsOrgID Optional[string] `json:"devin_sessions_org_id,omitempty"`
+	// JSON field "org_id".
+	OrgID Optional[string] `json:"org_id,omitempty"`
+	// Organization the user's CLI and Desktop usage is billed to: the account's organization, or in an enterprise the user's primary billing organization. Null when there is none or the user may not use Devin sessions in it.
+	PrimaryBillingOrgID Optional[string] `json:"primary_billing_org_id,omitempty"`
+	// JSON field "principal_type".
+	PrincipalType string `json:"principal_type"`
+	// JSON field "user_id".
+	UserID string `json:"user_id"`
+	// JSON field "user_name".
+	UserName string `json:"user_name"`
 }
 
 // “POST /builds/{id}/pin“ body. Empty per spec.
@@ -5183,6 +5186,64 @@ type PlaybookResponse struct {
 	UpdatedBy string `json:"updated_by"`
 }
 
+// Response model for PR metrics.
+type PRMetricsResponse struct {
+	// PRs Devin authored that were closed without merging.
+	PRsClosedCount int64 `json:"prs_closed_count"`
+	// Total PRs Devin authored across all states (open + merged + closed).
+	PRsCreatedCount int64 `json:"prs_created_count"`
+	// PRs Devin authored that were merged.
+	PRsMergedCount int64 `json:"prs_merged_count"`
+	// PRs Devin authored that are currently open.
+	PRsOpenedCount int64 `json:"prs_opened_count"`
+	// PRs Devin took over that were closed without merging.
+	PRsTakenOverClosedCount *int64 `json:"prs_taken_over_closed_count,omitempty"`
+	// Total PRs Devin took over across all states (open + merged + closed). A take-over is when Devin pushed commits to a PR it did not originally create.
+	PRsTakenOverCount *int64 `json:"prs_taken_over_count,omitempty"`
+	// PRs Devin took over that were merged.
+	PRsTakenOverMergedCount *int64 `json:"prs_taken_over_merged_count,omitempty"`
+	// PRs Devin took over that are currently open.
+	PRsTakenOverOpenedCount *int64 `json:"prs_taken_over_opened_count,omitempty"`
+}
+
+// OpenAPI schema PRReviewCreateRequest.
+type PRReviewCreateRequest struct {
+	// Full URL of the pull/merge request to review (e.g. `https://github.com/owner/repo/pull/123`).
+	PRURL string `json:"pr_url"`
+}
+
+// Current review status. Newly accepted reviews start as `pending`.
+type PRReviewResponseStatus string
+
+const (
+	// Value pending for PRReviewResponseStatus.
+	PRReviewResponseStatusPending PRReviewResponseStatus = "pending"
+	// Value running for PRReviewResponseStatus.
+	PRReviewResponseStatusRunning PRReviewResponseStatus = "running"
+	// Value completed for PRReviewResponseStatus.
+	PRReviewResponseStatusCompleted PRReviewResponseStatus = "completed"
+	// Value errored for PRReviewResponseStatus.
+	PRReviewResponseStatusErrored PRReviewResponseStatus = "errored"
+	// Value cancelled for PRReviewResponseStatus.
+	PRReviewResponseStatusCancelled PRReviewResponseStatus = "cancelled"
+	// Value skipped for PRReviewResponseStatus.
+	PRReviewResponseStatusSkipped PRReviewResponseStatus = "skipped"
+)
+
+// OpenAPI schema PRReviewResponse.
+type PRReviewResponse struct {
+	// Commit SHA of the PR head that will be reviewed.
+	CommitSha string `json:"commit_sha"`
+	// When the review was accepted.
+	CreatedAt string `json:"created_at"`
+	// Pull/merge request number.
+	PRNumber int64 `json:"pr_number"`
+	// Normalized host-prefixed repo path (e.g. `github.com/owner/repo`).
+	RepoPath string `json:"repo_path"`
+	// Current review status. Newly accepted reviews start as `pending`.
+	Status PRReviewResponseStatus `json:"status"`
+}
+
 // Reusable presigned-URL response (10-minute TTL).
 type PresignedDownload struct {
 	// Unix timestamp at which the URL expires.
@@ -5207,6 +5268,76 @@ type ProblemDetail struct {
 	Title string `json:"title"`
 	// A URI reference identifying the problem type.
 	Type *string `json:"type,omitempty"`
+}
+
+// OpenAPI schema QueueResponseStatus.
+type QueueResponseStatus string
+
+const (
+	// Value normal for QueueResponseStatus.
+	QueueResponseStatusNormal QueueResponseStatus = "normal"
+	// Value elevated for QueueResponseStatus.
+	QueueResponseStatusElevated QueueResponseStatus = "elevated"
+	// Value high for QueueResponseStatus.
+	QueueResponseStatusHigh QueueResponseStatus = "high"
+)
+
+// Response model for queue endpoint.
+type QueueResponse struct {
+	// JSON field "queue_size".
+	QueueSize int64 `json:"queue_size"`
+	// JSON field "status".
+	Status QueueResponseStatus `json:"status"`
+}
+
+// The remediation session launched for a code scan finding.
+type RemediateFindingResponse struct {
+	// The finding that is being remediated.
+	FindingID string `json:"finding_id"`
+	// ID of the Devin session launched to remediate the finding.
+	SessionID string `json:"session_id"`
+}
+
+// Findings of one scan to hand to a single Devin session. Provide exactly one of “finding_ids“ or “select_all“.
+type RemediateFindingsRequest struct {
+	// With `select_all`: findings to leave out of the selection.
+	ExcludeFindingIDs *[]string `json:"exclude_finding_ids,omitempty"`
+	// Findings to remediate together; all must belong to the scan and be open, and may span repositories.
+	FindingIDs Optional[[]string] `json:"finding_ids,omitempty"`
+	// Remediate every open finding of the scan matching these filters that does not already have a remediation session, minus `exclude_finding_ids`. Findings the filters match but which are closed or already being remediated are skipped and counted in `skipped_count`. Fails with 400 when more than 1000 findings match.
+	SelectAll Optional[RemediateFindingsSelection] `json:"select_all,omitempty"`
+}
+
+// The Devin session launched for a batch of code scan findings.
+type RemediateFindingsResponse struct {
+	// The findings being remediated: in request order for `finding_ids`, by severity (critical first) for `select_all`.
+	FindingIDs []string `json:"finding_ids"`
+	// ID of the Devin session launched for the findings. A batch of two or more findings gets a planner session that groups them and launches a fix session (one branch, one pull request) per group; each finding's `session_id` and `pr_url` then point at its fix session. A single finding gets a fix session directly.
+	SessionID string `json:"session_id"`
+	// Findings matched by `select_all` but left out because they are closed or already have a remediation session. Always 0 for `finding_ids`.
+	SkippedCount *int64 `json:"skipped_count,omitempty"`
+}
+
+// OpenAPI schema RemediateFindingsSelectionSeverityItem.
+type RemediateFindingsSelectionSeverityItem string
+
+const (
+	// Value critical for RemediateFindingsSelectionSeverityItem.
+	RemediateFindingsSelectionSeverityItemCritical RemediateFindingsSelectionSeverityItem = "critical"
+	// Value high for RemediateFindingsSelectionSeverityItem.
+	RemediateFindingsSelectionSeverityItemHigh RemediateFindingsSelectionSeverityItem = "high"
+	// Value medium for RemediateFindingsSelectionSeverityItem.
+	RemediateFindingsSelectionSeverityItemMedium RemediateFindingsSelectionSeverityItem = "medium"
+	// Value low for RemediateFindingsSelectionSeverityItem.
+	RemediateFindingsSelectionSeverityItemLow RemediateFindingsSelectionSeverityItem = "low"
+)
+
+// Filters selecting every remediable finding of a scan.
+type RemediateFindingsSelection struct {
+	// Only findings reported in this repository.
+	RepoName Optional[string] `json:"repo_name,omitempty"`
+	// Only findings with any of these severities (critical, high, medium, low).
+	Severity Optional[[]RemediateFindingsSelectionSeverityItem] `json:"severity,omitempty"`
 }
 
 // OpenAPI schema RemoveRepositoriesRequest.
@@ -5347,12 +5478,28 @@ type RoleDetailResponse struct {
 	RoleType RoleDetailResponseRoleType `json:"role_type"`
 }
 
-// OpenAPI schema ScanRepoRequest.
+// OpenAPI schema RotateAPIKeyRequest.
+type RotateAPIKeyRequest struct {
+	// Optional expiration for the new key as a UNIX timestamp in seconds. Null for no expiration.
+	NewKeyExpiresAt Optional[int64] `json:"new_key_expires_at,omitempty"`
+	// Whether to revoke the current key. Set to False for graceful rollover.
+	RevokeCurrent *bool `json:"revoke_current,omitempty"`
+}
+
+// An incremental (diff) scan run recorded for a code scan.
+type ScanNewCommitsResponse struct {
+	// The scan the incremental run belongs to.
+	ScanID string `json:"scan_id"`
+	// Scan status after the request: ``waiting`` once the run is enqueued, or ``completed`` when no new commits landed since the last scan and the run was recorded without starting a session.
+	Status string `json:"status"`
+}
+
+// A repository to include in a multi-repo scan.
 type ScanRepoRequest struct {
-	// JSON field "host".
-	Host *string `json:"host,omitempty"`
-	// JSON field "repo_name".
-	RepoName *string `json:"repo_name,omitempty"`
+	// Git host of the repository, if known.
+	Host Optional[string] `json:"host,omitempty"`
+	// Full name of the repository to scan.
+	RepoName string `json:"repo_name"`
 }
 
 // OpenAPI schema ScheduleCreateRequestAgent.
@@ -5587,6 +5734,12 @@ type ScheduleUpdateRequest struct {
 	TargetDevinID Optional[string] `json:"target_devin_id,omitempty"`
 }
 
+// Response model for search metrics.
+type SearchMetricsResponse struct {
+	// JSON field "searches_created_count".
+	SearchesCreatedCount int64 `json:"searches_created_count"`
+}
+
 // OpenAPI schema SecretCreateRequestType.
 type SecretCreateRequestType string
 
@@ -5659,90 +5812,6 @@ type SecretResponse struct {
 	UpdatedBy Optional[string] `json:"updated_by,omitempty"`
 }
 
-// Identity union. Service-user fields are documented; other principal variants retain their complete raw JSON. Inspect principal_type before choosing a variant.
-type SelfResponse struct{ raw json.RawMessage }
-
-// MarshalJSON writes the union's stored JSON value.
-func (value SelfResponse) MarshalJSON() ([]byte, error) {
-	if len(value.raw) == 0 {
-		return []byte("null"), nil
-	}
-	if !json.Valid(value.raw) {
-		return nil, errors.New("invalid SelfResponse union JSON")
-	}
-	return append([]byte(nil), value.raw...), nil
-}
-
-// UnmarshalJSON stores a copy of the input JSON value.
-func (value *SelfResponse) UnmarshalJSON(data []byte) error {
-	if value == nil {
-		return errors.New("cannot unmarshal SelfResponse into a nil receiver")
-	}
-	if !json.Valid(data) {
-		return errors.New("invalid SelfResponse union JSON")
-	}
-	value.raw = append(value.raw[:0], data...)
-	return nil
-}
-
-// NewSelfResponseServiceUserSelf constructs the union from a ServiceUserSelf value.
-func NewSelfResponseServiceUserSelf(value ServiceUserSelf) (SelfResponse, error) {
-	raw, err := json.Marshal(value)
-	if err != nil {
-		return SelfResponse{}, err
-	}
-	return SelfResponse{raw: raw}, nil
-}
-
-// AsServiceUserSelf decodes the stored JSON as ServiceUserSelf. It does not identify a oneOf variant
-// when multiple object variants can accept the same JSON shape.
-func (value SelfResponse) AsServiceUserSelf() (ServiceUserSelf, bool) {
-	if len(value.raw) == 0 || bytes.Equal(bytes.TrimSpace(value.raw), []byte("null")) {
-		var zero ServiceUserSelf
-		return zero, false
-	}
-	var result ServiceUserSelf
-	if err := json.Unmarshal(value.raw, &result); err != nil {
-		var zero ServiceUserSelf
-		return zero, false
-	}
-	return result, true
-}
-
-// NewSelfResponseJSONRawMessage2 constructs the union from a json.RawMessage value.
-func NewSelfResponseJSONRawMessage2(value json.RawMessage) (SelfResponse, error) {
-	raw, err := json.Marshal(value)
-	if err != nil {
-		return SelfResponse{}, err
-	}
-	return SelfResponse{raw: raw}, nil
-}
-
-// AsJSONRawMessage2 decodes the stored JSON as json.RawMessage. It does not identify a oneOf variant
-// when multiple object variants can accept the same JSON shape.
-func (value SelfResponse) AsJSONRawMessage2() (json.RawMessage, bool) {
-	if len(value.raw) == 0 || bytes.Equal(bytes.TrimSpace(value.raw), []byte("null")) {
-		var zero json.RawMessage
-		return zero, false
-	}
-	var result json.RawMessage
-	if err := json.Unmarshal(value.raw, &result); err != nil {
-		var zero json.RawMessage
-		return zero, false
-	}
-	return result, true
-}
-
-// OpenAPI schema SendSessionMessageRequest.
-type SendSessionMessageRequest struct {
-	// JSON field "attachment_urls".
-	AttachmentURLs *[]string `json:"attachment_urls,omitempty"`
-	// JSON field "message".
-	Message string `json:"message"`
-	// JSON field "message_as_user_id".
-	MessageAsUserID *string `json:"message_as_user_id,omitempty"`
-}
-
 // OpenAPI schema ServiceUser.
 type ServiceUser struct {
 	// JSON field "deleted_at".
@@ -5757,20 +5826,12 @@ type ServiceUser struct {
 	ServiceUserID string `json:"service_user_id"`
 }
 
-// OpenAPI schema ServiceUserSelfPrincipalType.
-type ServiceUserSelfPrincipalType string
-
-const (
-	// Value service_user for ServiceUserSelfPrincipalType.
-	ServiceUserSelfPrincipalTypeServiceUser ServiceUserSelfPrincipalType = "service_user"
-)
-
-// OpenAPI schema ServiceUserSelf.
+// Identity information for an authenticated service user.
 type ServiceUserSelf struct {
 	// JSON field "org_id".
 	OrgID Optional[string] `json:"org_id,omitempty"`
 	// JSON field "principal_type".
-	PrincipalType ServiceUserSelfPrincipalType `json:"principal_type"`
+	PrincipalType string `json:"principal_type"`
 	// JSON field "service_user_id".
 	ServiceUserID string `json:"service_user_id"`
 	// JSON field "service_user_name".
@@ -5793,7 +5854,7 @@ const (
 	SessionAttachmentSourceUser SessionAttachmentSource = "user"
 )
 
-// OpenAPI schema SessionAttachment.
+// An attachment sent during a session.
 type SessionAttachment struct {
 	// JSON field "attachment_id".
 	AttachmentID string `json:"attachment_id"`
@@ -5807,96 +5868,216 @@ type SessionAttachment struct {
 	URL string `json:"url"`
 }
 
-// OpenAPI schema SessionCountsByOrigin.
+// Session counts by origin type, exposed on the v3 metrics API. A curated subset of `SessionOrigin`: legacy origins (cli, vscode_extension, devin_spaces) are intentionally not surfaced. Counts for sessions with a `scheduled` DB origin roll into `automation` via the canonical `db_origin_to_api` mapping, since automations are a superset that schedules will migrate into.
 type SessionCountsByOrigin struct {
 	// JSON field "api".
-	API *float64 `json:"api,omitempty"`
+	API *int64 `json:"api,omitempty"`
 	// JSON field "automation".
-	Automation *float64 `json:"automation,omitempty"`
+	Automation *int64 `json:"automation,omitempty"`
 	// JSON field "code_scan".
-	CodeScan *float64 `json:"code_scan,omitempty"`
+	CodeScan *int64 `json:"code_scan,omitempty"`
 	// JSON field "desktop".
-	Desktop *float64 `json:"desktop,omitempty"`
+	Desktop *int64 `json:"desktop,omitempty"`
 	// JSON field "jira".
-	Jira *float64 `json:"jira,omitempty"`
+	Jira *int64 `json:"jira,omitempty"`
 	// JSON field "linear".
-	Linear *float64 `json:"linear,omitempty"`
+	Linear *int64 `json:"linear,omitempty"`
 	// JSON field "slack".
-	Slack *float64 `json:"slack,omitempty"`
+	Slack *int64 `json:"slack,omitempty"`
 	// JSON field "teams".
-	Teams *float64 `json:"teams,omitempty"`
+	Teams *int64 `json:"teams,omitempty"`
 	// JSON field "webapp".
-	Webapp *float64 `json:"webapp,omitempty"`
+	Webapp *int64 `json:"webapp,omitempty"`
 }
 
-// OpenAPI schema SessionCountsBySize.
+// Session counts by size category.
 type SessionCountsBySize struct {
 	// JSON field "l".
-	L *float64 `json:"l,omitempty"`
+	L *int64 `json:"l,omitempty"`
 	// JSON field "m".
-	M *float64 `json:"m,omitempty"`
+	M *int64 `json:"m,omitempty"`
 	// JSON field "s".
-	S *float64 `json:"s,omitempty"`
+	S *int64 `json:"s,omitempty"`
 	// JSON field "xl".
-	Xl *float64 `json:"xl,omitempty"`
+	Xl *int64 `json:"xl,omitempty"`
 	// JSON field "xs".
-	Xs *float64 `json:"xs,omitempty"`
+	Xs *int64 `json:"xs,omitempty"`
 }
 
-// OpenAPI schema SessionInsightsAnalysisClassification.
-type SessionInsightsAnalysisClassification struct {
-	// JSON field "category".
-	Category *string `json:"category,omitempty"`
-	// JSON field "confidence".
-	Confidence *float64 `json:"confidence,omitempty"`
-	// JSON field "programming_languages".
-	ProgrammingLanguages *[]json.RawMessage `json:"programming_languages,omitempty"`
-	// JSON field "tools_and_frameworks".
-	ToolsAndFrameworks *[]json.RawMessage `json:"tools_and_frameworks,omitempty"`
+// OpenAPI schema SessionCreateRequestDevinMode.
+type SessionCreateRequestDevinMode string
+
+const (
+	// Value normal for SessionCreateRequestDevinMode.
+	SessionCreateRequestDevinModeNormal SessionCreateRequestDevinMode = "normal"
+	// Value fast for SessionCreateRequestDevinMode.
+	SessionCreateRequestDevinModeFast SessionCreateRequestDevinMode = "fast"
+	// Value fusion for SessionCreateRequestDevinMode.
+	SessionCreateRequestDevinModeFusion SessionCreateRequestDevinMode = "fusion"
+	// Value lite for SessionCreateRequestDevinMode.
+	SessionCreateRequestDevinModeLite SessionCreateRequestDevinMode = "lite"
+	// Value ultra for SessionCreateRequestDevinMode.
+	SessionCreateRequestDevinModeUltra SessionCreateRequestDevinMode = "ultra"
+	// Value swe-2-medium for SessionCreateRequestDevinMode.
+	SessionCreateRequestDevinModeSwe2Medium SessionCreateRequestDevinMode = "swe-2-medium"
+	// Value swe-2-high for SessionCreateRequestDevinMode.
+	SessionCreateRequestDevinModeSwe2High SessionCreateRequestDevinMode = "swe-2-high"
+	// Value swe-2-max for SessionCreateRequestDevinMode.
+	SessionCreateRequestDevinModeSwe2Max SessionCreateRequestDevinMode = "swe-2-max"
+)
+
+// OpenAPI schema SessionCreateRequest.
+type SessionCreateRequest struct {
+	// JSON field "attachment_urls".
+	AttachmentURLs Optional[[]string] `json:"attachment_urls,omitempty"`
+	// JSON field "bypass_approval".
+	BypassApproval Optional[bool] `json:"bypass_approval,omitempty"`
+	// JSON field "child_playbook_id".
+	ChildPlaybookID Optional[string] `json:"child_playbook_id,omitempty"`
+	// JSON field "create_as_user_id".
+	CreateAsUserID Optional[string] `json:"create_as_user_id,omitempty"`
+	// Override the Devin agent mode for the session. 'normal' uses the default Agent mode, 'fast' uses Fast mode, 'lite' uses Devin Lite, 'ultra' uses Devin Ultra, and 'fusion' uses Fusion. The other values select the agent mode of the same name in the web app. Preview modes are subject to the same feature flag and enterprise agent preview restrictions as the web app.
+	DevinMode Optional[SessionCreateRequestDevinMode] `json:"devin_mode,omitempty"`
+	// JSON field "knowledge_ids".
+	KnowledgeIDs Optional[[]string] `json:"knowledge_ids,omitempty"`
+	// JSON field "max_acu_limit".
+	MaxACULimit Optional[int64] `json:"max_acu_limit,omitempty"`
+	// Override the VM platform for the session (e.g. 'windows'), or the name of an outpost (BYOB) pool to run the session on one of your own machines. When omitted (or set to 'inherit'), a session created by a parent Devin inherits the parent's placement — both its platform and its outpost pool, so an outpost-placed parent spawns children on the same pool; otherwise the organization default is used. Any value must match either a platform configured for your organization or an outpost pool name (case-insensitive) — built-in platforms take priority when a name matches both, and a personal outpost pool owned by the caller takes priority over an account-wide pool with the same name. Unrecognized values are rejected with a 400 whose error body lists the available platform labels and outpost pool names for the org.
+	Platform Optional[string] `json:"platform,omitempty"`
+	// JSON field "playbook_id".
+	PlaybookID Optional[string] `json:"playbook_id,omitempty"`
+	// JSON field "prompt".
+	Prompt string `json:"prompt"`
+	// JSON field "repos".
+	Repos Optional[[]string] `json:"repos,omitempty"`
+	// Whether to preserve the session's VM state after it stops so the session can be resumed. Set to false for disposable sessions.
+	Resumable *bool `json:"resumable,omitempty"`
+	// JSON field "secret_ids".
+	SecretIDs Optional[[]string] `json:"secret_ids,omitempty"`
+	// Attach a security profile to this session; omitted = default resolution applies (the playbook's security profile when one is bound, then the org/enterprise default). Requires the security-profile management permission.
+	SecurityProfile Optional[SessionSecurityProfileSelection] `json:"security_profile,omitempty"`
+	// JSON field "session_links".
+	SessionLinks Optional[[]string] `json:"session_links,omitempty"`
+	// JSON field "session_secrets".
+	SessionSecrets Optional[[]SessionSecretInput] `json:"session_secrets,omitempty"`
+	// When true (default), the agent MUST call provide_structured_output with is_final=true before its turn ends. When false, the tool is available but not required — it is not guaranteed to be called in a given turn.
+	StructuredOutputRequired Optional[bool] `json:"structured_output_required,omitempty"`
+	// JSON Schema (Draft 7) for validating structured output. Max 64KB. Must be self-contained (no external $ref).
+	StructuredOutputSchema Optional[map[string]json.RawMessage] `json:"structured_output_schema,omitempty"`
+	// JSON field "tags".
+	Tags Optional[[]string] `json:"tags,omitempty"`
+	// JSON field "title".
+	Title Optional[string] `json:"title,omitempty"`
 }
 
-// OpenAPI schema SessionInsightsAnalysisNoteUsage.
-type SessionInsightsAnalysisNoteUsage struct {
-	// JSON field "bad_usages".
-	BadUsages *[]map[string]json.RawMessage `json:"bad_usages,omitempty"`
-	// JSON field "good_usages".
-	GoodUsages *[]map[string]json.RawMessage `json:"good_usages,omitempty"`
+// OpenAPI schema SessionInsightsActionItemType.
+type SessionInsightsActionItemType string
+
+const (
+	// Value machine_setup for SessionInsightsActionItemType.
+	SessionInsightsActionItemTypeMachineSetup SessionInsightsActionItemType = "machine_setup"
+	// Value repo_config for SessionInsightsActionItemType.
+	SessionInsightsActionItemTypeRepoConfig SessionInsightsActionItemType = "repo_config"
+	// Value knowledge for SessionInsightsActionItemType.
+	SessionInsightsActionItemTypeKnowledge SessionInsightsActionItemType = "knowledge"
+	// Value prompt_improvement for SessionInsightsActionItemType.
+	SessionInsightsActionItemTypePromptImprovement SessionInsightsActionItemType = "prompt_improvement"
+	// Value external for SessionInsightsActionItemType.
+	SessionInsightsActionItemTypeExternal SessionInsightsActionItemType = "external"
+	// Value other for SessionInsightsActionItemType.
+	SessionInsightsActionItemTypeOther SessionInsightsActionItemType = "other"
+)
+
+// OpenAPI schema SessionInsightsActionItem.
+type SessionInsightsActionItem struct {
+	// JSON field "action_item".
+	ActionItem string `json:"action_item"`
+	// JSON field "issue_id".
+	IssueID Optional[string] `json:"issue_id,omitempty"`
+	// JSON field "type".
+	Type *SessionInsightsActionItemType `json:"type,omitempty"`
 }
 
-// OpenAPI schema SessionInsightsAnalysisSkillUsage.
-type SessionInsightsAnalysisSkillUsage struct {
-	// JSON field "bad_usages".
-	BadUsages *[]map[string]json.RawMessage `json:"bad_usages,omitempty"`
-	// JSON field "good_usages".
-	GoodUsages *[]map[string]json.RawMessage `json:"good_usages,omitempty"`
-}
-
-// OpenAPI schema SessionInsightsAnalysisSuggestedPrompt.
-type SessionInsightsAnalysisSuggestedPrompt struct {
-	// JSON field "feedback_items".
-	FeedbackItems *[]map[string]json.RawMessage `json:"feedback_items,omitempty"`
-	// JSON field "original_prompt".
-	OriginalPrompt *string `json:"original_prompt,omitempty"`
-	// JSON field "suggested_prompt".
-	SuggestedPrompt *string `json:"suggested_prompt,omitempty"`
-}
-
-// OpenAPI schema SessionInsightsAnalysis.
+// AI-generated analysis data from a completed session analysis.
 type SessionInsightsAnalysis struct {
 	// JSON field "action_items".
-	ActionItems *[]map[string]json.RawMessage `json:"action_items,omitempty"`
+	ActionItems *[]SessionInsightsActionItem `json:"action_items,omitempty"`
 	// JSON field "classification".
-	Classification *SessionInsightsAnalysisClassification `json:"classification,omitempty"`
+	Classification Optional[SessionInsightsClassification] `json:"classification,omitempty"`
 	// JSON field "issues".
-	Issues *[]map[string]json.RawMessage `json:"issues,omitempty"`
+	Issues *[]SessionInsightsIssue `json:"issues,omitempty"`
 	// JSON field "note_usage".
-	NoteUsage *SessionInsightsAnalysisNoteUsage `json:"note_usage,omitempty"`
+	NoteUsage Optional[SessionInsightsNoteUsage] `json:"note_usage,omitempty"`
 	// JSON field "skill_usage".
-	SkillUsage *SessionInsightsAnalysisSkillUsage `json:"skill_usage,omitempty"`
+	SkillUsage Optional[SessionInsightsSkillUsage] `json:"skill_usage,omitempty"`
 	// JSON field "suggested_prompt".
-	SuggestedPrompt *SessionInsightsAnalysisSuggestedPrompt `json:"suggested_prompt,omitempty"`
+	SuggestedPrompt Optional[SessionInsightsSuggestedPrompt] `json:"suggested_prompt,omitempty"`
 	// JSON field "timeline".
-	Timeline *[]map[string]json.RawMessage `json:"timeline,omitempty"`
+	Timeline *[]SessionInsightsTimelineEvent `json:"timeline,omitempty"`
+}
+
+// OpenAPI schema SessionInsightsClassification.
+type SessionInsightsClassification struct {
+	// JSON field "category".
+	Category string `json:"category"`
+	// JSON field "confidence".
+	Confidence float64 `json:"confidence"`
+	// JSON field "programming_languages".
+	ProgrammingLanguages *[]string `json:"programming_languages,omitempty"`
+	// JSON field "tools_and_frameworks".
+	ToolsAndFrameworks *[]string `json:"tools_and_frameworks,omitempty"`
+}
+
+// OpenAPI schema SessionInsightsFeedbackItem.
+type SessionInsightsFeedbackItem struct {
+	// JSON field "details".
+	Details string `json:"details"`
+	// JSON field "excerpt".
+	Excerpt string `json:"excerpt"`
+	// JSON field "issue_id".
+	IssueID Optional[string] `json:"issue_id,omitempty"`
+	// JSON field "summary".
+	Summary string `json:"summary"`
+}
+
+// Response from triggering session insights generation.
+type SessionInsightsGenerateResponse struct {
+	// The session ID for which insights generation was triggered.
+	SessionID string `json:"session_id"`
+	// The status of the generation request.
+	Status string `json:"status"`
+}
+
+// OpenAPI schema SessionInsightsIssue.
+type SessionInsightsIssue struct {
+	// JSON field "id".
+	ID *string `json:"id,omitempty"`
+	// JSON field "impact".
+	Impact string `json:"impact"`
+	// JSON field "issue".
+	Issue string `json:"issue"`
+	// JSON field "label".
+	Label string `json:"label"`
+	// JSON field "title".
+	Title *string `json:"title,omitempty"`
+}
+
+// OpenAPI schema SessionInsightsNoteUsage.
+type SessionInsightsNoteUsage struct {
+	// JSON field "bad_usages".
+	BadUsages *[]SessionInsightsNoteUsageItem `json:"bad_usages,omitempty"`
+	// JSON field "good_usages".
+	GoodUsages *[]SessionInsightsNoteUsageItem `json:"good_usages,omitempty"`
+}
+
+// OpenAPI schema SessionInsightsNoteUsageItem.
+type SessionInsightsNoteUsageItem struct {
+	// JSON field "message".
+	Message string `json:"message"`
+	// JSON field "note_id".
+	NoteID string `json:"note_id"`
+	// JSON field "reason".
+	Reason string `json:"reason"`
 }
 
 // OpenAPI schema SessionInsightsResponseAnalysisStatus.
@@ -5997,7 +6178,7 @@ const (
 	SessionInsightsResponseOriginOther SessionInsightsResponseOrigin = "other"
 )
 
-// OpenAPI schema SessionInsightsResponseSessionSize.
+// Session size classification based on ACU usage and message count.
 type SessionInsightsResponseSessionSize string
 
 const (
@@ -6071,35 +6252,35 @@ const (
 	SessionInsightsResponseStatusDetailError SessionInsightsResponseStatusDetail = "error"
 )
 
-// OpenAPI schema SessionInsightsResponse.
+// Session details augmented with quantitative metrics and AI analysis. Extends SessionResponse with additional fields that require extra queries.
 type SessionInsightsResponse struct {
 	// JSON field "acus_consumed".
 	AcusConsumed float64 `json:"acus_consumed"`
-	// JSON field "analysis".
+	// AI-generated session analysis. None if analysis has not completed.
 	Analysis Optional[SessionInsightsAnalysis] `json:"analysis,omitempty"`
-	// JSON field "analysis_status".
+	// State of the most recent session analysis run: 'completed', 'started' (in progress) or 'failed'. None if analysis was never run. 'failed' distinguishes a run that errored from one that never happened; `analysis` may still hold an older completed result.
 	AnalysisStatus Optional[SessionInsightsResponseAnalysisStatus] `json:"analysis_status,omitempty"`
-	// JSON field "automation_id".
+	// ID of the automation that created this session, if any.
 	AutomationID Optional[string] `json:"automation_id,omitempty"`
-	// JSON field "category".
+	// The session's assigned use-case category, if categorisation has run. Only populated on get/list endpoints.
 	Category Optional[SessionInsightsResponseCategory] `json:"category,omitempty"`
 	// JSON field "child_session_ids".
 	ChildSessionIDs Optional[[]string] `json:"child_session_ids,omitempty"`
 	// JSON field "created_at".
 	CreatedAt int64 `json:"created_at"`
-	// JSON field "devin_mode".
+	// The Devin agent mode the session was created with, after resolving org/user defaults and parent-session inheritance. None when the session runs an agent preview that has no mode equivalent.
 	DevinMode Optional[SessionInsightsResponseDevinMode] `json:"devin_mode,omitempty"`
 	// JSON field "is_archived".
 	IsArchived *bool `json:"is_archived,omitempty"`
-	// JSON field "num_devin_messages".
+	// Number of Devin messages sent during the session.
 	NumDevinMessages int64 `json:"num_devin_messages"`
-	// JSON field "num_user_messages".
+	// Number of user messages sent during the session.
 	NumUserMessages int64 `json:"num_user_messages"`
-	// JSON field "on_demand_usage".
+	// On-demand (overage) spend in USD for this session, excluding child sessions. Only populated for Teams plans; 0 when the session was fully covered by quota. Omitted for other plans. Only populated on get/list endpoints.
 	OnDemandUsage Optional[float64] `json:"on_demand_usage,omitempty"`
-	// JSON field "org_id".
+	// Owning organization. Null for detached sessions, which are owned by their creator's account rather than an organization.
 	OrgID *string `json:"org_id"`
-	// JSON field "origin".
+	// The origin from which the session was created.
 	Origin Optional[SessionInsightsResponseOrigin] `json:"origin,omitempty"`
 	// JSON field "parent_session_id".
 	ParentSessionID Optional[string] `json:"parent_session_id,omitempty"`
@@ -6107,21 +6288,21 @@ type SessionInsightsResponse struct {
 	PlaybookID Optional[string] `json:"playbook_id,omitempty"`
 	// JSON field "pull_requests".
 	PullRequests []SessionPullRequest `json:"pull_requests"`
-	// JSON field "security_profile".
+	// The session's own security-profile binding. Only populated on get/list endpoints.
 	SecurityProfile Optional[SessionSecurityProfileResponse] `json:"security_profile,omitempty"`
 	// JSON field "service_user_id".
 	ServiceUserID Optional[string] `json:"service_user_id,omitempty"`
 	// JSON field "session_id".
 	SessionID string `json:"session_id"`
-	// JSON field "session_size".
+	// Session size classification based on ACU usage and message count.
 	SessionSize SessionInsightsResponseSessionSize `json:"session_size"`
 	// JSON field "status".
 	Status SessionInsightsResponseStatus `json:"status"`
-	// JSON field "status_detail".
+	// Additional detail about the session's current status. When status is 'running': 'working' (actively working), 'waiting_for_user' (needs user input), 'waiting_for_approval' (awaiting action approval in safe mode), or 'finished' (task complete). When status is 'suspended': the reason for suspension such as 'inactivity', 'user_request', 'usage_limit_exceeded', 'out_of_credits', 'out_of_quota', 'no_quota_allocation', 'payment_declined', 'org_usage_limit_exceeded', 'user_usage_limit_exceeded', 'total_session_limit_exceeded', 'contract_expired', or 'error'. Only populated on get/list endpoints.
 	StatusDetail Optional[SessionInsightsResponseStatusDetail] `json:"status_detail,omitempty"`
-	// JSON field "structured_output".
+	// Validated structured output from the session. Only populated on get/list endpoints.
 	StructuredOutput Optional[map[string]json.RawMessage] `json:"structured_output,omitempty"`
-	// JSON field "subcategory".
+	// The session's assigned subcategory display name. 'Other' when a category is set but no subcategory was assigned or resolved. Only populated on get/list endpoints.
 	Subcategory Optional[string] `json:"subcategory,omitempty"`
 	// JSON field "tags".
 	Tags []string `json:"tags"`
@@ -6135,7 +6316,59 @@ type SessionInsightsResponse struct {
 	UserID Optional[string] `json:"user_id,omitempty"`
 }
 
-// OpenAPI schema SessionMessage.
+// OpenAPI schema SessionInsightsSkillUsage.
+type SessionInsightsSkillUsage struct {
+	// JSON field "bad_usages".
+	BadUsages *[]SessionInsightsSkillUsageItem `json:"bad_usages,omitempty"`
+	// JSON field "good_usages".
+	GoodUsages *[]SessionInsightsSkillUsageItem `json:"good_usages,omitempty"`
+}
+
+// OpenAPI schema SessionInsightsSkillUsageItem.
+type SessionInsightsSkillUsageItem struct {
+	// JSON field "reason".
+	Reason string `json:"reason"`
+	// JSON field "repo_origin".
+	RepoOrigin string `json:"repo_origin"`
+	// JSON field "skill_name".
+	SkillName string `json:"skill_name"`
+	// JSON field "skill_rel_path".
+	SkillRelPath string `json:"skill_rel_path"`
+}
+
+// OpenAPI schema SessionInsightsSuggestedPrompt.
+type SessionInsightsSuggestedPrompt struct {
+	// JSON field "feedback_items".
+	FeedbackItems *[]SessionInsightsFeedbackItem `json:"feedback_items,omitempty"`
+	// JSON field "original_prompt".
+	OriginalPrompt string `json:"original_prompt"`
+	// JSON field "suggested_prompt".
+	SuggestedPrompt string `json:"suggested_prompt"`
+}
+
+// OpenAPI schema SessionInsightsTimelineEvent.
+type SessionInsightsTimelineEvent struct {
+	// JSON field "color".
+	Color *string `json:"color,omitempty"`
+	// JSON field "description".
+	Description string `json:"description"`
+	// JSON field "issue_id".
+	IssueID Optional[string] `json:"issue_id,omitempty"`
+	// JSON field "title".
+	Title string `json:"title"`
+}
+
+// OpenAPI schema SessionMessageSource.
+type SessionMessageSource string
+
+const (
+	// Value devin for SessionMessageSource.
+	SessionMessageSourceDevin SessionMessageSource = "devin"
+	// Value user for SessionMessageSource.
+	SessionMessageSourceUser SessionMessageSource = "user"
+)
+
+// A message in a Devin session.
 type SessionMessage struct {
 	// JSON field "created_at".
 	CreatedAt int64 `json:"created_at"`
@@ -6143,20 +6376,50 @@ type SessionMessage struct {
 	EventID string `json:"event_id"`
 	// JSON field "message".
 	Message string `json:"message"`
-	// JSON field "origin".
+	// The origin of the message, if available.
 	Origin Optional[string] `json:"origin,omitempty"`
 	// JSON field "source".
-	Source string `json:"source"`
-	// JSON field "user_id".
+	Source SessionMessageSource `json:"source"`
+	// The ID of the user who sent the message, if available.
 	UserID Optional[string] `json:"user_id,omitempty"`
-	// JSON field "username".
+	// The username of the user who sent the message, if available.
 	Username Optional[string] `json:"username,omitempty"`
+}
+
+// OpenAPI schema SessionMessageCreateRequest.
+type SessionMessageCreateRequest struct {
+	// JSON field "attachment_urls".
+	AttachmentURLs Optional[[]string] `json:"attachment_urls,omitempty"`
+	// JSON field "message".
+	Message string `json:"message"`
+	// JSON field "message_as_user_id".
+	MessageAsUserID Optional[string] `json:"message_as_user_id,omitempty"`
+}
+
+// Response model for session metrics.
+type SessionMetricsResponse struct {
+	// JSON field "avg_acus_per_session".
+	AvgAcusPerSession float64 `json:"avg_acus_per_session"`
+	// JSON field "sessions_created_by_origin".
+	SessionsCreatedByOrigin SessionCountsByOrigin `json:"sessions_created_by_origin"`
+	// JSON field "sessions_created_by_size".
+	SessionsCreatedBySize SessionCountsBySize `json:"sessions_created_by_size"`
+	// JSON field "sessions_created_count".
+	SessionsCreatedCount int64 `json:"sessions_created_count"`
+	// JSON field "sessions_created_with_playbook_count".
+	SessionsCreatedWithPlaybookCount int64 `json:"sessions_created_with_playbook_count"`
+	// JSON field "sessions_created_with_search_count".
+	SessionsCreatedWithSearchCount int64 `json:"sessions_created_with_search_count"`
+	// JSON field "sessions_with_merged_prs_by_size".
+	SessionsWithMergedPRsBySize SessionCountsBySize `json:"sessions_with_merged_prs_by_size"`
+	// JSON field "sessions_with_merged_prs_count".
+	SessionsWithMergedPRsCount int64 `json:"sessions_with_merged_prs_count"`
 }
 
 // OpenAPI schema SessionPullRequest.
 type SessionPullRequest struct {
 	// JSON field "pr_state".
-	PRState string `json:"pr_state"`
+	PRState *string `json:"pr_state"`
 	// JSON field "pr_url".
 	PRURL string `json:"pr_url"`
 }
@@ -6309,23 +6572,23 @@ const (
 type SessionResponse struct {
 	// JSON field "acus_consumed".
 	AcusConsumed float64 `json:"acus_consumed"`
-	// JSON field "automation_id".
+	// ID of the automation that created this session, if any.
 	AutomationID Optional[string] `json:"automation_id,omitempty"`
-	// JSON field "category".
+	// The session's assigned use-case category, if categorisation has run. Only populated on get/list endpoints.
 	Category Optional[SessionResponseCategory] `json:"category,omitempty"`
 	// JSON field "child_session_ids".
 	ChildSessionIDs Optional[[]string] `json:"child_session_ids,omitempty"`
 	// JSON field "created_at".
 	CreatedAt int64 `json:"created_at"`
-	// JSON field "devin_mode".
+	// The Devin agent mode the session was created with, after resolving org/user defaults and parent-session inheritance. None when the session runs an agent preview that has no mode equivalent.
 	DevinMode Optional[SessionResponseDevinMode] `json:"devin_mode,omitempty"`
 	// JSON field "is_archived".
 	IsArchived *bool `json:"is_archived,omitempty"`
-	// JSON field "on_demand_usage".
+	// On-demand (overage) spend in USD for this session, excluding child sessions. Only populated for Teams plans; 0 when the session was fully covered by quota. Omitted for other plans. Only populated on get/list endpoints.
 	OnDemandUsage Optional[float64] `json:"on_demand_usage,omitempty"`
-	// JSON field "org_id".
+	// Owning organization. Null for detached sessions, which are owned by their creator's account rather than an organization.
 	OrgID *string `json:"org_id"`
-	// JSON field "origin".
+	// The origin from which the session was created.
 	Origin Optional[SessionResponseOrigin] `json:"origin,omitempty"`
 	// JSON field "parent_session_id".
 	ParentSessionID Optional[string] `json:"parent_session_id,omitempty"`
@@ -6333,7 +6596,7 @@ type SessionResponse struct {
 	PlaybookID Optional[string] `json:"playbook_id,omitempty"`
 	// JSON field "pull_requests".
 	PullRequests []SessionPullRequest `json:"pull_requests"`
-	// JSON field "security_profile".
+	// The session's own security-profile binding. Only populated on get/list endpoints.
 	SecurityProfile Optional[SessionSecurityProfileResponse] `json:"security_profile,omitempty"`
 	// JSON field "service_user_id".
 	ServiceUserID Optional[string] `json:"service_user_id,omitempty"`
@@ -6341,11 +6604,11 @@ type SessionResponse struct {
 	SessionID string `json:"session_id"`
 	// JSON field "status".
 	Status SessionResponseStatus `json:"status"`
-	// JSON field "status_detail".
+	// Additional detail about the session's current status. When status is 'running': 'working' (actively working), 'waiting_for_user' (needs user input), 'waiting_for_approval' (awaiting action approval in safe mode), or 'finished' (task complete). When status is 'suspended': the reason for suspension such as 'inactivity', 'user_request', 'usage_limit_exceeded', 'out_of_credits', 'out_of_quota', 'no_quota_allocation', 'payment_declined', 'org_usage_limit_exceeded', 'user_usage_limit_exceeded', 'total_session_limit_exceeded', 'contract_expired', or 'error'. Only populated on get/list endpoints.
 	StatusDetail Optional[SessionResponseStatusDetail] `json:"status_detail,omitempty"`
-	// JSON field "structured_output".
+	// Validated structured output from the session. Only populated on get/list endpoints.
 	StructuredOutput Optional[map[string]json.RawMessage] `json:"structured_output,omitempty"`
-	// JSON field "subcategory".
+	// The session's assigned subcategory display name. 'Other' when a category is set but no subcategory was assigned or resolved. Only populated on get/list endpoints.
 	Subcategory Optional[string] `json:"subcategory,omitempty"`
 	// JSON field "tags".
 	Tags []string `json:"tags"`
@@ -6359,32 +6622,162 @@ type SessionResponse struct {
 	UserID Optional[string] `json:"user_id,omitempty"`
 }
 
+// Input model for a session secret provided via API.
+type SessionSecretInput struct {
+	// JSON field "key".
+	Key string `json:"key"`
+	// JSON field "sensitive".
+	Sensitive *bool `json:"sensitive,omitempty"`
+	// JSON field "value".
+	Value string `json:"value"`
+}
+
+// The session's own binding: inherit (no binding of its own), none (explicit opt-out), or profile (pins profile_id). The effective configuration resolves the full governing chain (enterprise -> org -> automation/playbook -> session); an opt-out cannot escape a mandatory org/enterprise profile.
+type SessionSecurityProfileResponseSelection string
+
+const (
+	// Value inherit for SessionSecurityProfileResponseSelection.
+	SessionSecurityProfileResponseSelectionInherit SessionSecurityProfileResponseSelection = "inherit"
+	// Value none for SessionSecurityProfileResponseSelection.
+	SessionSecurityProfileResponseSelectionNone SessionSecurityProfileResponseSelection = "none"
+	// Value profile for SessionSecurityProfileResponseSelection.
+	SessionSecurityProfileResponseSelectionProfile SessionSecurityProfileResponseSelection = "profile"
+)
+
 // OpenAPI schema SessionSecurityProfileResponse.
 type SessionSecurityProfileResponse struct {
 	// JSON field "profile_id".
 	ProfileID Optional[string] `json:"profile_id,omitempty"`
-	// JSON field "selection".
-	Selection *string `json:"selection,omitempty"`
+	// The session's own binding: inherit (no binding of its own), none (explicit opt-out), or profile (pins profile_id). The effective configuration resolves the full governing chain (enterprise -> org -> automation/playbook -> session); an opt-out cannot escape a mandatory org/enterprise profile.
+	Selection SessionSecurityProfileResponseSelection `json:"selection"`
 }
 
-// OpenAPI schema SessionTags.
-type SessionTags struct {
+// An explicit security-profile selection for a new session.
+type SessionSecurityProfileSelection struct {
+	// Security profile to attach to the session; must belong to your organization or, for enterprise organizations, its enterprise. null records an explicit opt-out (no profile, even when the org or enterprise has a default).
+	ProfileID Optional[string] `json:"profile_id,omitempty"`
+}
+
+// OpenAPI schema SessionTagsResponse.
+type SessionTagsResponse struct {
 	// JSON field "tags".
 	Tags []string `json:"tags"`
 }
 
-// OpenAPI schema SessionTagsInput.
-type SessionTagsInput struct {
+// OpenAPI schema SessionTagsUpdateRequest.
+type SessionTagsUpdateRequest struct {
 	// JSON field "tags".
 	Tags []string `json:"tags"`
 }
 
-// OpenAPI schema SetOrganizationDefaultPlatformRequest.
-type SetOrganizationDefaultPlatformRequest struct {
-	// JSON field "outpost_pool_id".
-	OutpostPoolID Optional[string] `json:"outpost_pool_id,omitempty"`
-	// JSON field "platform".
-	Platform Optional[string] `json:"platform,omitempty"`
+// OpenAPI schema SessionsByCategoryResponse.
+type SessionsByCategoryResponse struct {
+	// JSON field "categories".
+	Categories []CategoryMetrics `json:"categories"`
+}
+
+// OpenAPI schema SessionsQueryParamsCategory.
+type SessionsQueryParamsCategory string
+
+const (
+	// Value bug_fixing for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryBugFixing SessionsQueryParamsCategory = "bug_fixing"
+	// Value ci_cd_and_devops for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryCiCdAndDevops SessionsQueryParamsCategory = "ci_cd_and_devops"
+	// Value code_quality_and_security for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryCodeQualityAndSecurity SessionsQueryParamsCategory = "code_quality_and_security"
+	// Value code_review for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryCodeReview SessionsQueryParamsCategory = "code_review"
+	// Value code_review_and_analysis for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryCodeReviewAndAnalysis SessionsQueryParamsCategory = "code_review_and_analysis"
+	// Value data_and_automation for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryDataAndAutomation SessionsQueryParamsCategory = "data_and_automation"
+	// Value documentation_and_content for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryDocumentationAndContent SessionsQueryParamsCategory = "documentation_and_content"
+	// Value feature_development for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryFeatureDevelopment SessionsQueryParamsCategory = "feature_development"
+	// Value migrations_and_upgrades for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryMigrationsAndUpgrades SessionsQueryParamsCategory = "migrations_and_upgrades"
+	// Value other for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryOther SessionsQueryParamsCategory = "other"
+	// Value production_investigation for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryProductionInvestigation SessionsQueryParamsCategory = "production_investigation"
+	// Value refactoring_and_optimization for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryRefactoringAndOptimization SessionsQueryParamsCategory = "refactoring_and_optimization"
+	// Value research_and_exploration for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryResearchAndExploration SessionsQueryParamsCategory = "research_and_exploration"
+	// Value security for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategorySecurity SessionsQueryParamsCategory = "security"
+	// Value unit_test_generation for SessionsQueryParamsCategory.
+	SessionsQueryParamsCategoryUnitTestGeneration SessionsQueryParamsCategory = "unit_test_generation"
+)
+
+// OpenAPI schema SessionsQueryParamsOriginsItem.
+type SessionsQueryParamsOriginsItem string
+
+const (
+	// Value webapp for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemWebapp SessionsQueryParamsOriginsItem = "webapp"
+	// Value slack for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemSlack SessionsQueryParamsOriginsItem = "slack"
+	// Value teams for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemTeams SessionsQueryParamsOriginsItem = "teams"
+	// Value api for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemAPI SessionsQueryParamsOriginsItem = "api"
+	// Value linear for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemLinear SessionsQueryParamsOriginsItem = "linear"
+	// Value jira for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemJira SessionsQueryParamsOriginsItem = "jira"
+	// Value automation for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemAutomation SessionsQueryParamsOriginsItem = "automation"
+	// Value cli for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemCli SessionsQueryParamsOriginsItem = "cli"
+	// Value desktop for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemDesktop SessionsQueryParamsOriginsItem = "desktop"
+	// Value code_scan for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemCodeScan SessionsQueryParamsOriginsItem = "code_scan"
+	// Value other for SessionsQueryParamsOriginsItem.
+	SessionsQueryParamsOriginsItemOther SessionsQueryParamsOriginsItem = "other"
+)
+
+// OpenAPI schema SessionsQueryParams.
+type SessionsQueryParams struct {
+	// JSON field "after".
+	After Optional[string] `json:"after,omitempty"`
+	// Filter to sessions created by any of these automations
+	AutomationIDs Optional[[]string] `json:"automation_ids,omitempty"`
+	// JSON field "category".
+	Category Optional[SessionsQueryParamsCategory] `json:"category,omitempty"`
+	// JSON field "created_after".
+	CreatedAfter Optional[int64] `json:"created_after,omitempty"`
+	// JSON field "created_before".
+	CreatedBefore Optional[int64] `json:"created_before,omitempty"`
+	// JSON field "first".
+	First *int64 `json:"first,omitempty"`
+	// JSON field "is_archived".
+	IsArchived Optional[bool] `json:"is_archived,omitempty"`
+	// JSON field "origins".
+	Origins Optional[[]SessionsQueryParamsOriginsItem] `json:"origins,omitempty"`
+	// Filter to child sessions spawned by this parent session
+	ParentSessionID Optional[string] `json:"parent_session_id,omitempty"`
+	// JSON field "playbook_id".
+	PlaybookID Optional[string] `json:"playbook_id,omitempty"`
+	// Filter by repository names (e.g., 'owner/repo')
+	RepoNames Optional[[]string] `json:"repo_names,omitempty"`
+	// JSON field "schedule_id".
+	ScheduleID Optional[string] `json:"schedule_id,omitempty"`
+	// JSON field "service_user_ids".
+	ServiceUserIDs Optional[[]string] `json:"service_user_ids,omitempty"`
+	// JSON field "session_ids".
+	SessionIDs Optional[[]string] `json:"session_ids,omitempty"`
+	// JSON field "tags".
+	Tags Optional[[]string] `json:"tags,omitempty"`
+	// JSON field "updated_after".
+	UpdatedAfter Optional[int64] `json:"updated_after,omitempty"`
+	// JSON field "updated_before".
+	UpdatedBefore Optional[int64] `json:"updated_before,omitempty"`
+	// JSON field "user_ids".
+	UserIDs Optional[[]string] `json:"user_ids,omitempty"`
 }
 
 // One exact skill: the plugin that ships it plus the skill's name.
@@ -6395,76 +6788,44 @@ type SkillReference struct {
 	SkillName string `json:"skill_name"`
 }
 
-// OpenAPI schema StartEnterpriseIngestionScanRequestEffort.
-type StartEnterpriseIngestionScanRequestEffort string
+// OpenAPI schema StartIngestionScanRequestEffort.
+type StartIngestionScanRequestEffort string
 
 const (
-	// Value normal for StartEnterpriseIngestionScanRequestEffort.
-	StartEnterpriseIngestionScanRequestEffortNormal StartEnterpriseIngestionScanRequestEffort = "normal"
-	// Value deep for StartEnterpriseIngestionScanRequestEffort.
-	StartEnterpriseIngestionScanRequestEffortDeep StartEnterpriseIngestionScanRequestEffort = "deep"
+	// Value normal for StartIngestionScanRequestEffort.
+	StartIngestionScanRequestEffortNormal StartIngestionScanRequestEffort = "normal"
+	// Value deep for StartIngestionScanRequestEffort.
+	StartIngestionScanRequestEffortDeep StartIngestionScanRequestEffort = "deep"
 )
 
-// OpenAPI schema StartEnterpriseIngestionScanRequestReposItem.
-type StartEnterpriseIngestionScanRequestReposItem struct {
-	// JSON field "host".
-	Host *string `json:"host,omitempty"`
-	// JSON field "repo_name".
-	RepoName string `json:"repo_name"`
-}
-
-// OpenAPI schema StartEnterpriseIngestionScanRequest.
-type StartEnterpriseIngestionScanRequest struct {
-	// JSON field "attachment_urls".
-	AttachmentURLs *[]string `json:"attachment_urls,omitempty"`
-	// JSON field "effort".
-	Effort *StartEnterpriseIngestionScanRequestEffort `json:"effort,omitempty"`
-	// JSON field "host".
-	Host *string `json:"host,omitempty"`
-	// JSON field "platform".
-	Platform *string `json:"platform,omitempty"`
-	// JSON field "profile_id".
+// Request body for starting an ingestion-mode code scan. Only accepts an ingestion (ingest-mode) scan profile: the profile is run against the given repository (or repositories).
+type StartIngestionScanRequest struct {
+	// Devin attachment URLs to provide to the scan, e.g. files uploaded via the attachments API. The attachments must belong to the organization being scanned.
+	AttachmentURLs Optional[[]string] `json:"attachment_urls,omitempty"`
+	// Scan effort: 'normal' (default) uses lower model reasoning effort with larger triage and validation batches; 'deep' runs the full pipeline.
+	Effort Optional[StartIngestionScanRequestEffort] `json:"effort,omitempty"`
+	// Git host of the repository, if known.
+	Host Optional[string] `json:"host,omitempty"`
+	// Where the scan's sessions run: a platform label configured for the organization (e.g. 'linux', 'windows', 'macos') or the name of an outpost (BYOB) pool, case-insensitive; platforms take priority when a name matches both. Omitted means the organization default. Unrecognized values are rejected with a 400 whose error body lists the available platform labels and outpost pool names.
+	Platform Optional[string] `json:"platform,omitempty"`
+	// Ingestion-mode scan profile to run. Must be an ingest profile; non-ingest profiles are rejected with 400.
 	ProfileID string `json:"profile_id"`
-	// JSON field "repo_name".
-	RepoName *string `json:"repo_name,omitempty"`
-	// JSON field "repos".
-	Repos *[]StartEnterpriseIngestionScanRequestReposItem `json:"repos,omitempty"`
+	// Full name of the repository to scan. Provide exactly one of repo_name or repos.
+	RepoName Optional[string] `json:"repo_name,omitempty"`
+	// Repositories covered by one scan; the first entry is the scan's primary repository. Provide exactly one of repo_name or repos.
+	Repos Optional[[]ScanRepoRequest] `json:"repos,omitempty"`
 }
 
-// OpenAPI schema StartOrganizationIngestionScanRequestEffort.
-type StartOrganizationIngestionScanRequestEffort string
-
-const (
-	// Value normal for StartOrganizationIngestionScanRequestEffort.
-	StartOrganizationIngestionScanRequestEffortNormal StartOrganizationIngestionScanRequestEffort = "normal"
-	// Value deep for StartOrganizationIngestionScanRequestEffort.
-	StartOrganizationIngestionScanRequestEffortDeep StartOrganizationIngestionScanRequestEffort = "deep"
-)
-
-// OpenAPI schema StartOrganizationIngestionScanRequestReposItem.
-type StartOrganizationIngestionScanRequestReposItem struct {
-	// JSON field "host".
-	Host *string `json:"host,omitempty"`
-	// JSON field "repo_name".
-	RepoName string `json:"repo_name"`
-}
-
-// OpenAPI schema StartOrganizationIngestionScanRequest.
-type StartOrganizationIngestionScanRequest struct {
-	// JSON field "attachment_urls".
-	AttachmentURLs *[]string `json:"attachment_urls,omitempty"`
-	// JSON field "effort".
-	Effort *StartOrganizationIngestionScanRequestEffort `json:"effort,omitempty"`
-	// JSON field "host".
-	Host *string `json:"host,omitempty"`
-	// JSON field "platform".
-	Platform *string `json:"platform,omitempty"`
-	// JSON field "profile_id".
-	ProfileID string `json:"profile_id"`
-	// JSON field "repo_name".
-	RepoName *string `json:"repo_name,omitempty"`
-	// JSON field "repos".
-	Repos *[]StartOrganizationIngestionScanRequestReposItem `json:"repos,omitempty"`
+// OpenAPI schema SubcategoryMetrics.
+type SubcategoryMetrics struct {
+	// JSON field "acus".
+	Acus float64 `json:"acus"`
+	// JSON field "display_name".
+	DisplayName string `json:"display_name"`
+	// JSON field "sessions_count".
+	SessionsCount int64 `json:"sessions_count"`
+	// JSON field "subcategory_id".
+	SubcategoryID *string `json:"subcategory_id"`
 }
 
 // OpenAPI schema TagsCreateRequest.
@@ -6482,9 +6843,6 @@ type TagsResponse struct {
 // “POST /builds“ body. Empty per spec; reserved for future fields.
 type TriggerBuildBody map[string]json.RawMessage
 
-// A response whose structure is not available in the captured documentation. Preserves any JSON value.
-type UndocumentedJSON = json.RawMessage
-
 // OpenAPI schema UpdateACULimitRequest.
 type UpdateACULimitRequest struct {
 	// JSON field "cycle_acu_limit".
@@ -6497,7 +6855,7 @@ type UpdateBlueprintContentsBody struct {
 	Contents string `json:"contents"`
 }
 
-// If set, switches the repo's blueprint source. Only accepted on the repo's root blueprint (scoped blueprints inherit it). 'git' pulls .devin/blueprint.yaml from the default branch (404 if absent) and cannot be combined with 'contents'; 'database' keeps the current YAML (or 'contents', if given) and stops syncing from the repo. No-op when the blueprint is already in that mode.
+// OpenAPI schema UpdateOrgBlueprintBodySource.
 type UpdateOrgBlueprintBodySource string
 
 const (
@@ -6519,6 +6877,18 @@ type UpdateOrgBlueprintBody struct {
 	ReportCheckRuns Optional[bool] `json:"report_check_runs,omitempty"`
 	// If set, switches the repo's blueprint source. Only accepted on the repo's root blueprint (scoped blueprints inherit it). 'git' pulls .devin/blueprint.yaml from the default branch (404 if absent) and cannot be combined with 'contents'; 'database' keeps the current YAML (or 'contents', if given) and stops syncing from the repo. No-op when the blueprint is already in that mode.
 	Source Optional[UpdateOrgBlueprintBodySource] `json:"source,omitempty"`
+}
+
+// OpenAPI schema UsageMetrics.
+type UsageMetrics struct {
+	// JSON field "prs_created_count".
+	PRsCreatedCount int64 `json:"prs_created_count"`
+	// JSON field "prs_merged_count".
+	PRsMergedCount int64 `json:"prs_merged_count"`
+	// JSON field "searches_count".
+	SearchesCount int64 `json:"searches_count"`
+	// JSON field "sessions_count".
+	SessionsCount int64 `json:"sessions_count"`
 }
 
 // OpenAPI schema User.
@@ -6545,4 +6915,34 @@ type UserBulkCreateRequest struct {
 type UserUpdateRoleRequest struct {
 	// JSON field "role_id".
 	RoleID string `json:"role_id"`
+}
+
+// User with both direct and IDP-group-derived role assignments.
+type UserWithIDPRoles struct {
+	// JSON field "email".
+	Email *string `json:"email"`
+	// JSON field "idp_role_assignments".
+	IDPRoleAssignments *[]IDPRoleAssignment `json:"idp_role_assignments,omitempty"`
+	// JSON field "name".
+	Name *string `json:"name"`
+	// JSON field "role_assignments".
+	RoleAssignments []RoleAssignment `json:"role_assignments"`
+	// JSON field "user_id".
+	UserID string `json:"user_id"`
+}
+
+// Identity information for an authenticated Windsurf session user.
+type WindsurfSessionUserSelf struct {
+	// Organization the caller's Devin Cloud sessions run in: the one named with x-cog-org-id, or without it the first organization visible to the user. Either way only an organization in which the user may use Devin sessions, and never an enterprise's primary organization. Null when there is none.
+	DevinSessionsOrgID Optional[string] `json:"devin_sessions_org_id,omitempty"`
+	// JSON field "org_id".
+	OrgID string `json:"org_id"`
+	// Organization the user's CLI and Desktop usage is billed to: the account's organization, or in an enterprise the user's primary billing organization. Null when there is none or the user may not use Devin sessions in it.
+	PrimaryBillingOrgID Optional[string] `json:"primary_billing_org_id,omitempty"`
+	// JSON field "principal_type".
+	PrincipalType string `json:"principal_type"`
+	// JSON field "user_id".
+	UserID string `json:"user_id"`
+	// JSON field "user_name".
+	UserName Optional[string] `json:"user_name,omitempty"`
 }

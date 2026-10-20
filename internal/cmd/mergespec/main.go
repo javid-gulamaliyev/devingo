@@ -37,11 +37,12 @@ func run() error {
 	}
 	for _, version := range []string{"v1", "v2", "v3"} {
 		paths, schemas := object{}, object{}
-		files := []string{"spec/" + version + ".documentation.openapi.json"}
+		// v3 comes from the official document alone; v1 and v2 are assembled from
+		// their reference pages plus the routes those pages left out.
+		files := []string{"spec/" + version + ".documentation.openapi.json", "spec/missing.openapi.json"}
 		if version == "v3" {
-			files = append([]string{"spec/v3.openapi.json"}, append(files, "spec/sessions.openapi.json")...)
+			files = []string{"spec/v3.openapi.json"}
 		}
-		files = append(files, "spec/missing.openapi.json")
 		for _, file := range files {
 			var doc object
 			if err := read(file, &doc); err != nil {
@@ -74,8 +75,7 @@ func run() error {
 				if existing, ok := schemas[name]; ok {
 					oldJSON, _ := json.Marshal(existing)
 					newJSON, _ := json.Marshal(value)
-					// The published provider definition is authoritative for ProblemDetail.
-					if string(oldJSON) != string(newJSON) && name != "ProblemDetail" {
+					if string(oldJSON) != string(newJSON) {
 						return fmt.Errorf("conflicting schema %s in %s", name, file)
 					}
 					continue

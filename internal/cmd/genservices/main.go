@@ -34,6 +34,7 @@ type schema struct {
 	OneOf                []*schema                  `json:"oneOf"`
 	AllOf                []*schema                  `json:"allOf"`
 	Properties           map[string]json.RawMessage `json:"properties"`
+	Required             []string                   `json:"required"`
 	AdditionalProperties json.RawMessage            `json:"additionalProperties"`
 }
 
@@ -216,7 +217,11 @@ func collectEndpoints(doc *document, cfg config) ([]*endpoint, error) {
 						ep.PathParams = append(ep.PathParams, p)
 					}
 				case "query":
-					ep.QueryParams = append(ep.QueryParams, p)
+					expanded, err := expandQueryObject(p, doc.Components.Schemas)
+					if err != nil {
+						return nil, fmt.Errorf("%s %s: %w", method, path, err)
+					}
+					ep.QueryParams = append(ep.QueryParams, expanded...)
 				case "header", "cookie":
 					return nil, fmt.Errorf("%s %s: unsupported %s parameter %q", method, path, p.In, p.Name)
 				}
@@ -285,6 +290,29 @@ func collectEndpoints(doc *document, cfg config) ([]*endpoint, error) {
 		used[key][ep.Method] = true
 	}
 	return endpoints, nil
+}
+
+// expandQueryObject turns a query parameter whose schema is an object (FastAPI
+// documents a Pydantic query model as one "qs" parameter) into one parameter per
+// property, which is how the server reads them off the URL.
+func expandQueryObject(p parameter, schemas map[string]*schema) ([]parameter, error) {
+	s := resolveSchema(p.Schema, schemas)
+	if s == nil || len(s.Properties) == 0 {
+		return []parameter{p}, nil
+	}
+	required := make(map[string]bool, len(s.Required))
+	for _, name := range s.Required {
+		required[name] = true
+	}
+	params := make([]parameter, 0, len(s.Properties))
+	for _, name := range sortedKeys(s.Properties) {
+		var property schema
+		if err := json.Unmarshal(s.Properties[name], &property); err != nil {
+			return nil, fmt.Errorf("query object %s property %s: %w", p.Name, name, err)
+		}
+		params = append(params, parameter{Name: name, In: "query", Required: required[name], Schema: &property})
+	}
+	return params, nil
 }
 
 func sortedKeys[V any](values map[string]V) []string {
@@ -364,7 +392,7 @@ func methodName(path, httpMethod, id, service, scope string) string {
 	}
 	if id != "" {
 		id = strings.TrimPrefix(id, "handle_")
-		for _, version := range []string{"_v1_", "_v2_", "_v3_"} {
+		for _, version := range []string{"_v1_", "_v2_", "_v3beta1_", "_v3_"} {
 			if before, _, found := strings.Cut(id, version); found {
 				id = before
 				break

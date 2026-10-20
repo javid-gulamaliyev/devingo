@@ -96,3 +96,50 @@ func TestLegacyBetaV2Scope(t *testing.T) {
 		t.Fatalf("legacy beta scope missing:\n%s", source)
 	}
 }
+
+func TestQueryObjectBecomesTypedFields(t *testing.T) {
+	const spec = `{
+  "paths": {
+    "/v3/organizations/{org_id}/sessions": {
+      "get": {
+        "operationId": "list_sessions_v3_organizations__org_id__sessions_get", "tags": ["sessions"],
+        "parameters": [
+          {"name":"org_id","in":"path","required":true,"schema":{"type":"string"}},
+          {"name":"qs","in":"query","required":true,"schema":{"$ref":"#/components/schemas/SessionsQueryParams"}}
+        ],
+        "responses":{"200":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Page"}}}}}
+      }
+    },
+    "/v3beta1/organizations/{org_id}/default-platform": {
+      "get": {
+        "operationId": "get_org_default_platform_v3beta1_organizations__org_id__default_platform_get", "tags": ["settings"],
+        "responses":{"200":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Platform"}}}}}
+      }
+    }
+  },
+  "components":{"schemas":{"SessionsQueryParams":{"type":"object","required":["first"],"properties":{
+    "first":{"type":"integer"},
+    "tags":{"anyOf":[{"type":"array","items":{"type":"string"}},{"type":"null"}]},
+    "updated_after":{"anyOf":[{"type":"integer"},{"type":"null"}]}
+  }}}}
+}`
+	source, _, err := generate([]byte(spec), config{Package: "devin"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(source)
+	for _, want := range []string{
+		"First        int64",
+		"Tags         []string",
+		"UpdatedAfter *int64",
+		`query.Add("tags", value)`,
+		"func (s OrgSettingsService) GetOrgDefaultPlatform(",
+	} {
+		if !strings.Contains(text, want) {
+			t.Errorf("generated source missing %q", want)
+		}
+	}
+	if strings.Contains(text, "Qs ") {
+		t.Error("query object was kept as a single parameter")
+	}
+}

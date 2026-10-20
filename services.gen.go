@@ -118,6 +118,7 @@ type EnterpriseClient struct {
 	Playbooks           EnterprisePlaybooksService
 	Queue               EnterpriseQueueService
 	Roles               EnterpriseRolesService
+	ServiceUserAPIKeys  EnterpriseServiceUserAPIKeysService
 	ServiceUsers        EnterpriseServiceUsersService
 	Sessions            EnterpriseSessionsService
 	SnapshotSetup       EnterpriseSnapshotSetupService
@@ -146,6 +147,7 @@ func (c *Client) Enterprise() *EnterpriseClient {
 	scope.Playbooks = EnterprisePlaybooksService{scope: scope}
 	scope.Queue = EnterpriseQueueService{scope: scope}
 	scope.Roles = EnterpriseRolesService{scope: scope}
+	scope.ServiceUserAPIKeys = EnterpriseServiceUserAPIKeysService{scope: scope}
 	scope.ServiceUsers = EnterpriseServiceUsersService{scope: scope}
 	scope.Sessions = EnterpriseSessionsService{scope: scope}
 	scope.SnapshotSetup = EnterpriseSnapshotSetupService{scope: scope}
@@ -210,6 +212,9 @@ type EnterpriseQueueService struct{ scope *EnterpriseClient }
 // EnterpriseRolesService provides Roles endpoints.
 type EnterpriseRolesService struct{ scope *EnterpriseClient }
 
+// EnterpriseServiceUserAPIKeysService provides ServiceUserAPIKeys endpoints.
+type EnterpriseServiceUserAPIKeysService struct{ scope *EnterpriseClient }
+
 // EnterpriseServiceUsersService provides ServiceUsers endpoints.
 type EnterpriseServiceUsersService struct{ scope *EnterpriseClient }
 
@@ -230,12 +235,12 @@ type EnterpriseAuditLogsListOptions struct {
 	TimeAfter  *int64
 	After      *string
 	First      *int64
-	Action     *string
+	Action     url.Values
 }
 
 // List List Audit Logs.
 // See https://docs.devin.ai/api-reference/v3/audit-logs/enterprise-audit-logs.
-func (s EnterpriseAuditLogsService) List(ctx context.Context, opts *EnterpriseAuditLogsListOptions) (*EnterpriseEnterpriseAuditLogsResponse, *Response, error) {
+func (s EnterpriseAuditLogsService) List(ctx context.Context, opts *EnterpriseAuditLogsListOptions) (*PaginatedResponseAuditLogResponse, *Response, error) {
 	path := "/v3/enterprise/audit-logs"
 	query := url.Values{}
 	if opts != nil {
@@ -257,11 +262,11 @@ func (s EnterpriseAuditLogsService) List(ctx context.Context, opts *EnterpriseAu
 		if opts.First != nil {
 			query.Set("first", strconv.FormatInt(*opts.First, 10))
 		}
-		if opts.Action != nil {
-			query.Set("action", *opts.Action)
+		for key, values := range opts.Action {
+			query[key] = append([]string(nil), values...)
 		}
 	}
-	result := new(EnterpriseEnterpriseAuditLogsResponse)
+	result := new(PaginatedResponseAuditLogResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -269,8 +274,8 @@ func (s EnterpriseAuditLogsService) List(ctx context.Context, opts *EnterpriseAu
 	return result, response, nil
 }
 
-// EnterpriseCodeScansEnterpriseEnterpriseCodeScansFindingsOptions configures query parameters for EnterpriseEnterpriseCodeScansFindings.
-type EnterpriseCodeScansEnterpriseEnterpriseCodeScansFindingsOptions struct {
+// EnterpriseCodeScansListCodeScanFindingsOptions configures query parameters for ListCodeScanFindings.
+type EnterpriseCodeScansListCodeScanFindingsOptions struct {
 	Extra         url.Values // Additional query parameters; typed fields take precedence.
 	After         *string
 	First         *int64
@@ -286,9 +291,9 @@ type EnterpriseCodeScansEnterpriseEnterpriseCodeScansFindingsOptions struct {
 	OrgIDs        []string
 }
 
-// EnterpriseEnterpriseCodeScansFindings List Code Scan Findings (Devin API).
+// ListCodeScanFindings List Code Scan Findings.
 // See https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-findings.
-func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansFindings(ctx context.Context, opts *EnterpriseCodeScansEnterpriseEnterpriseCodeScansFindingsOptions) (*EnterpriseEnterpriseCodeScansFindingsResponse, *Response, error) {
+func (s EnterpriseCodeScansService) ListCodeScanFindings(ctx context.Context, opts *EnterpriseCodeScansListCodeScanFindingsOptions) (*PaginatedResponseCodeScanFindingResponse, *Response, error) {
 	path := "/v3/enterprise/code-scans/findings"
 	query := url.Values{}
 	if opts != nil {
@@ -344,7 +349,7 @@ func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansFindings(ctx co
 			}
 		}
 	}
-	result := new(EnterpriseEnterpriseCodeScansFindingsResponse)
+	result := new(PaginatedResponseCodeScanFindingResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -352,17 +357,17 @@ func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansFindings(ctx co
 	return result, response, nil
 }
 
-// EnterpriseCodeScansEnterpriseEnterpriseCodeScansMetricsOptions configures query parameters for EnterpriseEnterpriseCodeScansMetrics.
-type EnterpriseCodeScansEnterpriseEnterpriseCodeScansMetricsOptions struct {
+// EnterpriseCodeScansGetCodeScanMetricsOptions configures query parameters for GetCodeScanMetrics.
+type EnterpriseCodeScansGetCodeScanMetricsOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore int64
 	TimeAfter  int64
 	OrgIDs     []string
 }
 
-// EnterpriseEnterpriseCodeScansMetrics Get Code Scan Metrics (Devin API).
+// GetCodeScanMetrics Get Code Scan Metrics.
 // See https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-metrics.
-func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansMetrics(ctx context.Context, opts *EnterpriseCodeScansEnterpriseEnterpriseCodeScansMetricsOptions) (*EnterpriseEnterpriseCodeScansMetricsResponse, *Response, error) {
+func (s EnterpriseCodeScansService) GetCodeScanMetrics(ctx context.Context, opts *EnterpriseCodeScansGetCodeScanMetricsOptions) (*CodeScanMetricsResponse, *Response, error) {
 	path := "/v3/enterprise/code-scans/metrics"
 	query := url.Values{}
 	if opts == nil {
@@ -381,7 +386,7 @@ func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansMetrics(ctx con
 			}
 		}
 	}
-	result := new(EnterpriseEnterpriseCodeScansMetricsResponse)
+	result := new(CodeScanMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -399,8 +404,7 @@ type EnterpriseCodeScansListCodeScanProfilesOptions struct {
 
 // ListCodeScanProfiles List Code Scan Profiles.
 // See https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-profiles.
-// Contract limitation: The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.
-func (s EnterpriseCodeScansService) ListCodeScanProfiles(ctx context.Context, opts *EnterpriseCodeScansListCodeScanProfilesOptions) (*UndocumentedJSON, *Response, error) {
+func (s EnterpriseCodeScansService) ListCodeScanProfiles(ctx context.Context, opts *EnterpriseCodeScansListCodeScanProfilesOptions) (*PaginatedResponseCodeScanProfileSummaryResponse, *Response, error) {
 	path := "/v3/enterprise/code-scans/profiles"
 	query := url.Values{}
 	if opts != nil {
@@ -420,7 +424,7 @@ func (s EnterpriseCodeScansService) ListCodeScanProfiles(ctx context.Context, op
 			}
 		}
 	}
-	result := new(UndocumentedJSON)
+	result := new(PaginatedResponseCodeScanProfileSummaryResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -428,14 +432,14 @@ func (s EnterpriseCodeScansService) ListCodeScanProfiles(ctx context.Context, op
 	return result, response, nil
 }
 
-// EnterpriseEnterpriseCodeScansProfile Get Code Scan Profile (Devin API).
+// GetCodeScanProfile Get Code Scan Profile.
 // See https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-profile.
-func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansProfile(ctx context.Context, profileID string) (*EnterpriseEnterpriseCodeScansProfileResponse, *Response, error) {
+func (s EnterpriseCodeScansService) GetCodeScanProfile(ctx context.Context, profileID string) (*CodeScanProfileDetailResponse, *Response, error) {
 	if profileID == "" {
 		return nil, nil, fmt.Errorf("devin: profile_id is required")
 	}
 	path := "/v3/enterprise/code-scans/profiles/" + url.PathEscape(profileID)
-	result := new(EnterpriseEnterpriseCodeScansProfileResponse)
+	result := new(CodeScanProfileDetailResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -443,8 +447,8 @@ func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansProfile(ctx con
 	return result, response, nil
 }
 
-// EnterpriseCodeScansEnterpriseEnterpriseCodeScansListOptions configures query parameters for EnterpriseEnterpriseCodeScansList.
-type EnterpriseCodeScansEnterpriseEnterpriseCodeScansListOptions struct {
+// EnterpriseCodeScansListCodeScansOptions configures query parameters for ListCodeScans.
+type EnterpriseCodeScansListCodeScansOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
@@ -454,9 +458,9 @@ type EnterpriseCodeScansEnterpriseEnterpriseCodeScansListOptions struct {
 	OrgIDs     []string
 }
 
-// EnterpriseEnterpriseCodeScansList List Code Scans (Devin API).
+// ListCodeScans List Code Scans.
 // See https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-list.
-func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansList(ctx context.Context, opts *EnterpriseCodeScansEnterpriseEnterpriseCodeScansListOptions) (*EnterpriseEnterpriseCodeScansListResponse, *Response, error) {
+func (s EnterpriseCodeScansService) ListCodeScans(ctx context.Context, opts *EnterpriseCodeScansListCodeScansOptions) (*PaginatedResponseCodeScanResponse, *Response, error) {
 	path := "/v3/enterprise/code-scans/scans"
 	query := url.Values{}
 	if opts != nil {
@@ -485,7 +489,7 @@ func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansList(ctx contex
 			}
 		}
 	}
-	result := new(EnterpriseEnterpriseCodeScansListResponse)
+	result := new(PaginatedResponseCodeScanResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -547,16 +551,16 @@ func (s EnterpriseACULimitsService) DeleteOrgDevinACULimit(ctx context.Context, 
 	return s.scope.client.Do(ctx, "DELETE", path, nil, nil, nil)
 }
 
-// EnterpriseConsumptionEnterpriseConsumptionCyclesOptions configures query parameters for EnterpriseConsumptionCycles.
-type EnterpriseConsumptionEnterpriseConsumptionCyclesOptions struct {
+// EnterpriseConsumptionGetConsumptionCyclesOptions configures query parameters for GetConsumptionCycles.
+type EnterpriseConsumptionGetConsumptionCyclesOptions struct {
 	Extra url.Values // Additional query parameters; typed fields take precedence.
 	After *string
 	First *int64
 }
 
-// EnterpriseConsumptionCycles List Consumption Cycles.
+// GetConsumptionCycles List Consumption Cycles.
 // See https://docs.devin.ai/api-reference/v3/consumption/consumption-cycles.
-func (s EnterpriseConsumptionService) EnterpriseConsumptionCycles(ctx context.Context, opts *EnterpriseConsumptionEnterpriseConsumptionCyclesOptions) (*EnterpriseConsumptionCyclesResponse, *Response, error) {
+func (s EnterpriseConsumptionService) GetConsumptionCycles(ctx context.Context, opts *EnterpriseConsumptionGetConsumptionCyclesOptions) (*PaginatedResponseConsumptionCycle, *Response, error) {
 	path := "/v3/enterprise/consumption/cycles"
 	query := url.Values{}
 	if opts != nil {
@@ -570,7 +574,7 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionCycles(ctx context.Co
 			query.Set("first", strconv.FormatInt(*opts.First, 10))
 		}
 	}
-	result := new(EnterpriseConsumptionCyclesResponse)
+	result := new(PaginatedResponseConsumptionCycle)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -578,16 +582,16 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionCycles(ctx context.Co
 	return result, response, nil
 }
 
-// EnterpriseConsumptionEnterpriseConsumptionDailyOptions configures query parameters for EnterpriseConsumptionDaily.
-type EnterpriseConsumptionEnterpriseConsumptionDailyOptions struct {
+// EnterpriseConsumptionGetConsumptionDailyOptions configures query parameters for GetConsumptionDaily.
+type EnterpriseConsumptionGetConsumptionDailyOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// EnterpriseConsumptionDaily Get Daily Consumption.
+// GetConsumptionDaily Get Daily Consumption.
 // See https://docs.devin.ai/api-reference/v3/consumption/consumption-daily.
-func (s EnterpriseConsumptionService) EnterpriseConsumptionDaily(ctx context.Context, opts *EnterpriseConsumptionEnterpriseConsumptionDailyOptions) (*EnterpriseConsumptionDailyResponse, *Response, error) {
+func (s EnterpriseConsumptionService) GetConsumptionDaily(ctx context.Context, opts *EnterpriseConsumptionGetConsumptionDailyOptions) (*ConsumptionResponse, *Response, error) {
 	path := "/v3/enterprise/consumption/daily"
 	query := url.Values{}
 	if opts != nil {
@@ -601,7 +605,7 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionDaily(ctx context.Con
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(EnterpriseConsumptionDailyResponse)
+	result := new(ConsumptionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -609,16 +613,16 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionDaily(ctx context.Con
 	return result, response, nil
 }
 
-// EnterpriseConsumptionEnterpriseConsumptionDailyOrganizationsOptions configures query parameters for EnterpriseConsumptionDailyOrganizations.
-type EnterpriseConsumptionEnterpriseConsumptionDailyOrganizationsOptions struct {
+// EnterpriseConsumptionGetOrgConsumptionDailyOptions configures query parameters for GetOrgConsumptionDaily.
+type EnterpriseConsumptionGetOrgConsumptionDailyOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// EnterpriseConsumptionDailyOrganizations Get Organization Daily Consumption.
+// GetOrgConsumptionDaily Get Organization Daily Consumption.
 // See https://docs.devin.ai/api-reference/v3/consumption/consumption-daily-organizations.
-func (s EnterpriseConsumptionService) EnterpriseConsumptionDailyOrganizations(ctx context.Context, orgID string, opts *EnterpriseConsumptionEnterpriseConsumptionDailyOrganizationsOptions) (*EnterpriseConsumptionDailyOrganizationsResponse, *Response, error) {
+func (s EnterpriseConsumptionService) GetOrgConsumptionDaily(ctx context.Context, orgID string, opts *EnterpriseConsumptionGetOrgConsumptionDailyOptions) (*ConsumptionResponse, *Response, error) {
 	if orgID == "" {
 		return nil, nil, fmt.Errorf("devin: org_id is required")
 	}
@@ -635,7 +639,7 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionDailyOrganizations(ct
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(EnterpriseConsumptionDailyOrganizationsResponse)
+	result := new(ConsumptionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -643,16 +647,16 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionDailyOrganizations(ct
 	return result, response, nil
 }
 
-// EnterpriseConsumptionEnterpriseConsumptionDailyServiceUsersOptions configures query parameters for EnterpriseConsumptionDailyServiceUsers.
-type EnterpriseConsumptionEnterpriseConsumptionDailyServiceUsersOptions struct {
+// EnterpriseConsumptionGetServiceUserConsumptionDailyOptions configures query parameters for GetServiceUserConsumptionDaily.
+type EnterpriseConsumptionGetServiceUserConsumptionDailyOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// EnterpriseConsumptionDailyServiceUsers Get Service User Daily Consumption.
+// GetServiceUserConsumptionDaily Get Service User Daily Consumption.
 // See https://docs.devin.ai/api-reference/v3/consumption/consumption-daily-service-users.
-func (s EnterpriseConsumptionService) EnterpriseConsumptionDailyServiceUsers(ctx context.Context, serviceUserID string, opts *EnterpriseConsumptionEnterpriseConsumptionDailyServiceUsersOptions) (*EnterpriseConsumptionDailyServiceUsersResponse, *Response, error) {
+func (s EnterpriseConsumptionService) GetServiceUserConsumptionDaily(ctx context.Context, serviceUserID string, opts *EnterpriseConsumptionGetServiceUserConsumptionDailyOptions) (*ConsumptionResponse, *Response, error) {
 	if serviceUserID == "" {
 		return nil, nil, fmt.Errorf("devin: service_user_id is required")
 	}
@@ -669,7 +673,7 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionDailyServiceUsers(ctx
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(EnterpriseConsumptionDailyServiceUsersResponse)
+	result := new(ConsumptionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -677,16 +681,16 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionDailyServiceUsers(ctx
 	return result, response, nil
 }
 
-// EnterpriseConsumptionEnterpriseConsumptionDailySessionsOptions configures query parameters for EnterpriseConsumptionDailySessions.
-type EnterpriseConsumptionEnterpriseConsumptionDailySessionsOptions struct {
+// EnterpriseConsumptionGetSessionConsumptionDailyOptions configures query parameters for GetSessionConsumptionDaily.
+type EnterpriseConsumptionGetSessionConsumptionDailyOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// EnterpriseConsumptionDailySessions Get Session Daily Consumption.
+// GetSessionConsumptionDaily Get Session Daily Consumption.
 // See https://docs.devin.ai/api-reference/v3/consumption/consumption-daily-sessions.
-func (s EnterpriseConsumptionService) EnterpriseConsumptionDailySessions(ctx context.Context, sessionID string, opts *EnterpriseConsumptionEnterpriseConsumptionDailySessionsOptions) (*EnterpriseConsumptionDailySessionsResponse, *Response, error) {
+func (s EnterpriseConsumptionService) GetSessionConsumptionDaily(ctx context.Context, sessionID string, opts *EnterpriseConsumptionGetSessionConsumptionDailyOptions) (*ConsumptionResponse, *Response, error) {
 	if sessionID == "" {
 		return nil, nil, fmt.Errorf("devin: session_id is required")
 	}
@@ -703,7 +707,7 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionDailySessions(ctx con
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(EnterpriseConsumptionDailySessionsResponse)
+	result := new(ConsumptionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -711,16 +715,16 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionDailySessions(ctx con
 	return result, response, nil
 }
 
-// EnterpriseConsumptionEnterpriseConsumptionDailyUsersOptions configures query parameters for EnterpriseConsumptionDailyUsers.
-type EnterpriseConsumptionEnterpriseConsumptionDailyUsersOptions struct {
+// EnterpriseConsumptionGetUserConsumptionDailyOptions configures query parameters for GetUserConsumptionDaily.
+type EnterpriseConsumptionGetUserConsumptionDailyOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// EnterpriseConsumptionDailyUsers Get User Daily Consumption.
+// GetUserConsumptionDaily Get User Daily Consumption.
 // See https://docs.devin.ai/api-reference/v3/consumption/consumption-daily-users.
-func (s EnterpriseConsumptionService) EnterpriseConsumptionDailyUsers(ctx context.Context, userID string, opts *EnterpriseConsumptionEnterpriseConsumptionDailyUsersOptions) (*EnterpriseConsumptionDailyUsersResponse, *Response, error) {
+func (s EnterpriseConsumptionService) GetUserConsumptionDaily(ctx context.Context, userID string, opts *EnterpriseConsumptionGetUserConsumptionDailyOptions) (*ConsumptionResponse, *Response, error) {
 	if userID == "" {
 		return nil, nil, fmt.Errorf("devin: user_id is required")
 	}
@@ -737,7 +741,7 @@ func (s EnterpriseConsumptionService) EnterpriseConsumptionDailyUsers(ctx contex
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(EnterpriseConsumptionDailyUsersResponse)
+	result := new(ConsumptionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -824,7 +828,7 @@ type EnterpriseHypervisorsListOptions struct {
 
 // List List Hypervisors.
 // See https://docs.devin.ai/api-reference/v3/hypervisors/hypervisors.
-func (s EnterpriseHypervisorsService) List(ctx context.Context, opts *EnterpriseHypervisorsListOptions) (*EnterpriseHypervisorsResponse, *Response, error) {
+func (s EnterpriseHypervisorsService) List(ctx context.Context, opts *EnterpriseHypervisorsListOptions) (*PaginatedResponseHypervisorResponse, *Response, error) {
 	path := "/v3/enterprise/hypervisors"
 	query := url.Values{}
 	if opts != nil {
@@ -841,7 +845,7 @@ func (s EnterpriseHypervisorsService) List(ctx context.Context, opts *Enterprise
 			query.Set("status", *opts.Status)
 		}
 	}
-	result := new(EnterpriseHypervisorsResponse)
+	result := new(PaginatedResponseHypervisorResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1417,8 +1421,8 @@ func (s EnterpriseUsersService) Delete(ctx context.Context, userID string) (*Use
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseMetricsActiveUsersOptions configures query parameters for EnterpriseMetricsActiveUsers.
-type EnterpriseMetricsEnterpriseMetricsActiveUsersOptions struct {
+// EnterpriseMetricsGetActiveUsersMetricsOptions configures query parameters for GetActiveUsersMetrics.
+type EnterpriseMetricsGetActiveUsersMetricsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore  int64
 	TimeAfter   int64
@@ -1427,9 +1431,9 @@ type EnterpriseMetricsEnterpriseMetricsActiveUsersOptions struct {
 	MinSearches *int64
 }
 
-// EnterpriseMetricsActiveUsers Get Active Users for Custom Date Range.
+// GetActiveUsersMetrics Get Active Users for Custom Date Range.
 // See https://docs.devin.ai/api-reference/v3/metrics/metrics-active-users.
-func (s EnterpriseMetricsService) EnterpriseMetricsActiveUsers(ctx context.Context, opts *EnterpriseMetricsEnterpriseMetricsActiveUsersOptions) (*EnterpriseMetricsActiveUsersResponse, *Response, error) {
+func (s EnterpriseMetricsService) GetActiveUsersMetrics(ctx context.Context, opts *EnterpriseMetricsGetActiveUsersMetricsOptions) (*ActiveUserMetricsResponse, *Response, error) {
 	path := "/v3/enterprise/metrics/active-users"
 	query := url.Values{}
 	if opts == nil {
@@ -1454,7 +1458,7 @@ func (s EnterpriseMetricsService) EnterpriseMetricsActiveUsers(ctx context.Conte
 			query.Set("min_searches", strconv.FormatInt(*opts.MinSearches, 10))
 		}
 	}
-	result := new(EnterpriseMetricsActiveUsersResponse)
+	result := new(ActiveUserMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1462,8 +1466,8 @@ func (s EnterpriseMetricsService) EnterpriseMetricsActiveUsers(ctx context.Conte
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseMetricsDauOptions configures query parameters for EnterpriseMetricsDau.
-type EnterpriseMetricsEnterpriseMetricsDauOptions struct {
+// EnterpriseMetricsGetDauMetricsOptions configures query parameters for GetDauMetrics.
+type EnterpriseMetricsGetDauMetricsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore  int64
 	TimeAfter   int64
@@ -1472,9 +1476,9 @@ type EnterpriseMetricsEnterpriseMetricsDauOptions struct {
 	MinSearches *int64
 }
 
-// EnterpriseMetricsDau Get Daily Active Users.
+// GetDauMetrics Get Daily Active Users.
 // See https://docs.devin.ai/api-reference/v3/metrics/metrics-dau.
-func (s EnterpriseMetricsService) EnterpriseMetricsDau(ctx context.Context, opts *EnterpriseMetricsEnterpriseMetricsDauOptions) (*EnterpriseMetricsDauResponse, *Response, error) {
+func (s EnterpriseMetricsService) GetDauMetrics(ctx context.Context, opts *EnterpriseMetricsGetDauMetricsOptions) (*ActiveUserMetricsListResponse, *Response, error) {
 	path := "/v3/enterprise/metrics/dau"
 	query := url.Values{}
 	if opts == nil {
@@ -1499,7 +1503,7 @@ func (s EnterpriseMetricsService) EnterpriseMetricsDau(ctx context.Context, opts
 			query.Set("min_searches", strconv.FormatInt(*opts.MinSearches, 10))
 		}
 	}
-	result := new(EnterpriseMetricsDauResponse)
+	result := new(ActiveUserMetricsListResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1507,8 +1511,8 @@ func (s EnterpriseMetricsService) EnterpriseMetricsDau(ctx context.Context, opts
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseMetricsMauOptions configures query parameters for EnterpriseMetricsMau.
-type EnterpriseMetricsEnterpriseMetricsMauOptions struct {
+// EnterpriseMetricsGetMauMetricsOptions configures query parameters for GetMauMetrics.
+type EnterpriseMetricsGetMauMetricsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore  int64
 	TimeAfter   int64
@@ -1517,9 +1521,9 @@ type EnterpriseMetricsEnterpriseMetricsMauOptions struct {
 	MinSearches *int64
 }
 
-// EnterpriseMetricsMau Get Monthly Active Users.
+// GetMauMetrics Get Monthly Active Users.
 // See https://docs.devin.ai/api-reference/v3/metrics/metrics-mau.
-func (s EnterpriseMetricsService) EnterpriseMetricsMau(ctx context.Context, opts *EnterpriseMetricsEnterpriseMetricsMauOptions) (*EnterpriseMetricsMauResponse, *Response, error) {
+func (s EnterpriseMetricsService) GetMauMetrics(ctx context.Context, opts *EnterpriseMetricsGetMauMetricsOptions) (*ActiveUserMetricsListResponse, *Response, error) {
 	path := "/v3/enterprise/metrics/mau"
 	query := url.Values{}
 	if opts == nil {
@@ -1544,7 +1548,7 @@ func (s EnterpriseMetricsService) EnterpriseMetricsMau(ctx context.Context, opts
 			query.Set("min_searches", strconv.FormatInt(*opts.MinSearches, 10))
 		}
 	}
-	result := new(EnterpriseMetricsMauResponse)
+	result := new(ActiveUserMetricsListResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1552,8 +1556,8 @@ func (s EnterpriseMetricsService) EnterpriseMetricsMau(ctx context.Context, opts
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseMetricsPRsOptions configures query parameters for EnterpriseMetricsPRs.
-type EnterpriseMetricsEnterpriseMetricsPRsOptions struct {
+// EnterpriseMetricsGetPRMetricsOptions configures query parameters for GetPRMetrics.
+type EnterpriseMetricsGetPRMetricsOptions struct {
 	Extra          url.Values // Additional query parameters; typed fields take precedence.
 	UserIDs        []string
 	ServiceUserIDs []string
@@ -1563,9 +1567,9 @@ type EnterpriseMetricsEnterpriseMetricsPRsOptions struct {
 	PlaybookID     *string
 }
 
-// EnterpriseMetricsPRs Get PR Metrics.
+// GetPRMetrics Get PR Metrics.
 // See https://docs.devin.ai/api-reference/v3/metrics/metrics-prs.
-func (s EnterpriseMetricsService) EnterpriseMetricsPRs(ctx context.Context, opts *EnterpriseMetricsEnterpriseMetricsPRsOptions) (*EnterpriseMetricsPRsResponse, *Response, error) {
+func (s EnterpriseMetricsService) GetPRMetrics(ctx context.Context, opts *EnterpriseMetricsGetPRMetricsOptions) (*PRMetricsResponse, *Response, error) {
 	path := "/v3/enterprise/metrics/prs"
 	query := url.Values{}
 	if opts == nil {
@@ -1599,7 +1603,7 @@ func (s EnterpriseMetricsService) EnterpriseMetricsPRs(ctx context.Context, opts
 			query.Set("playbook_id", *opts.PlaybookID)
 		}
 	}
-	result := new(EnterpriseMetricsPRsResponse)
+	result := new(PRMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1607,17 +1611,17 @@ func (s EnterpriseMetricsService) EnterpriseMetricsPRs(ctx context.Context, opts
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseMetricsSearchesOptions configures query parameters for EnterpriseMetricsSearches.
-type EnterpriseMetricsEnterpriseMetricsSearchesOptions struct {
+// EnterpriseMetricsSearchMetricsOptions configures query parameters for SearchMetrics.
+type EnterpriseMetricsSearchMetricsOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore int64
 	TimeAfter  int64
 	OrgIDs     []string
 }
 
-// EnterpriseMetricsSearches Get Search Metrics.
+// SearchMetrics Get Search Metrics.
 // See https://docs.devin.ai/api-reference/v3/metrics/metrics-searches.
-func (s EnterpriseMetricsService) EnterpriseMetricsSearches(ctx context.Context, opts *EnterpriseMetricsEnterpriseMetricsSearchesOptions) (*EnterpriseMetricsSearchesResponse, *Response, error) {
+func (s EnterpriseMetricsService) SearchMetrics(ctx context.Context, opts *EnterpriseMetricsSearchMetricsOptions) (*SearchMetricsResponse, *Response, error) {
 	path := "/v3/enterprise/metrics/searches"
 	query := url.Values{}
 	if opts == nil {
@@ -1636,7 +1640,7 @@ func (s EnterpriseMetricsService) EnterpriseMetricsSearches(ctx context.Context,
 			}
 		}
 	}
-	result := new(EnterpriseMetricsSearchesResponse)
+	result := new(SearchMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1644,8 +1648,8 @@ func (s EnterpriseMetricsService) EnterpriseMetricsSearches(ctx context.Context,
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseMetricsSessionsOptions configures query parameters for EnterpriseMetricsSessions.
-type EnterpriseMetricsEnterpriseMetricsSessionsOptions struct {
+// EnterpriseMetricsGetSessionMetricsOptions configures query parameters for GetSessionMetrics.
+type EnterpriseMetricsGetSessionMetricsOptions struct {
 	Extra          url.Values // Additional query parameters; typed fields take precedence.
 	UserIDs        []string
 	ServiceUserIDs []string
@@ -1655,9 +1659,9 @@ type EnterpriseMetricsEnterpriseMetricsSessionsOptions struct {
 	PlaybookID     *string
 }
 
-// EnterpriseMetricsSessions Get Session Metrics.
+// GetSessionMetrics Get Session Metrics.
 // See https://docs.devin.ai/api-reference/v3/metrics/metrics-sessions.
-func (s EnterpriseMetricsService) EnterpriseMetricsSessions(ctx context.Context, opts *EnterpriseMetricsEnterpriseMetricsSessionsOptions) (*EnterpriseMetricsSessionsResponse, *Response, error) {
+func (s EnterpriseMetricsService) GetSessionMetrics(ctx context.Context, opts *EnterpriseMetricsGetSessionMetricsOptions) (*SessionMetricsResponse, *Response, error) {
 	path := "/v3/enterprise/metrics/sessions"
 	query := url.Values{}
 	if opts == nil {
@@ -1691,7 +1695,7 @@ func (s EnterpriseMetricsService) EnterpriseMetricsSessions(ctx context.Context,
 			query.Set("playbook_id", *opts.PlaybookID)
 		}
 	}
-	result := new(EnterpriseMetricsSessionsResponse)
+	result := new(SessionMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1699,17 +1703,17 @@ func (s EnterpriseMetricsService) EnterpriseMetricsSessions(ctx context.Context,
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseMetricsSessionsByCategoryOptions configures query parameters for EnterpriseMetricsSessionsByCategory.
-type EnterpriseMetricsEnterpriseMetricsSessionsByCategoryOptions struct {
+// EnterpriseMetricsGetSessionsByCategoryOptions configures query parameters for GetSessionsByCategory.
+type EnterpriseMetricsGetSessionsByCategoryOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore int64
 	TimeAfter  int64
 	OrgIDs     []string
 }
 
-// EnterpriseMetricsSessionsByCategory Get Session Metrics by Category.
+// GetSessionsByCategory Get Session Metrics by Category.
 // See https://docs.devin.ai/api-reference/v3/metrics/metrics-sessions-by-category.
-func (s EnterpriseMetricsService) EnterpriseMetricsSessionsByCategory(ctx context.Context, opts *EnterpriseMetricsEnterpriseMetricsSessionsByCategoryOptions) (*EnterpriseMetricsSessionsByCategoryResponse, *Response, error) {
+func (s EnterpriseMetricsService) GetSessionsByCategory(ctx context.Context, opts *EnterpriseMetricsGetSessionsByCategoryOptions) (*SessionsByCategoryResponse, *Response, error) {
 	path := "/v3/enterprise/metrics/sessions-by-category"
 	query := url.Values{}
 	if opts == nil {
@@ -1728,7 +1732,7 @@ func (s EnterpriseMetricsService) EnterpriseMetricsSessionsByCategory(ctx contex
 			}
 		}
 	}
-	result := new(EnterpriseMetricsSessionsByCategoryResponse)
+	result := new(SessionsByCategoryResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1736,16 +1740,16 @@ func (s EnterpriseMetricsService) EnterpriseMetricsSessionsByCategory(ctx contex
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseMetricsUsageOptions configures query parameters for EnterpriseMetricsUsage.
-type EnterpriseMetricsEnterpriseMetricsUsageOptions struct {
+// EnterpriseMetricsGetUsageMetricsOptions configures query parameters for GetUsageMetrics.
+type EnterpriseMetricsGetUsageMetricsOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// EnterpriseMetricsUsage Get Usage Metrics.
+// GetUsageMetrics Get Usage Metrics.
 // See https://docs.devin.ai/api-reference/v3/metrics/metrics-usage.
-func (s EnterpriseMetricsService) EnterpriseMetricsUsage(ctx context.Context, opts *EnterpriseMetricsEnterpriseMetricsUsageOptions) (*EnterpriseMetricsUsageResponse, *Response, error) {
+func (s EnterpriseMetricsService) GetUsageMetrics(ctx context.Context, opts *EnterpriseMetricsGetUsageMetricsOptions) (*UsageMetrics, *Response, error) {
 	path := "/v3/enterprise/metrics/usage"
 	query := url.Values{}
 	if opts != nil {
@@ -1759,7 +1763,7 @@ func (s EnterpriseMetricsService) EnterpriseMetricsUsage(ctx context.Context, op
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(EnterpriseMetricsUsageResponse)
+	result := new(UsageMetrics)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1767,8 +1771,8 @@ func (s EnterpriseMetricsService) EnterpriseMetricsUsage(ctx context.Context, op
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseMetricsWauOptions configures query parameters for EnterpriseMetricsWau.
-type EnterpriseMetricsEnterpriseMetricsWauOptions struct {
+// EnterpriseMetricsGetWauMetricsOptions configures query parameters for GetWauMetrics.
+type EnterpriseMetricsGetWauMetricsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore  int64
 	TimeAfter   int64
@@ -1777,9 +1781,9 @@ type EnterpriseMetricsEnterpriseMetricsWauOptions struct {
 	MinSearches *int64
 }
 
-// EnterpriseMetricsWau Get Weekly Active Users.
+// GetWauMetrics Get Weekly Active Users.
 // See https://docs.devin.ai/api-reference/v3/metrics/metrics-wau.
-func (s EnterpriseMetricsService) EnterpriseMetricsWau(ctx context.Context, opts *EnterpriseMetricsEnterpriseMetricsWauOptions) (*EnterpriseMetricsWauResponse, *Response, error) {
+func (s EnterpriseMetricsService) GetWauMetrics(ctx context.Context, opts *EnterpriseMetricsGetWauMetricsOptions) (*ActiveUserMetricsListResponse, *Response, error) {
 	path := "/v3/enterprise/metrics/wau"
 	query := url.Values{}
 	if opts == nil {
@@ -1804,7 +1808,7 @@ func (s EnterpriseMetricsService) EnterpriseMetricsWau(ctx context.Context, opts
 			query.Set("min_searches", strconv.FormatInt(*opts.MinSearches, 10))
 		}
 	}
-	result := new(EnterpriseMetricsWauResponse)
+	result := new(ActiveUserMetricsListResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1933,20 +1937,20 @@ func (s EnterpriseOrganizationsService) Delete(ctx context.Context, orgID string
 	return result, response, nil
 }
 
-// EnterpriseAuditLogsEnterpriseOrganizationsAuditLogsOptions configures query parameters for EnterpriseOrganizationsAuditLogs.
-type EnterpriseAuditLogsEnterpriseOrganizationsAuditLogsOptions struct {
+// EnterpriseAuditLogsGetOrgAuditLogsOptions configures query parameters for GetOrgAuditLogs.
+type EnterpriseAuditLogsGetOrgAuditLogsOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	Order      *string
 	TimeBefore *int64
 	TimeAfter  *int64
 	After      *string
 	First      *int64
-	Action     *string
+	Action     url.Values
 }
 
-// EnterpriseOrganizationsAuditLogs List Organization Audit Logs.
+// GetOrgAuditLogs List Organization Audit Logs.
 // See https://docs.devin.ai/api-reference/v3/audit-logs/organizations-audit-logs.
-func (s EnterpriseAuditLogsService) EnterpriseOrganizationsAuditLogs(ctx context.Context, orgID string, opts *EnterpriseAuditLogsEnterpriseOrganizationsAuditLogsOptions) (*EnterpriseOrganizationsAuditLogsResponse, *Response, error) {
+func (s EnterpriseAuditLogsService) GetOrgAuditLogs(ctx context.Context, orgID string, opts *EnterpriseAuditLogsGetOrgAuditLogsOptions) (*PaginatedResponseAuditLogResponse, *Response, error) {
 	if orgID == "" {
 		return nil, nil, fmt.Errorf("devin: org_id is required")
 	}
@@ -1971,11 +1975,11 @@ func (s EnterpriseAuditLogsService) EnterpriseOrganizationsAuditLogs(ctx context
 		if opts.First != nil {
 			query.Set("first", strconv.FormatInt(*opts.First, 10))
 		}
-		if opts.Action != nil {
-			query.Set("action", *opts.Action)
+		for key, values := range opts.Action {
+			query[key] = append([]string(nil), values...)
 		}
 	}
-	result := new(EnterpriseOrganizationsAuditLogsResponse)
+	result := new(PaginatedResponseAuditLogResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -1983,9 +1987,9 @@ func (s EnterpriseAuditLogsService) EnterpriseOrganizationsAuditLogs(ctx context
 	return result, response, nil
 }
 
-// Create Start Code Scan (Devin API).
+// Create Start Code Scan.
 // See https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-start.
-func (s EnterpriseCodeScansService) Create(ctx context.Context, orgID string, request *EnterpriseEnterpriseCodeScansStartRequest) (*EnterpriseEnterpriseCodeScansStartResponse, *Response, error) {
+func (s EnterpriseCodeScansService) Create(ctx context.Context, orgID string, request *CodeScanCreateRequest) (*CodeScanResponse, *Response, error) {
 	if orgID == "" {
 		return nil, nil, fmt.Errorf("devin: org_id is required")
 	}
@@ -1993,7 +1997,7 @@ func (s EnterpriseCodeScansService) Create(ctx context.Context, orgID string, re
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans"
-	result := new(EnterpriseEnterpriseCodeScansStartResponse)
+	result := new(CodeScanResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -2001,10 +2005,9 @@ func (s EnterpriseCodeScansService) Create(ctx context.Context, orgID string, re
 	return result, response, nil
 }
 
-// StartIngestionScanEnterprise Start Ingestion Scan (Enterprise).
+// StartIngestionScan Start Ingestion Scan.
 // See https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-start-ingestion.
-// Contract limitation: The docs list these request fields and require profile_id, but the full schema page is inaccessible. Exactly one of repo_name or repos is required; cross-field constraints are documented in the operation description.
-func (s EnterpriseCodeScansService) StartIngestionScanEnterprise(ctx context.Context, orgID string, request *StartEnterpriseIngestionScanRequest) (*UndocumentedJSON, *Response, error) {
+func (s EnterpriseCodeScansService) StartIngestionScan(ctx context.Context, orgID string, request *StartIngestionScanRequest) (*CodeScanResponse, *Response, error) {
 	if orgID == "" {
 		return nil, nil, fmt.Errorf("devin: org_id is required")
 	}
@@ -2012,7 +2015,7 @@ func (s EnterpriseCodeScansService) StartIngestionScanEnterprise(ctx context.Con
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans/ingestion"
-	result := new(UndocumentedJSON)
+	result := new(CodeScanResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -2020,9 +2023,103 @@ func (s EnterpriseCodeScansService) StartIngestionScanEnterprise(ctx context.Con
 	return result, response, nil
 }
 
-// EnterpriseEnterpriseCodeScansRemediate Remediate Code Scan Finding (Devin API).
+// Get Get Code Scan.
+// See https://docs.devin.ai/v3-openapi.json#handle_get_code_scan_v3_enterprise_organizations__org_id__code_scans__scan_id__get.
+func (s EnterpriseCodeScansService) Get(ctx context.Context, orgID string, scanID string) (*CodeScanResponse, *Response, error) {
+	if orgID == "" {
+		return nil, nil, fmt.Errorf("devin: org_id is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans/" + url.PathEscape(scanID)
+	result := new(CodeScanResponse)
+	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// CreateAutoScanSchedule Create Auto-Scan Schedule.
+// See https://docs.devin.ai/v3-openapi.json#handle_create_auto_scan_schedule_v3_enterprise_organizations__org_id__code_scans__scan_id__auto_scan_post.
+func (s EnterpriseCodeScansService) CreateAutoScanSchedule(ctx context.Context, orgID string, scanID string, request *AutoScanScheduleCreateRequest) (*AutoScanScheduleResponse, *Response, error) {
+	if orgID == "" {
+		return nil, nil, fmt.Errorf("devin: org_id is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	if request == nil {
+		return nil, nil, fmt.Errorf("devin: request is required")
+	}
+	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans/" + url.PathEscape(scanID) + "/auto-scan"
+	result := new(AutoScanScheduleResponse)
+	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// DeleteAutoScanSchedule Delete Auto-Scan Schedule.
+// See https://docs.devin.ai/v3-openapi.json#handle_delete_auto_scan_schedule_v3_enterprise_organizations__org_id__code_scans__scan_id__auto_scan_delete.
+func (s EnterpriseCodeScansService) DeleteAutoScanSchedule(ctx context.Context, orgID string, scanID string) (*Response, error) {
+	if orgID == "" {
+		return nil, fmt.Errorf("devin: org_id is required")
+	}
+	if scanID == "" {
+		return nil, fmt.Errorf("devin: scan_id is required")
+	}
+	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans/" + url.PathEscape(scanID) + "/auto-scan"
+	return s.scope.client.Do(ctx, "DELETE", path, nil, nil, nil)
+}
+
+// UpdateCodeScanEffort Update Code Scan Effort.
+// See https://docs.devin.ai/v3-openapi.json#handle_update_code_scan_effort_v3_enterprise_organizations__org_id__code_scans__scan_id__effort_put.
+func (s EnterpriseCodeScansService) UpdateCodeScanEffort(ctx context.Context, orgID string, scanID string, request *CodeScanEffortUpdateRequest) (*CodeScanEffortResponse, *Response, error) {
+	if orgID == "" {
+		return nil, nil, fmt.Errorf("devin: org_id is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	if request == nil {
+		return nil, nil, fmt.Errorf("devin: request is required")
+	}
+	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans/" + url.PathEscape(scanID) + "/effort"
+	result := new(CodeScanEffortResponse)
+	response, err := s.scope.client.Do(ctx, "PUT", path, nil, request, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// RemediateCodeScanFindings Remediate Code Scan Findings.
+// See https://docs.devin.ai/v3-openapi.json#handle_remediate_code_scan_findings_v3_enterprise_organizations__org_id__code_scans__scan_id__findings_remediate_post.
+func (s EnterpriseCodeScansService) RemediateCodeScanFindings(ctx context.Context, orgID string, scanID string, request *RemediateFindingsRequest) (*RemediateFindingsResponse, *Response, error) {
+	if orgID == "" {
+		return nil, nil, fmt.Errorf("devin: org_id is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	if request == nil {
+		return nil, nil, fmt.Errorf("devin: request is required")
+	}
+	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans/" + url.PathEscape(scanID) + "/findings/remediate"
+	result := new(RemediateFindingsResponse)
+	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// RemediateCodeScanFinding Remediate Code Scan Finding.
 // See https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-remediate.
-func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansRemediate(ctx context.Context, orgID string, scanID string, findingID string) (*EnterpriseEnterpriseCodeScansRemediateResponse, *Response, error) {
+func (s EnterpriseCodeScansService) RemediateCodeScanFinding(ctx context.Context, orgID string, scanID string, findingID string) (*RemediateFindingResponse, *Response, error) {
 	if orgID == "" {
 		return nil, nil, fmt.Errorf("devin: org_id is required")
 	}
@@ -2033,7 +2130,46 @@ func (s EnterpriseCodeScansService) EnterpriseEnterpriseCodeScansRemediate(ctx c
 		return nil, nil, fmt.Errorf("devin: finding_id is required")
 	}
 	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans/" + url.PathEscape(scanID) + "/findings/" + url.PathEscape(findingID) + "/remediate"
-	result := new(EnterpriseEnterpriseCodeScansRemediateResponse)
+	result := new(RemediateFindingResponse)
+	response, err := s.scope.client.Do(ctx, "POST", path, nil, nil, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// SwitchCodeScanProfile Switch Code Scan Profile.
+// See https://docs.devin.ai/v3-openapi.json#handle_switch_code_scan_profile_v3_enterprise_organizations__org_id__code_scans__scan_id__profile_put.
+func (s EnterpriseCodeScansService) SwitchCodeScanProfile(ctx context.Context, orgID string, scanID string, request *CodeScanProfileSwitchRequest) (*CodeScanProfileSwitchResponse, *Response, error) {
+	if orgID == "" {
+		return nil, nil, fmt.Errorf("devin: org_id is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	if request == nil {
+		return nil, nil, fmt.Errorf("devin: request is required")
+	}
+	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans/" + url.PathEscape(scanID) + "/profile"
+	result := new(CodeScanProfileSwitchResponse)
+	response, err := s.scope.client.Do(ctx, "PUT", path, nil, request, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// ScanNewCommits Scan New Commits.
+// See https://docs.devin.ai/v3-openapi.json#handle_scan_new_commits_v3_enterprise_organizations__org_id__code_scans__scan_id__scan_new_commits_post.
+func (s EnterpriseCodeScansService) ScanNewCommits(ctx context.Context, orgID string, scanID string) (*ScanNewCommitsResponse, *Response, error) {
+	if orgID == "" {
+		return nil, nil, fmt.Errorf("devin: org_id is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	path := "/v3/enterprise/organizations/" + url.PathEscape(orgID) + "/code-scans/" + url.PathEscape(scanID) + "/scan-new-commits"
+	result := new(ScanNewCommitsResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -2511,16 +2647,16 @@ func (s EnterpriseUsersService) RemoveOrganizationUser(ctx context.Context, orgI
 	return result, response, nil
 }
 
-// EnterpriseMetricsEnterpriseOrganizationsMetricsUsageOptions configures query parameters for EnterpriseOrganizationsMetricsUsage.
-type EnterpriseMetricsEnterpriseOrganizationsMetricsUsageOptions struct {
+// EnterpriseMetricsGetOrganizationUsageMetricsOptions configures query parameters for GetOrganizationUsageMetrics.
+type EnterpriseMetricsGetOrganizationUsageMetricsOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// EnterpriseOrganizationsMetricsUsage Get Organization Usage Metrics.
+// GetOrganizationUsageMetrics Get Organization Usage Metrics.
 // See https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-usage.
-func (s EnterpriseMetricsService) EnterpriseOrganizationsMetricsUsage(ctx context.Context, orgID string, opts *EnterpriseMetricsEnterpriseOrganizationsMetricsUsageOptions) (*EnterpriseOrganizationsMetricsUsageResponse, *Response, error) {
+func (s EnterpriseMetricsService) GetOrganizationUsageMetrics(ctx context.Context, orgID string, opts *EnterpriseMetricsGetOrganizationUsageMetricsOptions) (*UsageMetrics, *Response, error) {
 	if orgID == "" {
 		return nil, nil, fmt.Errorf("devin: org_id is required")
 	}
@@ -2537,7 +2673,7 @@ func (s EnterpriseMetricsService) EnterpriseOrganizationsMetricsUsage(ctx contex
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(EnterpriseOrganizationsMetricsUsageResponse)
+	result := new(UsageMetrics)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -2780,7 +2916,7 @@ type EnterprisePRReviewsListOptions struct {
 
 // List Get latest Devin Review status.
 // See https://docs.devin.ai/api-reference/v3/pr-reviews/get-enterprise-pr-reviews.
-func (s EnterprisePRReviewsService) List(ctx context.Context, opts *EnterprisePRReviewsListOptions) (*EnterpriseGetEnterprisePRReviewsResponse, *Response, error) {
+func (s EnterprisePRReviewsService) List(ctx context.Context, opts *EnterprisePRReviewsListOptions) (*PRReviewResponse, *Response, error) {
 	path := "/v3/enterprise/pr-reviews"
 	query := url.Values{}
 	if opts == nil {
@@ -2798,7 +2934,7 @@ func (s EnterprisePRReviewsService) List(ctx context.Context, opts *EnterprisePR
 			query.Set("commit_sha", *opts.CommitSha)
 		}
 	}
-	result := new(EnterpriseGetEnterprisePRReviewsResponse)
+	result := new(PRReviewResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -2808,12 +2944,12 @@ func (s EnterprisePRReviewsService) List(ctx context.Context, opts *EnterprisePR
 
 // Create Trigger Devin Review.
 // See https://docs.devin.ai/api-reference/v3/pr-reviews/post-enterprise-pr-reviews.
-func (s EnterprisePRReviewsService) Create(ctx context.Context, request *EnterprisePostEnterprisePRReviewsRequest) (*EnterprisePostEnterprisePRReviewsResponse, *Response, error) {
+func (s EnterprisePRReviewsService) Create(ctx context.Context, request *PRReviewCreateRequest) (*PRReviewResponse, *Response, error) {
 	if request == nil {
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/enterprise/pr-reviews"
-	result := new(EnterprisePostEnterprisePRReviewsResponse)
+	result := new(PRReviewResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -2823,9 +2959,9 @@ func (s EnterprisePRReviewsService) Create(ctx context.Context, request *Enterpr
 
 // List Get Queue.
 // See https://docs.devin.ai/api-reference/v3/queue/enterprise-queue.
-func (s EnterpriseQueueService) List(ctx context.Context) (*EnterpriseEnterpriseQueueResponse, *Response, error) {
+func (s EnterpriseQueueService) List(ctx context.Context) (*QueueResponse, *Response, error) {
 	path := "/v3/enterprise/queue"
-	result := new(EnterpriseEnterpriseQueueResponse)
+	result := new(QueueResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -2906,7 +3042,7 @@ type EnterpriseSessionsListOptions struct {
 
 // List List sessions for account.
 // See https://docs.devin.ai/api-reference/v3/sessions/enterprise-sessions.
-func (s EnterpriseSessionsService) List(ctx context.Context, opts *EnterpriseSessionsListOptions) (*PaginatedSessionResponse, *Response, error) {
+func (s EnterpriseSessionsService) List(ctx context.Context, opts *EnterpriseSessionsListOptions) (*PaginatedResponseSessionResponse, *Response, error) {
 	path := "/v3/enterprise/sessions"
 	query := url.Values{}
 	if opts != nil {
@@ -2998,7 +3134,7 @@ func (s EnterpriseSessionsService) List(ctx context.Context, opts *EnterpriseSes
 			query.Set("include_deleted_orgs", strconv.FormatBool(*opts.IncludeDeletedOrgs))
 		}
 	}
-	result := new(PaginatedSessionResponse)
+	result := new(PaginatedResponseSessionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3006,8 +3142,8 @@ func (s EnterpriseSessionsService) List(ctx context.Context, opts *EnterpriseSes
 	return result, response, nil
 }
 
-// EnterpriseSessionsListSessionsWithInsightsOptions configures query parameters for ListSessionsWithInsights.
-type EnterpriseSessionsListSessionsWithInsightsOptions struct {
+// EnterpriseSessionsGetAccountSessionsInsightsOptions configures query parameters for GetAccountSessionsInsights.
+type EnterpriseSessionsGetAccountSessionsInsightsOptions struct {
 	Extra              url.Values // Additional query parameters; typed fields take precedence.
 	After              *string
 	First              *int64
@@ -3031,9 +3167,9 @@ type EnterpriseSessionsListSessionsWithInsightsOptions struct {
 	IncludeDeletedOrgs *bool
 }
 
-// ListSessionsWithInsights List sessions with insights.
+// GetAccountSessionsInsights List sessions with insights.
 // See https://docs.devin.ai/api-reference/v3/sessions/enterprise-sessions-insights.
-func (s EnterpriseSessionsService) ListSessionsWithInsights(ctx context.Context, opts *EnterpriseSessionsListSessionsWithInsightsOptions) (*PaginatedSessionInsightsResponse, *Response, error) {
+func (s EnterpriseSessionsService) GetAccountSessionsInsights(ctx context.Context, opts *EnterpriseSessionsGetAccountSessionsInsightsOptions) (*PaginatedResponseSessionInsightsResponse, *Response, error) {
 	path := "/v3/enterprise/sessions/insights"
 	query := url.Values{}
 	if opts != nil {
@@ -3125,7 +3261,7 @@ func (s EnterpriseSessionsService) ListSessionsWithInsights(ctx context.Context,
 			query.Set("include_deleted_orgs", strconv.FormatBool(*opts.IncludeDeletedOrgs))
 		}
 	}
-	result := new(PaginatedSessionInsightsResponse)
+	result := new(PaginatedResponseSessionInsightsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3133,76 +3269,137 @@ func (s EnterpriseSessionsService) ListSessionsWithInsights(ctx context.Context,
 	return result, response, nil
 }
 
+// EnterpriseSessionsGetOptions configures query parameters for Get.
+type EnterpriseSessionsGetOptions struct {
+	Extra url.Values // Additional query parameters; typed fields take precedence.
+	OrgID *string
+}
+
 // Get Get session details.
 // See https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session.
-func (s EnterpriseSessionsService) Get(ctx context.Context, devinID string) (*SessionResponse, *Response, error) {
+func (s EnterpriseSessionsService) Get(ctx context.Context, devinID string, opts *EnterpriseSessionsGetOptions) (*SessionResponse, *Response, error) {
 	if devinID == "" {
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
 	path := "/v3/enterprise/sessions/" + url.PathEscape(devinID)
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.OrgID != nil {
+			query.Set("org_id", *opts.OrgID)
+		}
+	}
 	result := new(SessionResponse)
-	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
+	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
 	}
 	return result, response, nil
 }
 
-// ListSessionAttachments List session attachments.
+// EnterpriseSessionsGetAccountSessionAttachmentsOptions configures query parameters for GetAccountSessionAttachments.
+type EnterpriseSessionsGetAccountSessionAttachmentsOptions struct {
+	Extra url.Values // Additional query parameters; typed fields take precedence.
+	OrgID *string
+}
+
+// GetAccountSessionAttachments List session attachments.
 // See https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session-attachments.
-func (s EnterpriseSessionsService) ListSessionAttachments(ctx context.Context, devinID string) (*[]SessionAttachment, *Response, error) {
+func (s EnterpriseSessionsService) GetAccountSessionAttachments(ctx context.Context, devinID string, opts *EnterpriseSessionsGetAccountSessionAttachmentsOptions) (*[]SessionAttachment, *Response, error) {
 	if devinID == "" {
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
 	path := "/v3/enterprise/sessions/" + url.PathEscape(devinID) + "/attachments"
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.OrgID != nil {
+			query.Set("org_id", *opts.OrgID)
+		}
+	}
 	result := new([]SessionAttachment)
-	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
+	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
 	}
 	return result, response, nil
 }
 
-// GetSessionInsights Get session insights.
+// EnterpriseSessionsGetAccountSessionInsightsOptions configures query parameters for GetAccountSessionInsights.
+type EnterpriseSessionsGetAccountSessionInsightsOptions struct {
+	Extra url.Values // Additional query parameters; typed fields take precedence.
+	OrgID *string
+}
+
+// GetAccountSessionInsights Get session insights.
 // See https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session-insights.
-func (s EnterpriseSessionsService) GetSessionInsights(ctx context.Context, devinID string) (*SessionInsightsResponse, *Response, error) {
+func (s EnterpriseSessionsService) GetAccountSessionInsights(ctx context.Context, devinID string, opts *EnterpriseSessionsGetAccountSessionInsightsOptions) (*SessionInsightsResponse, *Response, error) {
 	if devinID == "" {
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
 	path := "/v3/enterprise/sessions/" + url.PathEscape(devinID) + "/insights"
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.OrgID != nil {
+			query.Set("org_id", *opts.OrgID)
+		}
+	}
 	result := new(SessionInsightsResponse)
-	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
+	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
 	}
 	return result, response, nil
 }
 
-// PostGenerateSessionInsights Generate session insights.
+// EnterpriseSessionsGenerateAccountSessionInsightsOptions configures query parameters for GenerateAccountSessionInsights.
+type EnterpriseSessionsGenerateAccountSessionInsightsOptions struct {
+	Extra url.Values // Additional query parameters; typed fields take precedence.
+	OrgID *string
+}
+
+// GenerateAccountSessionInsights Generate session insights.
 // See https://docs.devin.ai/api-reference/v3/sessions/post-enterprise-session-insights-generate.
-func (s EnterpriseSessionsService) PostGenerateSessionInsights(ctx context.Context, devinID string) (*InsightsGenerationResponse, *Response, error) {
+func (s EnterpriseSessionsService) GenerateAccountSessionInsights(ctx context.Context, devinID string, opts *EnterpriseSessionsGenerateAccountSessionInsightsOptions) (*SessionInsightsGenerateResponse, *Response, error) {
 	if devinID == "" {
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
 	path := "/v3/enterprise/sessions/" + url.PathEscape(devinID) + "/insights/generate"
-	result := new(InsightsGenerationResponse)
-	response, err := s.scope.client.Do(ctx, "POST", path, nil, nil, result)
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.OrgID != nil {
+			query.Set("org_id", *opts.OrgID)
+		}
+	}
+	result := new(SessionInsightsGenerateResponse)
+	response, err := s.scope.client.Do(ctx, "POST", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
 	}
 	return result, response, nil
 }
 
-// EnterpriseSessionsListSessionMessagesOptions configures query parameters for ListSessionMessages.
-type EnterpriseSessionsListSessionMessagesOptions struct {
+// EnterpriseSessionsGetAccountSessionMessagesOptions configures query parameters for GetAccountSessionMessages.
+type EnterpriseSessionsGetAccountSessionMessagesOptions struct {
 	Extra url.Values // Additional query parameters; typed fields take precedence.
 	After *string
 	First *int64
+	OrgID *string
 }
 
-// ListSessionMessages List session messages.
+// GetAccountSessionMessages List session messages.
 // See https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session-messages.
-func (s EnterpriseSessionsService) ListSessionMessages(ctx context.Context, devinID string, opts *EnterpriseSessionsListSessionMessagesOptions) (*PaginatedSessionMessages, *Response, error) {
+func (s EnterpriseSessionsService) GetAccountSessionMessages(ctx context.Context, devinID string, opts *EnterpriseSessionsGetAccountSessionMessagesOptions) (*PaginatedResponseSessionMessage, *Response, error) {
 	if devinID == "" {
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
@@ -3218,8 +3415,11 @@ func (s EnterpriseSessionsService) ListSessionMessages(ctx context.Context, devi
 		if opts.First != nil {
 			query.Set("first", strconv.FormatInt(*opts.First, 10))
 		}
+		if opts.OrgID != nil {
+			query.Set("org_id", *opts.OrgID)
+		}
 	}
-	result := new(PaginatedSessionMessages)
+	result := new(PaginatedResponseSessionMessage)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3227,9 +3427,15 @@ func (s EnterpriseSessionsService) ListSessionMessages(ctx context.Context, devi
 	return result, response, nil
 }
 
-// SendAMessageToASession Send a message to a session.
+// EnterpriseSessionsPostAccountSessionMessageOptions configures query parameters for PostAccountSessionMessage.
+type EnterpriseSessionsPostAccountSessionMessageOptions struct {
+	Extra url.Values // Additional query parameters; typed fields take precedence.
+	OrgID *string
+}
+
+// PostAccountSessionMessage Send a message to a session.
 // See https://docs.devin.ai/api-reference/v3/sessions/post-enterprise-sessions-messages.
-func (s EnterpriseSessionsService) SendAMessageToASession(ctx context.Context, devinID string, request *SendSessionMessageRequest) (*SessionResponse, *Response, error) {
+func (s EnterpriseSessionsService) PostAccountSessionMessage(ctx context.Context, devinID string, request *SessionMessageCreateRequest, opts *EnterpriseSessionsPostAccountSessionMessageOptions) (*SessionResponse, *Response, error) {
 	if devinID == "" {
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
@@ -3237,32 +3443,62 @@ func (s EnterpriseSessionsService) SendAMessageToASession(ctx context.Context, d
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/enterprise/sessions/" + url.PathEscape(devinID) + "/messages"
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.OrgID != nil {
+			query.Set("org_id", *opts.OrgID)
+		}
+	}
 	result := new(SessionResponse)
-	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
+	response, err := s.scope.client.Do(ctx, "POST", path, query, request, result)
 	if err != nil {
 		return nil, response, err
 	}
 	return result, response, nil
 }
 
-// GetSessionTags Get session tags.
+// EnterpriseSessionsGetAccountSessionTagsOptions configures query parameters for GetAccountSessionTags.
+type EnterpriseSessionsGetAccountSessionTagsOptions struct {
+	Extra url.Values // Additional query parameters; typed fields take precedence.
+	OrgID *string
+}
+
+// GetAccountSessionTags Get session tags.
 // See https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session-tags.
-func (s EnterpriseSessionsService) GetSessionTags(ctx context.Context, devinID string) (*SessionTags, *Response, error) {
+func (s EnterpriseSessionsService) GetAccountSessionTags(ctx context.Context, devinID string, opts *EnterpriseSessionsGetAccountSessionTagsOptions) (*SessionTagsResponse, *Response, error) {
 	if devinID == "" {
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
 	path := "/v3/enterprise/sessions/" + url.PathEscape(devinID) + "/tags"
-	result := new(SessionTags)
-	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.OrgID != nil {
+			query.Set("org_id", *opts.OrgID)
+		}
+	}
+	result := new(SessionTagsResponse)
+	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
 	}
 	return result, response, nil
 }
 
-// AppendSessionTags Append session tags.
+// EnterpriseSessionsAppendAccountSessionTagsOptions configures query parameters for AppendAccountSessionTags.
+type EnterpriseSessionsAppendAccountSessionTagsOptions struct {
+	Extra url.Values // Additional query parameters; typed fields take precedence.
+	OrgID *string
+}
+
+// AppendAccountSessionTags Append session tags.
 // See https://docs.devin.ai/api-reference/v3/sessions/post-enterprise-session-tags.
-func (s EnterpriseSessionsService) AppendSessionTags(ctx context.Context, devinID string, request *SessionTagsInput) (*SessionTags, *Response, error) {
+func (s EnterpriseSessionsService) AppendAccountSessionTags(ctx context.Context, devinID string, request *SessionTagsUpdateRequest, opts *EnterpriseSessionsAppendAccountSessionTagsOptions) (*SessionTagsResponse, *Response, error) {
 	if devinID == "" {
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
@@ -3270,17 +3506,32 @@ func (s EnterpriseSessionsService) AppendSessionTags(ctx context.Context, devinI
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/enterprise/sessions/" + url.PathEscape(devinID) + "/tags"
-	result := new(SessionTags)
-	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.OrgID != nil {
+			query.Set("org_id", *opts.OrgID)
+		}
+	}
+	result := new(SessionTagsResponse)
+	response, err := s.scope.client.Do(ctx, "POST", path, query, request, result)
 	if err != nil {
 		return nil, response, err
 	}
 	return result, response, nil
 }
 
-// ReplaceSessionTags Replace session tags.
+// EnterpriseSessionsReplaceAccountSessionTagsOptions configures query parameters for ReplaceAccountSessionTags.
+type EnterpriseSessionsReplaceAccountSessionTagsOptions struct {
+	Extra url.Values // Additional query parameters; typed fields take precedence.
+	OrgID *string
+}
+
+// ReplaceAccountSessionTags Replace session tags.
 // See https://docs.devin.ai/api-reference/v3/sessions/put-enterprise-session-tags.
-func (s EnterpriseSessionsService) ReplaceSessionTags(ctx context.Context, devinID string, request *SessionTagsInput) (*SessionTags, *Response, error) {
+func (s EnterpriseSessionsService) ReplaceAccountSessionTags(ctx context.Context, devinID string, request *SessionTagsUpdateRequest, opts *EnterpriseSessionsReplaceAccountSessionTagsOptions) (*SessionTagsResponse, *Response, error) {
 	if devinID == "" {
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
@@ -3288,8 +3539,17 @@ func (s EnterpriseSessionsService) ReplaceSessionTags(ctx context.Context, devin
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/enterprise/sessions/" + url.PathEscape(devinID) + "/tags"
-	result := new(SessionTags)
-	response, err := s.scope.client.Do(ctx, "PUT", path, nil, request, result)
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.OrgID != nil {
+			query.Set("org_id", *opts.OrgID)
+		}
+	}
+	result := new(SessionTagsResponse)
+	response, err := s.scope.client.Do(ctx, "PUT", path, query, request, result)
 	if err != nil {
 		return nil, response, err
 	}
@@ -3448,7 +3708,7 @@ func (s EnterpriseSnapshotSetupService) DeleteEnterpriseBlueprintFile(ctx contex
 
 // Upload Upload an attachment.
 // See https://docs.devin.ai/api-reference/v3/attachments/post-organizations-attachments.
-func (s OrgAttachmentsService) Upload(ctx context.Context, file *Upload) (*AttachmentUploadResponse, *Response, error) {
+func (s OrgAttachmentsService) Upload(ctx context.Context, file *Upload) (*AttachmentResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3456,7 +3716,7 @@ func (s OrgAttachmentsService) Upload(ctx context.Context, file *Upload) (*Attac
 		return nil, nil, fmt.Errorf("devin: file is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/attachments"
-	result := new(AttachmentUploadResponse)
+	result := new(AttachmentResponse)
 	response, err := s.scope.client.Upload(ctx, "POST", path, nil, nil, "file", file, result)
 	if err != nil {
 		return nil, response, err
@@ -3657,9 +3917,9 @@ func (s OrgAutomationsService) Delete(ctx context.Context, automationID string) 
 	return result, response, nil
 }
 
-// Create Start Code Scan (Devin API).
+// Create Start Code Scan.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-start.
-func (s OrgCodeScansService) Create(ctx context.Context, request *OrgOrganizationsCodeScansStartRequest) (*OrgOrganizationsCodeScansStartResponse, *Response, error) {
+func (s OrgCodeScansService) Create(ctx context.Context, request *OrgCodeScanCreateRequest) (*CodeScanResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3667,7 +3927,7 @@ func (s OrgCodeScansService) Create(ctx context.Context, request *OrgOrganizatio
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans"
-	result := new(OrgOrganizationsCodeScansStartResponse)
+	result := new(CodeScanResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -3675,20 +3935,25 @@ func (s OrgCodeScansService) Create(ctx context.Context, request *OrgOrganizatio
 	return result, response, nil
 }
 
-// OrgCodeScansListCodeScanFindingsOrganizationOptions configures query parameters for ListCodeScanFindingsOrganization.
-type OrgCodeScansListCodeScanFindingsOrganizationOptions struct {
-	Extra    url.Values // Additional query parameters; typed fields take precedence.
-	ScanID   *string
-	Severity *string
-	Status   *string
-	After    *string
-	First    *int64
+// OrgCodeScansListCodeScanFindingsOptions configures query parameters for ListCodeScanFindings.
+type OrgCodeScansListCodeScanFindingsOptions struct {
+	Extra         url.Values // Additional query parameters; typed fields take precedence.
+	After         *string
+	First         *int64
+	ScanID        *string
+	RepoName      *string
+	Severity      []string
+	Status        []string
+	Payoff        []string
+	CreatedAfter  *int64
+	CreatedBefore *int64
+	UpdatedAfter  *int64
+	UpdatedBefore *int64
 }
 
-// ListCodeScanFindingsOrganization List Code Scan Findings (Organization).
+// ListCodeScanFindings List Code Scan Findings.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-findings.
-// Contract limitation: The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.
-func (s OrgCodeScansService) ListCodeScanFindingsOrganization(ctx context.Context, opts *OrgCodeScansListCodeScanFindingsOrganizationOptions) (*UndocumentedJSON, *Response, error) {
+func (s OrgCodeScansService) ListCodeScanFindings(ctx context.Context, opts *OrgCodeScansListCodeScanFindingsOptions) (*PaginatedResponseCodeScanFindingResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3698,23 +3963,50 @@ func (s OrgCodeScansService) ListCodeScanFindingsOrganization(ctx context.Contex
 		for key, values := range opts.Extra {
 			query[key] = append([]string(nil), values...)
 		}
-		if opts.ScanID != nil {
-			query.Set("scan_id", *opts.ScanID)
-		}
-		if opts.Severity != nil {
-			query.Set("severity", *opts.Severity)
-		}
-		if opts.Status != nil {
-			query.Set("status", *opts.Status)
-		}
 		if opts.After != nil {
 			query.Set("after", *opts.After)
 		}
 		if opts.First != nil {
 			query.Set("first", strconv.FormatInt(*opts.First, 10))
 		}
+		if opts.ScanID != nil {
+			query.Set("scan_id", *opts.ScanID)
+		}
+		if opts.RepoName != nil {
+			query.Set("repo_name", *opts.RepoName)
+		}
+		if opts.Severity != nil {
+			delete(query, "severity")
+			for _, value := range opts.Severity {
+				query.Add("severity", value)
+			}
+		}
+		if opts.Status != nil {
+			delete(query, "status")
+			for _, value := range opts.Status {
+				query.Add("status", value)
+			}
+		}
+		if opts.Payoff != nil {
+			delete(query, "payoff")
+			for _, value := range opts.Payoff {
+				query.Add("payoff", value)
+			}
+		}
+		if opts.CreatedAfter != nil {
+			query.Set("created_after", strconv.FormatInt(*opts.CreatedAfter, 10))
+		}
+		if opts.CreatedBefore != nil {
+			query.Set("created_before", strconv.FormatInt(*opts.CreatedBefore, 10))
+		}
+		if opts.UpdatedAfter != nil {
+			query.Set("updated_after", strconv.FormatInt(*opts.UpdatedAfter, 10))
+		}
+		if opts.UpdatedBefore != nil {
+			query.Set("updated_before", strconv.FormatInt(*opts.UpdatedBefore, 10))
+		}
 	}
-	result := new(UndocumentedJSON)
+	result := new(PaginatedResponseCodeScanFindingResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3722,10 +4014,9 @@ func (s OrgCodeScansService) ListCodeScanFindingsOrganization(ctx context.Contex
 	return result, response, nil
 }
 
-// StartIngestionScanOrganization Start Ingestion Scan (Organization).
+// StartIngestionScan Start Ingestion Scan.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-start-ingestion.
-// Contract limitation: The docs list these request fields and require profile_id, but the full schema page is inaccessible. Exactly one of repo_name or repos is required; cross-field constraints are documented in the operation description.
-func (s OrgCodeScansService) StartIngestionScanOrganization(ctx context.Context, request *StartOrganizationIngestionScanRequest) (*UndocumentedJSON, *Response, error) {
+func (s OrgCodeScansService) StartIngestionScan(ctx context.Context, request *StartIngestionScanRequest) (*CodeScanResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3733,7 +4024,7 @@ func (s OrgCodeScansService) StartIngestionScanOrganization(ctx context.Context,
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/ingestion"
-	result := new(UndocumentedJSON)
+	result := new(CodeScanResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -3741,17 +4032,16 @@ func (s OrgCodeScansService) StartIngestionScanOrganization(ctx context.Context,
 	return result, response, nil
 }
 
-// OrgCodeScansGetCodeScanMetricsOrganizationOptions configures query parameters for GetCodeScanMetricsOrganization.
-type OrgCodeScansGetCodeScanMetricsOrganizationOptions struct {
+// OrgCodeScansGetCodeScanMetricsOptions configures query parameters for GetCodeScanMetrics.
+type OrgCodeScansGetCodeScanMetricsOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
-	TimeAfter  int64
 	TimeBefore int64
+	TimeAfter  int64
 }
 
-// GetCodeScanMetricsOrganization Get Code Scan Metrics (Organization).
+// GetCodeScanMetrics Get Code Scan Metrics.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-metrics.
-// Contract limitation: The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.
-func (s OrgCodeScansService) GetCodeScanMetricsOrganization(ctx context.Context, opts *OrgCodeScansGetCodeScanMetricsOrganizationOptions) (*UndocumentedJSON, *Response, error) {
+func (s OrgCodeScansService) GetCodeScanMetrics(ctx context.Context, opts *OrgCodeScansGetCodeScanMetricsOptions) (*CodeScanMetricsResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3764,10 +4054,10 @@ func (s OrgCodeScansService) GetCodeScanMetricsOrganization(ctx context.Context,
 		for key, values := range opts.Extra {
 			query[key] = append([]string(nil), values...)
 		}
-		query.Set("time_after", strconv.FormatInt(opts.TimeAfter, 10))
 		query.Set("time_before", strconv.FormatInt(opts.TimeBefore, 10))
+		query.Set("time_after", strconv.FormatInt(opts.TimeAfter, 10))
 	}
-	result := new(UndocumentedJSON)
+	result := new(CodeScanMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3775,16 +4065,16 @@ func (s OrgCodeScansService) GetCodeScanMetricsOrganization(ctx context.Context,
 	return result, response, nil
 }
 
-// OrgCodeScansOrgOrganizationsCodeScansProfilesOptions configures query parameters for OrgOrganizationsCodeScansProfiles.
-type OrgCodeScansOrgOrganizationsCodeScansProfilesOptions struct {
+// OrgCodeScansListCodeScanProfilesOptions configures query parameters for ListCodeScanProfiles.
+type OrgCodeScansListCodeScanProfilesOptions struct {
 	Extra url.Values // Additional query parameters; typed fields take precedence.
 	After *string
 	First *int64
 }
 
-// OrgOrganizationsCodeScansProfiles List Code Scan Profiles (Devin API).
+// ListCodeScanProfiles List Code Scan Profiles.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-profiles.
-func (s OrgCodeScansService) OrgOrganizationsCodeScansProfiles(ctx context.Context, opts *OrgCodeScansOrgOrganizationsCodeScansProfilesOptions) (*OrgOrganizationsCodeScansProfilesResponse, *Response, error) {
+func (s OrgCodeScansService) ListCodeScanProfiles(ctx context.Context, opts *OrgCodeScansListCodeScanProfilesOptions) (*PaginatedResponseCodeScanProfileSummaryResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3801,7 +4091,7 @@ func (s OrgCodeScansService) OrgOrganizationsCodeScansProfiles(ctx context.Conte
 			query.Set("first", strconv.FormatInt(*opts.First, 10))
 		}
 	}
-	result := new(OrgOrganizationsCodeScansProfilesResponse)
+	result := new(PaginatedResponseCodeScanProfileSummaryResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3809,10 +4099,9 @@ func (s OrgCodeScansService) OrgOrganizationsCodeScansProfiles(ctx context.Conte
 	return result, response, nil
 }
 
-// GetCodeScanProfileOrganization Get Code Scan Profile (Organization).
+// GetCodeScanProfile Get Code Scan Profile.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-profile.
-// Contract limitation: The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.
-func (s OrgCodeScansService) GetCodeScanProfileOrganization(ctx context.Context, profileID string) (*UndocumentedJSON, *Response, error) {
+func (s OrgCodeScansService) GetCodeScanProfile(ctx context.Context, profileID string) (*CodeScanProfileDetailResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3820,7 +4109,7 @@ func (s OrgCodeScansService) GetCodeScanProfileOrganization(ctx context.Context,
 		return nil, nil, fmt.Errorf("devin: profile_id is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/profiles/" + url.PathEscape(profileID)
-	result := new(UndocumentedJSON)
+	result := new(CodeScanProfileDetailResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3828,8 +4117,8 @@ func (s OrgCodeScansService) GetCodeScanProfileOrganization(ctx context.Context,
 	return result, response, nil
 }
 
-// OrgCodeScansOrgOrganizationsCodeScansListOptions configures query parameters for OrgOrganizationsCodeScansList.
-type OrgCodeScansOrgOrganizationsCodeScansListOptions struct {
+// OrgCodeScansListCodeScansOptions configures query parameters for ListCodeScans.
+type OrgCodeScansListCodeScansOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
@@ -3838,9 +4127,9 @@ type OrgCodeScansOrgOrganizationsCodeScansListOptions struct {
 	RepoName   *string
 }
 
-// OrgOrganizationsCodeScansList List Code Scans (Devin API).
+// ListCodeScans List Code Scans.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-list.
-func (s OrgCodeScansService) OrgOrganizationsCodeScansList(ctx context.Context, opts *OrgCodeScansOrgOrganizationsCodeScansListOptions) (*OrgOrganizationsCodeScansListResponse, *Response, error) {
+func (s OrgCodeScansService) ListCodeScans(ctx context.Context, opts *OrgCodeScansListCodeScansOptions) (*PaginatedResponseCodeScanResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3866,7 +4155,7 @@ func (s OrgCodeScansService) OrgOrganizationsCodeScansList(ctx context.Context, 
 			query.Set("repo_name", *opts.RepoName)
 		}
 	}
-	result := new(OrgOrganizationsCodeScansListResponse)
+	result := new(PaginatedResponseCodeScanResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3874,9 +4163,103 @@ func (s OrgCodeScansService) OrgOrganizationsCodeScansList(ctx context.Context, 
 	return result, response, nil
 }
 
-// OrgOrganizationsCodeScansRemediate Remediate Code Scan Finding (Devin API).
+// Get Get Code Scan.
+// See https://docs.devin.ai/v3-openapi.json#handle_get_code_scan_v3_organizations__org_id__code_scans__scan_id__get.
+func (s OrgCodeScansService) Get(ctx context.Context, scanID string) (*CodeScanResponse, *Response, error) {
+	if s.scope.orgID == "" {
+		return nil, nil, fmt.Errorf("devin: organization ID is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/" + url.PathEscape(scanID)
+	result := new(CodeScanResponse)
+	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// CreateAutoScanSchedule Create Auto-Scan Schedule.
+// See https://docs.devin.ai/v3-openapi.json#handle_create_auto_scan_schedule_v3_organizations__org_id__code_scans__scan_id__auto_scan_post.
+func (s OrgCodeScansService) CreateAutoScanSchedule(ctx context.Context, scanID string, request *AutoScanScheduleCreateRequest) (*AutoScanScheduleResponse, *Response, error) {
+	if s.scope.orgID == "" {
+		return nil, nil, fmt.Errorf("devin: organization ID is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	if request == nil {
+		return nil, nil, fmt.Errorf("devin: request is required")
+	}
+	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/" + url.PathEscape(scanID) + "/auto-scan"
+	result := new(AutoScanScheduleResponse)
+	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// DeleteAutoScanSchedule Delete Auto-Scan Schedule.
+// See https://docs.devin.ai/v3-openapi.json#handle_delete_auto_scan_schedule_v3_organizations__org_id__code_scans__scan_id__auto_scan_delete.
+func (s OrgCodeScansService) DeleteAutoScanSchedule(ctx context.Context, scanID string) (*Response, error) {
+	if s.scope.orgID == "" {
+		return nil, fmt.Errorf("devin: organization ID is required")
+	}
+	if scanID == "" {
+		return nil, fmt.Errorf("devin: scan_id is required")
+	}
+	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/" + url.PathEscape(scanID) + "/auto-scan"
+	return s.scope.client.Do(ctx, "DELETE", path, nil, nil, nil)
+}
+
+// UpdateCodeScanEffort Update Code Scan Effort.
+// See https://docs.devin.ai/v3-openapi.json#handle_update_code_scan_effort_v3_organizations__org_id__code_scans__scan_id__effort_put.
+func (s OrgCodeScansService) UpdateCodeScanEffort(ctx context.Context, scanID string, request *CodeScanEffortUpdateRequest) (*CodeScanEffortResponse, *Response, error) {
+	if s.scope.orgID == "" {
+		return nil, nil, fmt.Errorf("devin: organization ID is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	if request == nil {
+		return nil, nil, fmt.Errorf("devin: request is required")
+	}
+	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/" + url.PathEscape(scanID) + "/effort"
+	result := new(CodeScanEffortResponse)
+	response, err := s.scope.client.Do(ctx, "PUT", path, nil, request, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// RemediateCodeScanFindings Remediate Code Scan Findings.
+// See https://docs.devin.ai/v3-openapi.json#handle_remediate_code_scan_findings_v3_organizations__org_id__code_scans__scan_id__findings_remediate_post.
+func (s OrgCodeScansService) RemediateCodeScanFindings(ctx context.Context, scanID string, request *RemediateFindingsRequest) (*RemediateFindingsResponse, *Response, error) {
+	if s.scope.orgID == "" {
+		return nil, nil, fmt.Errorf("devin: organization ID is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	if request == nil {
+		return nil, nil, fmt.Errorf("devin: request is required")
+	}
+	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/" + url.PathEscape(scanID) + "/findings/remediate"
+	result := new(RemediateFindingsResponse)
+	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// RemediateCodeScanFinding Remediate Code Scan Finding.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-remediate.
-func (s OrgCodeScansService) OrgOrganizationsCodeScansRemediate(ctx context.Context, scanID string, findingID string) (*OrgOrganizationsCodeScansRemediateResponse, *Response, error) {
+func (s OrgCodeScansService) RemediateCodeScanFinding(ctx context.Context, scanID string, findingID string) (*RemediateFindingResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3887,7 +4270,7 @@ func (s OrgCodeScansService) OrgOrganizationsCodeScansRemediate(ctx context.Cont
 		return nil, nil, fmt.Errorf("devin: finding_id is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/" + url.PathEscape(scanID) + "/findings/" + url.PathEscape(findingID) + "/remediate"
-	result := new(OrgOrganizationsCodeScansRemediateResponse)
+	result := new(RemediateFindingResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3895,16 +4278,55 @@ func (s OrgCodeScansService) OrgOrganizationsCodeScansRemediate(ctx context.Cont
 	return result, response, nil
 }
 
-// OrgConsumptionOrgOrganizationsConsumptionDailyOptions configures query parameters for OrgOrganizationsConsumptionDaily.
-type OrgConsumptionOrgOrganizationsConsumptionDailyOptions struct {
+// SwitchCodeScanProfile Switch Code Scan Profile.
+// See https://docs.devin.ai/v3-openapi.json#handle_switch_code_scan_profile_v3_organizations__org_id__code_scans__scan_id__profile_put.
+func (s OrgCodeScansService) SwitchCodeScanProfile(ctx context.Context, scanID string, request *CodeScanProfileSwitchRequest) (*CodeScanProfileSwitchResponse, *Response, error) {
+	if s.scope.orgID == "" {
+		return nil, nil, fmt.Errorf("devin: organization ID is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	if request == nil {
+		return nil, nil, fmt.Errorf("devin: request is required")
+	}
+	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/" + url.PathEscape(scanID) + "/profile"
+	result := new(CodeScanProfileSwitchResponse)
+	response, err := s.scope.client.Do(ctx, "PUT", path, nil, request, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// ScanNewCommits Scan New Commits.
+// See https://docs.devin.ai/v3-openapi.json#handle_scan_new_commits_v3_organizations__org_id__code_scans__scan_id__scan_new_commits_post.
+func (s OrgCodeScansService) ScanNewCommits(ctx context.Context, scanID string) (*ScanNewCommitsResponse, *Response, error) {
+	if s.scope.orgID == "" {
+		return nil, nil, fmt.Errorf("devin: organization ID is required")
+	}
+	if scanID == "" {
+		return nil, nil, fmt.Errorf("devin: scan_id is required")
+	}
+	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/code-scans/" + url.PathEscape(scanID) + "/scan-new-commits"
+	result := new(ScanNewCommitsResponse)
+	response, err := s.scope.client.Do(ctx, "POST", path, nil, nil, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// OrgConsumptionGetConsumptionDailyOptions configures query parameters for GetConsumptionDaily.
+type OrgConsumptionGetConsumptionDailyOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// OrgOrganizationsConsumptionDaily Get Daily Consumption.
+// GetConsumptionDaily Get Daily Consumption.
 // See https://docs.devin.ai/api-reference/v3/consumption/organizations-consumption-daily.
-func (s OrgConsumptionService) OrgOrganizationsConsumptionDaily(ctx context.Context, opts *OrgConsumptionOrgOrganizationsConsumptionDailyOptions) (*OrgOrganizationsConsumptionDailyResponse, *Response, error) {
+func (s OrgConsumptionService) GetConsumptionDaily(ctx context.Context, opts *OrgConsumptionGetConsumptionDailyOptions) (*ConsumptionResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3921,7 +4343,7 @@ func (s OrgConsumptionService) OrgOrganizationsConsumptionDaily(ctx context.Cont
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(OrgOrganizationsConsumptionDailyResponse)
+	result := new(ConsumptionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3929,16 +4351,16 @@ func (s OrgConsumptionService) OrgOrganizationsConsumptionDaily(ctx context.Cont
 	return result, response, nil
 }
 
-// OrgConsumptionOrgOrganizationsConsumptionDailyServiceUsersOptions configures query parameters for OrgOrganizationsConsumptionDailyServiceUsers.
-type OrgConsumptionOrgOrganizationsConsumptionDailyServiceUsersOptions struct {
+// OrgConsumptionGetServiceUserConsumptionDailyOptions configures query parameters for GetServiceUserConsumptionDaily.
+type OrgConsumptionGetServiceUserConsumptionDailyOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// OrgOrganizationsConsumptionDailyServiceUsers Get Service User Daily Consumption.
+// GetServiceUserConsumptionDaily Get Service User Daily Consumption.
 // See https://docs.devin.ai/api-reference/v3/consumption/organizations-consumption-daily-service-users.
-func (s OrgConsumptionService) OrgOrganizationsConsumptionDailyServiceUsers(ctx context.Context, serviceUserID string, opts *OrgConsumptionOrgOrganizationsConsumptionDailyServiceUsersOptions) (*OrgOrganizationsConsumptionDailyServiceUsersResponse, *Response, error) {
+func (s OrgConsumptionService) GetServiceUserConsumptionDaily(ctx context.Context, serviceUserID string, opts *OrgConsumptionGetServiceUserConsumptionDailyOptions) (*ConsumptionResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3958,7 +4380,7 @@ func (s OrgConsumptionService) OrgOrganizationsConsumptionDailyServiceUsers(ctx 
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(OrgOrganizationsConsumptionDailyServiceUsersResponse)
+	result := new(ConsumptionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -3966,16 +4388,16 @@ func (s OrgConsumptionService) OrgOrganizationsConsumptionDailyServiceUsers(ctx 
 	return result, response, nil
 }
 
-// OrgConsumptionOrgOrganizationsConsumptionDailySessionsOptions configures query parameters for OrgOrganizationsConsumptionDailySessions.
-type OrgConsumptionOrgOrganizationsConsumptionDailySessionsOptions struct {
+// OrgConsumptionGetSessionConsumptionDailyOptions configures query parameters for GetSessionConsumptionDaily.
+type OrgConsumptionGetSessionConsumptionDailyOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// OrgOrganizationsConsumptionDailySessions Get Session Daily Consumption.
+// GetSessionConsumptionDaily Get Session Daily Consumption.
 // See https://docs.devin.ai/api-reference/v3/consumption/organizations-consumption-daily-sessions.
-func (s OrgConsumptionService) OrgOrganizationsConsumptionDailySessions(ctx context.Context, sessionID string, opts *OrgConsumptionOrgOrganizationsConsumptionDailySessionsOptions) (*OrgOrganizationsConsumptionDailySessionsResponse, *Response, error) {
+func (s OrgConsumptionService) GetSessionConsumptionDaily(ctx context.Context, sessionID string, opts *OrgConsumptionGetSessionConsumptionDailyOptions) (*ConsumptionResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -3995,7 +4417,7 @@ func (s OrgConsumptionService) OrgOrganizationsConsumptionDailySessions(ctx cont
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(OrgOrganizationsConsumptionDailySessionsResponse)
+	result := new(ConsumptionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4003,16 +4425,16 @@ func (s OrgConsumptionService) OrgOrganizationsConsumptionDailySessions(ctx cont
 	return result, response, nil
 }
 
-// OrgConsumptionOrgOrganizationsConsumptionDailyUsersOptions configures query parameters for OrgOrganizationsConsumptionDailyUsers.
-type OrgConsumptionOrgOrganizationsConsumptionDailyUsersOptions struct {
+// OrgConsumptionGetUserConsumptionDailyOptions configures query parameters for GetUserConsumptionDaily.
+type OrgConsumptionGetUserConsumptionDailyOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// OrgOrganizationsConsumptionDailyUsers Get User Daily Consumption.
+// GetUserConsumptionDaily Get User Daily Consumption.
 // See https://docs.devin.ai/api-reference/v3/consumption/organizations-consumption-daily-users.
-func (s OrgConsumptionService) OrgOrganizationsConsumptionDailyUsers(ctx context.Context, userID string, opts *OrgConsumptionOrgOrganizationsConsumptionDailyUsersOptions) (*OrgOrganizationsConsumptionDailyUsersResponse, *Response, error) {
+func (s OrgConsumptionService) GetUserConsumptionDaily(ctx context.Context, userID string, opts *OrgConsumptionGetUserConsumptionDailyOptions) (*ConsumptionResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4032,7 +4454,7 @@ func (s OrgConsumptionService) OrgOrganizationsConsumptionDailyUsers(ctx context
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(OrgOrganizationsConsumptionDailyUsersResponse)
+	result := new(ConsumptionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4176,8 +4598,8 @@ func (s OrgNotesService) Delete(ctx context.Context, noteID string) (*KnowledgeN
 	return result, response, nil
 }
 
-// OrgMetricsOrgOrganizationsMetricsActiveUsersOptions configures query parameters for OrgOrganizationsMetricsActiveUsers.
-type OrgMetricsOrgOrganizationsMetricsActiveUsersOptions struct {
+// OrgMetricsGetActiveUsersMetricsOptions configures query parameters for GetActiveUsersMetrics.
+type OrgMetricsGetActiveUsersMetricsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore  int64
 	TimeAfter   int64
@@ -4185,9 +4607,9 @@ type OrgMetricsOrgOrganizationsMetricsActiveUsersOptions struct {
 	MinSearches *int64
 }
 
-// OrgOrganizationsMetricsActiveUsers Get Active Users for Custom Date Range.
+// GetActiveUsersMetrics Get Active Users for Custom Date Range.
 // See https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-active-users.
-func (s OrgMetricsService) OrgOrganizationsMetricsActiveUsers(ctx context.Context, opts *OrgMetricsOrgOrganizationsMetricsActiveUsersOptions) (*OrgOrganizationsMetricsActiveUsersResponse, *Response, error) {
+func (s OrgMetricsService) GetActiveUsersMetrics(ctx context.Context, opts *OrgMetricsGetActiveUsersMetricsOptions) (*ActiveUserMetricsResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4209,7 +4631,7 @@ func (s OrgMetricsService) OrgOrganizationsMetricsActiveUsers(ctx context.Contex
 			query.Set("min_searches", strconv.FormatInt(*opts.MinSearches, 10))
 		}
 	}
-	result := new(OrgOrganizationsMetricsActiveUsersResponse)
+	result := new(ActiveUserMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4217,8 +4639,8 @@ func (s OrgMetricsService) OrgOrganizationsMetricsActiveUsers(ctx context.Contex
 	return result, response, nil
 }
 
-// OrgMetricsOrgOrganizationsMetricsDauOptions configures query parameters for OrgOrganizationsMetricsDau.
-type OrgMetricsOrgOrganizationsMetricsDauOptions struct {
+// OrgMetricsGetDauMetricsOptions configures query parameters for GetDauMetrics.
+type OrgMetricsGetDauMetricsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore  int64
 	TimeAfter   int64
@@ -4226,9 +4648,9 @@ type OrgMetricsOrgOrganizationsMetricsDauOptions struct {
 	MinSearches *int64
 }
 
-// OrgOrganizationsMetricsDau Get Daily Active Users.
+// GetDauMetrics Get Daily Active Users.
 // See https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-dau.
-func (s OrgMetricsService) OrgOrganizationsMetricsDau(ctx context.Context, opts *OrgMetricsOrgOrganizationsMetricsDauOptions) (*OrgOrganizationsMetricsDauResponse, *Response, error) {
+func (s OrgMetricsService) GetDauMetrics(ctx context.Context, opts *OrgMetricsGetDauMetricsOptions) (*ActiveUserMetricsListResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4250,7 +4672,7 @@ func (s OrgMetricsService) OrgOrganizationsMetricsDau(ctx context.Context, opts 
 			query.Set("min_searches", strconv.FormatInt(*opts.MinSearches, 10))
 		}
 	}
-	result := new(OrgOrganizationsMetricsDauResponse)
+	result := new(ActiveUserMetricsListResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4258,8 +4680,8 @@ func (s OrgMetricsService) OrgOrganizationsMetricsDau(ctx context.Context, opts 
 	return result, response, nil
 }
 
-// OrgMetricsOrgOrganizationsMetricsMauOptions configures query parameters for OrgOrganizationsMetricsMau.
-type OrgMetricsOrgOrganizationsMetricsMauOptions struct {
+// OrgMetricsGetMauMetricsOptions configures query parameters for GetMauMetrics.
+type OrgMetricsGetMauMetricsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore  int64
 	TimeAfter   int64
@@ -4267,9 +4689,9 @@ type OrgMetricsOrgOrganizationsMetricsMauOptions struct {
 	MinSearches *int64
 }
 
-// OrgOrganizationsMetricsMau Get Monthly Active Users.
+// GetMauMetrics Get Monthly Active Users.
 // See https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-mau.
-func (s OrgMetricsService) OrgOrganizationsMetricsMau(ctx context.Context, opts *OrgMetricsOrgOrganizationsMetricsMauOptions) (*OrgOrganizationsMetricsMauResponse, *Response, error) {
+func (s OrgMetricsService) GetMauMetrics(ctx context.Context, opts *OrgMetricsGetMauMetricsOptions) (*ActiveUserMetricsListResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4291,7 +4713,7 @@ func (s OrgMetricsService) OrgOrganizationsMetricsMau(ctx context.Context, opts 
 			query.Set("min_searches", strconv.FormatInt(*opts.MinSearches, 10))
 		}
 	}
-	result := new(OrgOrganizationsMetricsMauResponse)
+	result := new(ActiveUserMetricsListResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4299,8 +4721,8 @@ func (s OrgMetricsService) OrgOrganizationsMetricsMau(ctx context.Context, opts 
 	return result, response, nil
 }
 
-// OrgMetricsOrgOrganizationsMetricsPRsOptions configures query parameters for OrgOrganizationsMetricsPRs.
-type OrgMetricsOrgOrganizationsMetricsPRsOptions struct {
+// OrgMetricsGetPRMetricsOptions configures query parameters for GetPRMetrics.
+type OrgMetricsGetPRMetricsOptions struct {
 	Extra          url.Values // Additional query parameters; typed fields take precedence.
 	UserIDs        []string
 	ServiceUserIDs []string
@@ -4309,9 +4731,9 @@ type OrgMetricsOrgOrganizationsMetricsPRsOptions struct {
 	PlaybookID     *string
 }
 
-// OrgOrganizationsMetricsPRs Get PR Metrics.
+// GetPRMetrics Get PR Metrics.
 // See https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-prs.
-func (s OrgMetricsService) OrgOrganizationsMetricsPRs(ctx context.Context, opts *OrgMetricsOrgOrganizationsMetricsPRsOptions) (*OrgOrganizationsMetricsPRsResponse, *Response, error) {
+func (s OrgMetricsService) GetPRMetrics(ctx context.Context, opts *OrgMetricsGetPRMetricsOptions) (*PRMetricsResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4342,7 +4764,7 @@ func (s OrgMetricsService) OrgOrganizationsMetricsPRs(ctx context.Context, opts 
 			query.Set("playbook_id", *opts.PlaybookID)
 		}
 	}
-	result := new(OrgOrganizationsMetricsPRsResponse)
+	result := new(PRMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4350,16 +4772,16 @@ func (s OrgMetricsService) OrgOrganizationsMetricsPRs(ctx context.Context, opts 
 	return result, response, nil
 }
 
-// OrgMetricsOrgOrganizationsMetricsSearchesOptions configures query parameters for OrgOrganizationsMetricsSearches.
-type OrgMetricsOrgOrganizationsMetricsSearchesOptions struct {
+// OrgMetricsSearchMetricsOptions configures query parameters for SearchMetrics.
+type OrgMetricsSearchMetricsOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore int64
 	TimeAfter  int64
 }
 
-// OrgOrganizationsMetricsSearches Get Search Metrics.
+// SearchMetrics Get Search Metrics.
 // See https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-searches.
-func (s OrgMetricsService) OrgOrganizationsMetricsSearches(ctx context.Context, opts *OrgMetricsOrgOrganizationsMetricsSearchesOptions) (*OrgOrganizationsMetricsSearchesResponse, *Response, error) {
+func (s OrgMetricsService) SearchMetrics(ctx context.Context, opts *OrgMetricsSearchMetricsOptions) (*SearchMetricsResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4375,7 +4797,7 @@ func (s OrgMetricsService) OrgOrganizationsMetricsSearches(ctx context.Context, 
 		query.Set("time_before", strconv.FormatInt(opts.TimeBefore, 10))
 		query.Set("time_after", strconv.FormatInt(opts.TimeAfter, 10))
 	}
-	result := new(OrgOrganizationsMetricsSearchesResponse)
+	result := new(SearchMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4383,8 +4805,8 @@ func (s OrgMetricsService) OrgOrganizationsMetricsSearches(ctx context.Context, 
 	return result, response, nil
 }
 
-// OrgMetricsOrgOrganizationsMetricsSessionsOptions configures query parameters for OrgOrganizationsMetricsSessions.
-type OrgMetricsOrgOrganizationsMetricsSessionsOptions struct {
+// OrgMetricsGetSessionMetricsOptions configures query parameters for GetSessionMetrics.
+type OrgMetricsGetSessionMetricsOptions struct {
 	Extra          url.Values // Additional query parameters; typed fields take precedence.
 	UserIDs        []string
 	ServiceUserIDs []string
@@ -4393,9 +4815,9 @@ type OrgMetricsOrgOrganizationsMetricsSessionsOptions struct {
 	PlaybookID     *string
 }
 
-// OrgOrganizationsMetricsSessions Get Session Metrics.
+// GetSessionMetrics Get Session Metrics.
 // See https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-sessions.
-func (s OrgMetricsService) OrgOrganizationsMetricsSessions(ctx context.Context, opts *OrgMetricsOrgOrganizationsMetricsSessionsOptions) (*OrgOrganizationsMetricsSessionsResponse, *Response, error) {
+func (s OrgMetricsService) GetSessionMetrics(ctx context.Context, opts *OrgMetricsGetSessionMetricsOptions) (*SessionMetricsResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4426,7 +4848,7 @@ func (s OrgMetricsService) OrgOrganizationsMetricsSessions(ctx context.Context, 
 			query.Set("playbook_id", *opts.PlaybookID)
 		}
 	}
-	result := new(OrgOrganizationsMetricsSessionsResponse)
+	result := new(SessionMetricsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4434,16 +4856,16 @@ func (s OrgMetricsService) OrgOrganizationsMetricsSessions(ctx context.Context, 
 	return result, response, nil
 }
 
-// OrgMetricsOrgOrganizationsMetricsUsageOrgOptions configures query parameters for OrgOrganizationsMetricsUsageOrg.
-type OrgMetricsOrgOrganizationsMetricsUsageOrgOptions struct {
+// OrgMetricsGetUsageMetricsOptions configures query parameters for GetUsageMetrics.
+type OrgMetricsGetUsageMetricsOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore *int64
 	TimeAfter  *int64
 }
 
-// OrgOrganizationsMetricsUsageOrg Get Usage Metrics.
+// GetUsageMetrics Get Usage Metrics.
 // See https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-usage-org.
-func (s OrgMetricsService) OrgOrganizationsMetricsUsageOrg(ctx context.Context, opts *OrgMetricsOrgOrganizationsMetricsUsageOrgOptions) (*OrgOrganizationsMetricsUsageOrgResponse, *Response, error) {
+func (s OrgMetricsService) GetUsageMetrics(ctx context.Context, opts *OrgMetricsGetUsageMetricsOptions) (*UsageMetrics, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4460,7 +4882,7 @@ func (s OrgMetricsService) OrgOrganizationsMetricsUsageOrg(ctx context.Context, 
 			query.Set("time_after", strconv.FormatInt(*opts.TimeAfter, 10))
 		}
 	}
-	result := new(OrgOrganizationsMetricsUsageOrgResponse)
+	result := new(UsageMetrics)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4468,8 +4890,8 @@ func (s OrgMetricsService) OrgOrganizationsMetricsUsageOrg(ctx context.Context, 
 	return result, response, nil
 }
 
-// OrgMetricsOrgOrganizationsMetricsWauOptions configures query parameters for OrgOrganizationsMetricsWau.
-type OrgMetricsOrgOrganizationsMetricsWauOptions struct {
+// OrgMetricsGetWauMetricsOptions configures query parameters for GetWauMetrics.
+type OrgMetricsGetWauMetricsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
 	TimeBefore  int64
 	TimeAfter   int64
@@ -4477,9 +4899,9 @@ type OrgMetricsOrgOrganizationsMetricsWauOptions struct {
 	MinSearches *int64
 }
 
-// OrgOrganizationsMetricsWau Get Weekly Active Users.
+// GetWauMetrics Get Weekly Active Users.
 // See https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-wau.
-func (s OrgMetricsService) OrgOrganizationsMetricsWau(ctx context.Context, opts *OrgMetricsOrgOrganizationsMetricsWauOptions) (*OrgOrganizationsMetricsWauResponse, *Response, error) {
+func (s OrgMetricsService) GetWauMetrics(ctx context.Context, opts *OrgMetricsGetWauMetricsOptions) (*ActiveUserMetricsListResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4501,7 +4923,7 @@ func (s OrgMetricsService) OrgOrganizationsMetricsWau(ctx context.Context, opts 
 			query.Set("min_searches", strconv.FormatInt(*opts.MinSearches, 10))
 		}
 	}
-	result := new(OrgOrganizationsMetricsWauResponse)
+	result := new(ActiveUserMetricsListResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4631,7 +5053,7 @@ type OrgPRReviewsListOptions struct {
 
 // List Get latest Devin Review status.
 // See https://docs.devin.ai/api-reference/v3/pr-reviews/get-organizations-pr-reviews.
-func (s OrgPRReviewsService) List(ctx context.Context, opts *OrgPRReviewsListOptions) (*OrgGetOrganizationsPRReviewsResponse, *Response, error) {
+func (s OrgPRReviewsService) List(ctx context.Context, opts *OrgPRReviewsListOptions) (*PRReviewResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4652,7 +5074,7 @@ func (s OrgPRReviewsService) List(ctx context.Context, opts *OrgPRReviewsListOpt
 			query.Set("commit_sha", *opts.CommitSha)
 		}
 	}
-	result := new(OrgGetOrganizationsPRReviewsResponse)
+	result := new(PRReviewResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -4662,7 +5084,7 @@ func (s OrgPRReviewsService) List(ctx context.Context, opts *OrgPRReviewsListOpt
 
 // Create Trigger Devin Review.
 // See https://docs.devin.ai/api-reference/v3/pr-reviews/post-organizations-pr-reviews.
-func (s OrgPRReviewsService) Create(ctx context.Context, request *OrgPostOrganizationsPRReviewsRequest) (*OrgPostOrganizationsPRReviewsResponse, *Response, error) {
+func (s OrgPRReviewsService) Create(ctx context.Context, request *PRReviewCreateRequest) (*PRReviewResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -4670,7 +5092,7 @@ func (s OrgPRReviewsService) Create(ctx context.Context, request *OrgPostOrganiz
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/pr-reviews"
-	result := new(OrgPostOrganizationsPRReviewsResponse)
+	result := new(PRReviewResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -5068,14 +5490,31 @@ func (s OrgSecretsService) Delete(ctx context.Context, secretID string) (*Secret
 
 // OrgSessionsListOptions configures query parameters for List.
 type OrgSessionsListOptions struct {
-	Extra   url.Values // Additional query parameters; typed fields take precedence.
-	DevinID *string
+	Extra           url.Values // Additional query parameters; typed fields take precedence.
+	After           *string
+	AutomationIDs   []string
+	Category        *string
+	CreatedAfter    *int64
+	CreatedBefore   *int64
+	First           *int64
+	IsArchived      *bool
+	Origins         []string
+	ParentSessionID *string
+	PlaybookID      *string
+	RepoNames       []string
+	ScheduleID      *string
+	ServiceUserIDs  []string
+	SessionIDs      []string
+	Tags            []string
+	UpdatedAfter    *int64
+	UpdatedBefore   *int64
+	UserIDs         []string
+	DevinID         *string
 }
 
 // List List Sessions.
 // See https://docs.devin.ai/api-reference/v3/sessions/organizations-sessions.
-// Contract limitation: The official page lists a required SessionsQueryParams object but does not expose its child fields. The generated query-field serialization is undocumented here; callers should pass documented raw query values without a literal qs key.
-func (s OrgSessionsService) List(ctx context.Context, opts *OrgSessionsListOptions) (*PaginatedSessionResponse, *Response, error) {
+func (s OrgSessionsService) List(ctx context.Context, opts *OrgSessionsListOptions) (*PaginatedResponseSessionResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5085,11 +5524,86 @@ func (s OrgSessionsService) List(ctx context.Context, opts *OrgSessionsListOptio
 		for key, values := range opts.Extra {
 			query[key] = append([]string(nil), values...)
 		}
+		if opts.After != nil {
+			query.Set("after", *opts.After)
+		}
+		if opts.AutomationIDs != nil {
+			delete(query, "automation_ids")
+			for _, value := range opts.AutomationIDs {
+				query.Add("automation_ids", value)
+			}
+		}
+		if opts.Category != nil {
+			query.Set("category", *opts.Category)
+		}
+		if opts.CreatedAfter != nil {
+			query.Set("created_after", strconv.FormatInt(*opts.CreatedAfter, 10))
+		}
+		if opts.CreatedBefore != nil {
+			query.Set("created_before", strconv.FormatInt(*opts.CreatedBefore, 10))
+		}
+		if opts.First != nil {
+			query.Set("first", strconv.FormatInt(*opts.First, 10))
+		}
+		if opts.IsArchived != nil {
+			query.Set("is_archived", strconv.FormatBool(*opts.IsArchived))
+		}
+		if opts.Origins != nil {
+			delete(query, "origins")
+			for _, value := range opts.Origins {
+				query.Add("origins", value)
+			}
+		}
+		if opts.ParentSessionID != nil {
+			query.Set("parent_session_id", *opts.ParentSessionID)
+		}
+		if opts.PlaybookID != nil {
+			query.Set("playbook_id", *opts.PlaybookID)
+		}
+		if opts.RepoNames != nil {
+			delete(query, "repo_names")
+			for _, value := range opts.RepoNames {
+				query.Add("repo_names", value)
+			}
+		}
+		if opts.ScheduleID != nil {
+			query.Set("schedule_id", *opts.ScheduleID)
+		}
+		if opts.ServiceUserIDs != nil {
+			delete(query, "service_user_ids")
+			for _, value := range opts.ServiceUserIDs {
+				query.Add("service_user_ids", value)
+			}
+		}
+		if opts.SessionIDs != nil {
+			delete(query, "session_ids")
+			for _, value := range opts.SessionIDs {
+				query.Add("session_ids", value)
+			}
+		}
+		if opts.Tags != nil {
+			delete(query, "tags")
+			for _, value := range opts.Tags {
+				query.Add("tags", value)
+			}
+		}
+		if opts.UpdatedAfter != nil {
+			query.Set("updated_after", strconv.FormatInt(*opts.UpdatedAfter, 10))
+		}
+		if opts.UpdatedBefore != nil {
+			query.Set("updated_before", strconv.FormatInt(*opts.UpdatedBefore, 10))
+		}
+		if opts.UserIDs != nil {
+			delete(query, "user_ids")
+			for _, value := range opts.UserIDs {
+				query.Add("user_ids", value)
+			}
+		}
 		if opts.DevinID != nil {
 			query.Set("devin_id", *opts.DevinID)
 		}
 	}
-	result := new(PaginatedSessionResponse)
+	result := new(PaginatedResponseSessionResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -5105,7 +5619,7 @@ type OrgSessionsCreateOptions struct {
 
 // Create Create Session.
 // See https://docs.devin.ai/api-reference/v3/sessions/post-organizations-sessions.
-func (s OrgSessionsService) Create(ctx context.Context, request *CreateSessionRequest, opts *OrgSessionsCreateOptions) (*SessionResponse, *Response, error) {
+func (s OrgSessionsService) Create(ctx context.Context, request *SessionCreateRequest, opts *OrgSessionsCreateOptions) (*SessionResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5130,23 +5644,130 @@ func (s OrgSessionsService) Create(ctx context.Context, request *CreateSessionRe
 	return result, response, nil
 }
 
-// ListSessionsWithInsights List sessions with insights.
+// OrgSessionsGetSessionsInsightsOptions configures query parameters for GetSessionsInsights.
+type OrgSessionsGetSessionsInsightsOptions struct {
+	Extra           url.Values // Additional query parameters; typed fields take precedence.
+	After           *string
+	AutomationIDs   []string
+	Category        *string
+	CreatedAfter    *int64
+	CreatedBefore   *int64
+	First           *int64
+	IsArchived      *bool
+	Origins         []string
+	ParentSessionID *string
+	PlaybookID      *string
+	RepoNames       []string
+	ScheduleID      *string
+	ServiceUserIDs  []string
+	SessionIDs      []string
+	Tags            []string
+	UpdatedAfter    *int64
+	UpdatedBefore   *int64
+	UserIDs         []string
+	DevinID         *string
+}
+
+// GetSessionsInsights List sessions with insights.
 // See https://docs.devin.ai/api-reference/v3/sessions/organizations-sessions-insights.
-// Contract limitation: The official page lists a required SessionsQueryParams object but does not expose its child fields. The generated query-field serialization is undocumented here; callers should pass documented raw query values without a literal qs key.
-func (s OrgSessionsService) ListSessionsWithInsights(ctx context.Context) (*PaginatedSessionInsightsResponse, *Response, error) {
+func (s OrgSessionsService) GetSessionsInsights(ctx context.Context, opts *OrgSessionsGetSessionsInsightsOptions) (*PaginatedResponseSessionInsightsResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/sessions/insights"
-	result := new(PaginatedSessionInsightsResponse)
-	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.After != nil {
+			query.Set("after", *opts.After)
+		}
+		if opts.AutomationIDs != nil {
+			delete(query, "automation_ids")
+			for _, value := range opts.AutomationIDs {
+				query.Add("automation_ids", value)
+			}
+		}
+		if opts.Category != nil {
+			query.Set("category", *opts.Category)
+		}
+		if opts.CreatedAfter != nil {
+			query.Set("created_after", strconv.FormatInt(*opts.CreatedAfter, 10))
+		}
+		if opts.CreatedBefore != nil {
+			query.Set("created_before", strconv.FormatInt(*opts.CreatedBefore, 10))
+		}
+		if opts.First != nil {
+			query.Set("first", strconv.FormatInt(*opts.First, 10))
+		}
+		if opts.IsArchived != nil {
+			query.Set("is_archived", strconv.FormatBool(*opts.IsArchived))
+		}
+		if opts.Origins != nil {
+			delete(query, "origins")
+			for _, value := range opts.Origins {
+				query.Add("origins", value)
+			}
+		}
+		if opts.ParentSessionID != nil {
+			query.Set("parent_session_id", *opts.ParentSessionID)
+		}
+		if opts.PlaybookID != nil {
+			query.Set("playbook_id", *opts.PlaybookID)
+		}
+		if opts.RepoNames != nil {
+			delete(query, "repo_names")
+			for _, value := range opts.RepoNames {
+				query.Add("repo_names", value)
+			}
+		}
+		if opts.ScheduleID != nil {
+			query.Set("schedule_id", *opts.ScheduleID)
+		}
+		if opts.ServiceUserIDs != nil {
+			delete(query, "service_user_ids")
+			for _, value := range opts.ServiceUserIDs {
+				query.Add("service_user_ids", value)
+			}
+		}
+		if opts.SessionIDs != nil {
+			delete(query, "session_ids")
+			for _, value := range opts.SessionIDs {
+				query.Add("session_ids", value)
+			}
+		}
+		if opts.Tags != nil {
+			delete(query, "tags")
+			for _, value := range opts.Tags {
+				query.Add("tags", value)
+			}
+		}
+		if opts.UpdatedAfter != nil {
+			query.Set("updated_after", strconv.FormatInt(*opts.UpdatedAfter, 10))
+		}
+		if opts.UpdatedBefore != nil {
+			query.Set("updated_before", strconv.FormatInt(*opts.UpdatedBefore, 10))
+		}
+		if opts.UserIDs != nil {
+			delete(query, "user_ids")
+			for _, value := range opts.UserIDs {
+				query.Add("user_ids", value)
+			}
+		}
+		if opts.DevinID != nil {
+			query.Set("devin_id", *opts.DevinID)
+		}
+	}
+	result := new(PaginatedResponseSessionInsightsResponse)
+	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
 	}
 	return result, response, nil
 }
 
-// Get Get session details.
+// Get Get Session.
 // See https://docs.devin.ai/api-reference/v3/sessions/get-organizations-session.
 func (s OrgSessionsService) Get(ctx context.Context, devinID string) (*SessionResponse, *Response, error) {
 	if s.scope.orgID == "" {
@@ -5197,9 +5818,9 @@ func (s OrgSessionsService) Delete(ctx context.Context, devinID string, opts *Or
 	return result, response, nil
 }
 
-// PostArchiveSession Archive Session.
+// ArchiveSession Archive Session.
 // See https://docs.devin.ai/api-reference/v3/sessions/post-organizations-sessions-archive.
-func (s OrgSessionsService) PostArchiveSession(ctx context.Context, devinID string) (*SessionResponse, *Response, error) {
+func (s OrgSessionsService) ArchiveSession(ctx context.Context, devinID string) (*SessionResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5215,9 +5836,9 @@ func (s OrgSessionsService) PostArchiveSession(ctx context.Context, devinID stri
 	return result, response, nil
 }
 
-// ListSessionAttachments List session attachments.
+// GetSessionAttachments List session attachments.
 // See https://docs.devin.ai/api-reference/v3/sessions/get-organizations-session-attachments.
-func (s OrgSessionsService) ListSessionAttachments(ctx context.Context, devinID string) (*[]SessionAttachment, *Response, error) {
+func (s OrgSessionsService) GetSessionAttachments(ctx context.Context, devinID string) (*[]SessionAttachment, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5251,9 +5872,9 @@ func (s OrgSessionsService) GetSessionInsights(ctx context.Context, devinID stri
 	return result, response, nil
 }
 
-// PostGenerateSessionInsights Generate session insights.
+// GenerateSessionInsights Generate session insights.
 // See https://docs.devin.ai/api-reference/v3/sessions/post-organizations-session-insights-generate.
-func (s OrgSessionsService) PostGenerateSessionInsights(ctx context.Context, devinID string) (*InsightsGenerationResponse, *Response, error) {
+func (s OrgSessionsService) GenerateSessionInsights(ctx context.Context, devinID string) (*SessionInsightsGenerateResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5261,7 +5882,7 @@ func (s OrgSessionsService) PostGenerateSessionInsights(ctx context.Context, dev
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/sessions/" + url.PathEscape(devinID) + "/insights/generate"
-	result := new(InsightsGenerationResponse)
+	result := new(SessionInsightsGenerateResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -5269,9 +5890,16 @@ func (s OrgSessionsService) PostGenerateSessionInsights(ctx context.Context, dev
 	return result, response, nil
 }
 
-// ListSessionMessages List session messages.
+// OrgSessionsGetSessionMessagesOptions configures query parameters for GetSessionMessages.
+type OrgSessionsGetSessionMessagesOptions struct {
+	Extra url.Values // Additional query parameters; typed fields take precedence.
+	After *string
+	First *int64
+}
+
+// GetSessionMessages List session messages.
 // See https://docs.devin.ai/api-reference/v3/sessions/get-organizations-session-messages.
-func (s OrgSessionsService) ListSessionMessages(ctx context.Context, devinID string) (*PaginatedSessionMessages, *Response, error) {
+func (s OrgSessionsService) GetSessionMessages(ctx context.Context, devinID string, opts *OrgSessionsGetSessionMessagesOptions) (*PaginatedResponseSessionMessage, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5279,17 +5907,29 @@ func (s OrgSessionsService) ListSessionMessages(ctx context.Context, devinID str
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/sessions/" + url.PathEscape(devinID) + "/messages"
-	result := new(PaginatedSessionMessages)
-	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
+	query := url.Values{}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.After != nil {
+			query.Set("after", *opts.After)
+		}
+		if opts.First != nil {
+			query.Set("first", strconv.FormatInt(*opts.First, 10))
+		}
+	}
+	result := new(PaginatedResponseSessionMessage)
+	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
 	}
 	return result, response, nil
 }
 
-// SendAMessageToASession Send a message to a session.
+// PostMessage Send a message to a session.
 // See https://docs.devin.ai/api-reference/v3/sessions/post-organizations-sessions-messages.
-func (s OrgSessionsService) SendAMessageToASession(ctx context.Context, devinID string, request *SendSessionMessageRequest) (*SessionResponse, *Response, error) {
+func (s OrgSessionsService) PostMessage(ctx context.Context, devinID string, request *SessionMessageCreateRequest) (*SessionResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5310,7 +5950,7 @@ func (s OrgSessionsService) SendAMessageToASession(ctx context.Context, devinID 
 
 // GetSessionTags Get session tags.
 // See https://docs.devin.ai/api-reference/v3/sessions/get-organizations-session-tags.
-func (s OrgSessionsService) GetSessionTags(ctx context.Context, devinID string) (*SessionTags, *Response, error) {
+func (s OrgSessionsService) GetSessionTags(ctx context.Context, devinID string) (*SessionTagsResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5318,7 +5958,7 @@ func (s OrgSessionsService) GetSessionTags(ctx context.Context, devinID string) 
 		return nil, nil, fmt.Errorf("devin: devin_id is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/sessions/" + url.PathEscape(devinID) + "/tags"
-	result := new(SessionTags)
+	result := new(SessionTagsResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -5328,7 +5968,7 @@ func (s OrgSessionsService) GetSessionTags(ctx context.Context, devinID string) 
 
 // AppendSessionTags Append session tags.
 // See https://docs.devin.ai/api-reference/v3/sessions/post-organizations-session-tags.
-func (s OrgSessionsService) AppendSessionTags(ctx context.Context, devinID string, request *SessionTagsInput) (*SessionTags, *Response, error) {
+func (s OrgSessionsService) AppendSessionTags(ctx context.Context, devinID string, request *SessionTagsUpdateRequest) (*SessionTagsResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5339,7 +5979,7 @@ func (s OrgSessionsService) AppendSessionTags(ctx context.Context, devinID strin
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/sessions/" + url.PathEscape(devinID) + "/tags"
-	result := new(SessionTags)
+	result := new(SessionTagsResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -5349,7 +5989,7 @@ func (s OrgSessionsService) AppendSessionTags(ctx context.Context, devinID strin
 
 // ReplaceSessionTags Replace session tags.
 // See https://docs.devin.ai/api-reference/v3/sessions/put-organizations-session-tags.
-func (s OrgSessionsService) ReplaceSessionTags(ctx context.Context, devinID string, request *SessionTagsInput) (*SessionTags, *Response, error) {
+func (s OrgSessionsService) ReplaceSessionTags(ctx context.Context, devinID string, request *SessionTagsUpdateRequest) (*SessionTagsResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5360,8 +6000,26 @@ func (s OrgSessionsService) ReplaceSessionTags(ctx context.Context, devinID stri
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/sessions/" + url.PathEscape(devinID) + "/tags"
-	result := new(SessionTags)
+	result := new(SessionTagsResponse)
 	response, err := s.scope.client.Do(ctx, "PUT", path, nil, request, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// UnarchiveSession Unarchive Session.
+// See https://docs.devin.ai/v3-openapi.json#handle_unarchive_session_v3_organizations__org_id__sessions__devin_id__unarchive_post.
+func (s OrgSessionsService) UnarchiveSession(ctx context.Context, devinID string) (*SessionResponse, *Response, error) {
+	if s.scope.orgID == "" {
+		return nil, nil, fmt.Errorf("devin: organization ID is required")
+	}
+	if devinID == "" {
+		return nil, nil, fmt.Errorf("devin: devin_id is required")
+	}
+	path := "/v3/organizations/" + url.PathEscape(s.scope.orgID) + "/sessions/" + url.PathEscape(devinID) + "/unarchive"
+	result := new(SessionResponse)
+	response, err := s.scope.client.Do(ctx, "POST", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
 	}
@@ -5710,10 +6368,60 @@ func (s OrgSnapshotSetupService) UnpinOrgBuild(ctx context.Context, buildID stri
 
 // Self Get Self.
 // See https://docs.devin.ai/api-reference/v3/self/self.
-func (c *Client) Self(ctx context.Context) (*SelfResponse, *Response, error) {
+func (c *Client) Self(ctx context.Context) (*ServiceUserSelf, *Response, error) {
 	path := "/v3/self"
-	result := new(SelfResponse)
+	result := new(ServiceUserSelf)
 	response, err := c.Do(ctx, "GET", path, nil, nil, result)
+	if err != nil {
+		return nil, response, err
+	}
+	return result, response, nil
+}
+
+// GlobalClientAiGatewayMetricsGetAiGatewayMetricsOptions configures query parameters for AiGatewayMetricsGetAiGatewayMetrics.
+type GlobalClientAiGatewayMetricsGetAiGatewayMetricsOptions struct {
+	Extra           url.Values // Additional query parameters; typed fields take precedence.
+	Metric          url.Values
+	TimeAfter       int64
+	TimeBefore      int64
+	IntervalSeconds *int64
+	Model           *string
+	Aggregation     *string
+}
+
+// AiGatewayMetricsGetAiGatewayMetrics Query AI Gateway Metrics.
+// See https://docs.devin.ai/v3-openapi.json#handle_get_ai_gateway_metrics_v3beta1_ai_gateway_metrics_get.
+// This endpoint is part of the beta API and may change.
+func (c *Client) AiGatewayMetricsGetAiGatewayMetrics(ctx context.Context, opts *GlobalClientAiGatewayMetricsGetAiGatewayMetricsOptions) (*AiGatewayMetricsResponse, *Response, error) {
+	path := "/v3beta1/ai-gateway/metrics"
+	query := url.Values{}
+	if opts == nil {
+		return nil, nil, fmt.Errorf("devin: query options are required")
+	}
+	if opts != nil {
+		for key, values := range opts.Extra {
+			query[key] = append([]string(nil), values...)
+		}
+		if opts.Metric == nil {
+			return nil, nil, fmt.Errorf("devin: metric is required")
+		}
+		for key, values := range opts.Metric {
+			query[key] = append([]string(nil), values...)
+		}
+		query.Set("time_after", strconv.FormatInt(opts.TimeAfter, 10))
+		query.Set("time_before", strconv.FormatInt(opts.TimeBefore, 10))
+		if opts.IntervalSeconds != nil {
+			query.Set("interval_seconds", strconv.FormatInt(*opts.IntervalSeconds, 10))
+		}
+		if opts.Model != nil {
+			query.Set("model", *opts.Model)
+		}
+		if opts.Aggregation != nil {
+			query.Set("aggregation", *opts.Aggregation)
+		}
+	}
+	result := new(AiGatewayMetricsResponse)
+	response, err := c.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
 	}
@@ -5735,7 +6443,7 @@ type EnterpriseGuardrailViolationsListOptions struct {
 // List List Guardrail Violations.
 // See https://docs.devin.ai/api-reference/v3/guardrail-violations/enterprise-guardrail-violations.
 // This endpoint is part of the beta API and may change.
-func (s EnterpriseGuardrailViolationsService) List(ctx context.Context, opts *EnterpriseGuardrailViolationsListOptions) (*EnterpriseEnterpriseGuardrailViolationsResponse, *Response, error) {
+func (s EnterpriseGuardrailViolationsService) List(ctx context.Context, opts *EnterpriseGuardrailViolationsListOptions) (*PaginatedResponseGuardrailViolationResponse, *Response, error) {
 	path := "/v3beta1/enterprise/guardrail-violations"
 	query := url.Values{}
 	if opts != nil {
@@ -5764,7 +6472,7 @@ func (s EnterpriseGuardrailViolationsService) List(ctx context.Context, opts *En
 			query.Set("guardrail_id", *opts.GuardrailID)
 		}
 	}
-	result := new(EnterpriseEnterpriseGuardrailViolationsResponse)
+	result := new(PaginatedResponseGuardrailViolationResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -5772,8 +6480,8 @@ func (s EnterpriseGuardrailViolationsService) List(ctx context.Context, opts *En
 	return result, response, nil
 }
 
-// EnterpriseGuardrailViolationsEnterpriseOrganizationsGuardrailViolationsOptions configures query parameters for EnterpriseOrganizationsGuardrailViolations.
-type EnterpriseGuardrailViolationsEnterpriseOrganizationsGuardrailViolationsOptions struct {
+// EnterpriseGuardrailViolationsGetOrgGuardrailViolationsOptions configures query parameters for GetOrgGuardrailViolations.
+type EnterpriseGuardrailViolationsGetOrgGuardrailViolationsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
 	Order       *string
 	TimeBefore  *int64
@@ -5784,10 +6492,10 @@ type EnterpriseGuardrailViolationsEnterpriseOrganizationsGuardrailViolationsOpti
 	GuardrailID *string
 }
 
-// EnterpriseOrganizationsGuardrailViolations List Organization Guardrail Violations.
+// GetOrgGuardrailViolations List Organization Guardrail Violations.
 // See https://docs.devin.ai/api-reference/v3/guardrail-violations/organizations-guardrail-violations.
 // This endpoint is part of the beta API and may change.
-func (s EnterpriseGuardrailViolationsService) EnterpriseOrganizationsGuardrailViolations(ctx context.Context, orgID string, opts *EnterpriseGuardrailViolationsEnterpriseOrganizationsGuardrailViolationsOptions) (*EnterpriseOrganizationsGuardrailViolationsResponse, *Response, error) {
+func (s EnterpriseGuardrailViolationsService) GetOrgGuardrailViolations(ctx context.Context, orgID string, opts *EnterpriseGuardrailViolationsGetOrgGuardrailViolationsOptions) (*PaginatedResponseGuardrailViolationResponse, *Response, error) {
 	if orgID == "" {
 		return nil, nil, fmt.Errorf("devin: org_id is required")
 	}
@@ -5819,7 +6527,7 @@ func (s EnterpriseGuardrailViolationsService) EnterpriseOrganizationsGuardrailVi
 			query.Set("guardrail_id", *opts.GuardrailID)
 		}
 	}
-	result := new(EnterpriseOrganizationsGuardrailViolationsResponse)
+	result := new(PaginatedResponseGuardrailViolationResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -5827,16 +6535,16 @@ func (s EnterpriseGuardrailViolationsService) EnterpriseOrganizationsGuardrailVi
 	return result, response, nil
 }
 
-// EnterpriseServiceUsersEnterpriseGetEnterpriseServiceUserAPIKeysOptions configures query parameters for EnterpriseGetEnterpriseServiceUserAPIKeys.
-type EnterpriseServiceUsersEnterpriseGetEnterpriseServiceUserAPIKeysOptions struct {
+// EnterpriseServiceUserAPIKeysListServiceUserAPIKeysOptions configures query parameters for ListServiceUserAPIKeys.
+type EnterpriseServiceUserAPIKeysListServiceUserAPIKeysOptions struct {
 	Extra  url.Values // Additional query parameters; typed fields take precedence.
 	Status *string
 }
 
-// EnterpriseGetEnterpriseServiceUserAPIKeys List API keys for service user.
+// ListServiceUserAPIKeys List API keys for service user.
 // See https://docs.devin.ai/api-reference/v3/service-users/get-enterprise-service-user-api-keys.
 // This endpoint is part of the beta API and may change.
-func (s EnterpriseServiceUsersService) EnterpriseGetEnterpriseServiceUserAPIKeys(ctx context.Context, serviceUserID string, opts *EnterpriseServiceUsersEnterpriseGetEnterpriseServiceUserAPIKeysOptions) (*EnterpriseGetEnterpriseServiceUserAPIKeysResponse, *Response, error) {
+func (s EnterpriseServiceUserAPIKeysService) ListServiceUserAPIKeys(ctx context.Context, serviceUserID string, opts *EnterpriseServiceUserAPIKeysListServiceUserAPIKeysOptions) (*PaginatedResponseAPIKeyResponse, *Response, error) {
 	if serviceUserID == "" {
 		return nil, nil, fmt.Errorf("devin: service_user_id is required")
 	}
@@ -5850,7 +6558,7 @@ func (s EnterpriseServiceUsersService) EnterpriseGetEnterpriseServiceUserAPIKeys
 			query.Set("status", *opts.Status)
 		}
 	}
-	result := new(EnterpriseGetEnterpriseServiceUserAPIKeysResponse)
+	result := new(PaginatedResponseAPIKeyResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -5858,10 +6566,10 @@ func (s EnterpriseServiceUsersService) EnterpriseGetEnterpriseServiceUserAPIKeys
 	return result, response, nil
 }
 
-// EnterprisePostEnterpriseServiceUserAPIKeys Create API key for service user.
+// CreateServiceUserAPIKey Create API key for service user.
 // See https://docs.devin.ai/api-reference/v3/service-users/post-enterprise-service-user-api-keys.
 // This endpoint is part of the beta API and may change.
-func (s EnterpriseServiceUsersService) EnterprisePostEnterpriseServiceUserAPIKeys(ctx context.Context, serviceUserID string, request *EnterprisePostEnterpriseServiceUserAPIKeysRequest) (*EnterprisePostEnterpriseServiceUserAPIKeysResponse, *Response, error) {
+func (s EnterpriseServiceUserAPIKeysService) CreateServiceUserAPIKey(ctx context.Context, serviceUserID string, request *CreateAPIKeyRequest) (*APIKeyWithTokenResponse, *Response, error) {
 	if serviceUserID == "" {
 		return nil, nil, fmt.Errorf("devin: service_user_id is required")
 	}
@@ -5869,7 +6577,7 @@ func (s EnterpriseServiceUsersService) EnterprisePostEnterpriseServiceUserAPIKey
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3beta1/enterprise/service-users/" + url.PathEscape(serviceUserID) + "/api-keys"
-	result := new(EnterprisePostEnterpriseServiceUserAPIKeysResponse)
+	result := new(APIKeyWithTokenResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -5877,10 +6585,10 @@ func (s EnterpriseServiceUsersService) EnterprisePostEnterpriseServiceUserAPIKey
 	return result, response, nil
 }
 
-// EnterpriseDeleteEnterpriseServiceUserAPIKey Revoke API key for service user.
+// RevokeServiceUserAPIKey Revoke API key for service user.
 // See https://docs.devin.ai/api-reference/v3/service-users/delete-enterprise-service-user-api-key.
 // This endpoint is part of the beta API and may change.
-func (s EnterpriseServiceUsersService) EnterpriseDeleteEnterpriseServiceUserAPIKey(ctx context.Context, serviceUserID string, apiKeyID string) (*EnterpriseDeleteEnterpriseServiceUserAPIKeyResponse, *Response, error) {
+func (s EnterpriseServiceUserAPIKeysService) RevokeServiceUserAPIKey(ctx context.Context, serviceUserID string, apiKeyID string) (*APIKeyResponse, *Response, error) {
 	if serviceUserID == "" {
 		return nil, nil, fmt.Errorf("devin: service_user_id is required")
 	}
@@ -5888,7 +6596,7 @@ func (s EnterpriseServiceUsersService) EnterpriseDeleteEnterpriseServiceUserAPIK
 		return nil, nil, fmt.Errorf("devin: api_key_id is required")
 	}
 	path := "/v3beta1/enterprise/service-users/" + url.PathEscape(serviceUserID) + "/api-keys/" + url.PathEscape(apiKeyID)
-	result := new(EnterpriseDeleteEnterpriseServiceUserAPIKeyResponse)
+	result := new(APIKeyResponse)
 	response, err := s.scope.client.Do(ctx, "DELETE", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -5896,10 +6604,10 @@ func (s EnterpriseServiceUsersService) EnterpriseDeleteEnterpriseServiceUserAPIK
 	return result, response, nil
 }
 
-// EnterpriseRotateEnterpriseServiceUserAPIKey Rotate API key for service user.
+// RotateServiceUserAPIKey Rotate API key for service user.
 // See https://docs.devin.ai/api-reference/v3/service-users/rotate-enterprise-service-user-api-key.
 // This endpoint is part of the beta API and may change.
-func (s EnterpriseServiceUsersService) EnterpriseRotateEnterpriseServiceUserAPIKey(ctx context.Context, serviceUserID string, apiKeyID string, request *EnterpriseRotateEnterpriseServiceUserAPIKeyRequest) (*EnterpriseRotateEnterpriseServiceUserAPIKeyResponse, *Response, error) {
+func (s EnterpriseServiceUserAPIKeysService) RotateServiceUserAPIKey(ctx context.Context, serviceUserID string, apiKeyID string, request *RotateAPIKeyRequest) (*APIKeyWithTokenResponse, *Response, error) {
 	if serviceUserID == "" {
 		return nil, nil, fmt.Errorf("devin: service_user_id is required")
 	}
@@ -5910,7 +6618,7 @@ func (s EnterpriseServiceUsersService) EnterpriseRotateEnterpriseServiceUserAPIK
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3beta1/enterprise/service-users/" + url.PathEscape(serviceUserID) + "/api-keys/" + url.PathEscape(apiKeyID) + "/rotate"
-	result := new(EnterpriseRotateEnterpriseServiceUserAPIKeyResponse)
+	result := new(APIKeyWithTokenResponse)
 	response, err := s.scope.client.Do(ctx, "POST", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -5918,15 +6626,15 @@ func (s EnterpriseServiceUsersService) EnterpriseRotateEnterpriseServiceUserAPIK
 	return result, response, nil
 }
 
-// OrgGetOrganizationDefaultPlatform Get Organization Default Platform (Devin API).
+// GetOrgDefaultPlatform Get Organization Default Platform.
 // See https://docs.devin.ai/api-reference/v3/organization-settings/get-organization-default-platform.
 // This endpoint is part of the beta API and may change.
-func (s OrgOrganizationSettingsService) OrgGetOrganizationDefaultPlatform(ctx context.Context) (*OrgGetOrganizationDefaultPlatformResponse, *Response, error) {
+func (s OrgOrganizationSettingsService) GetOrgDefaultPlatform(ctx context.Context) (*OrgDefaultPlatformResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
 	path := "/v3beta1/organizations/" + url.PathEscape(s.scope.orgID) + "/default-platform"
-	result := new(OrgGetOrganizationDefaultPlatformResponse)
+	result := new(OrgDefaultPlatformResponse)
 	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -5934,11 +6642,10 @@ func (s OrgOrganizationSettingsService) OrgGetOrganizationDefaultPlatform(ctx co
 	return result, response, nil
 }
 
-// SetOrganizationDefaultPlatform Set Organization Default Platform.
+// UpdateOrgDefaultPlatform Set Organization Default Platform.
 // See https://docs.devin.ai/api-reference/v3/organization-settings/put-organization-default-platform.
-// Contract limitation: The official llms-full page specifies a required JSON object; send at most one of platform or outpost_pool_id, or an empty object to clear. Response schema remains unconstrained because the endpoint detail page is inaccessible.
 // This endpoint is part of the beta API and may change.
-func (s OrgOrganizationSettingsService) SetOrganizationDefaultPlatform(ctx context.Context, request *SetOrganizationDefaultPlatformRequest) (*UndocumentedJSON, *Response, error) {
+func (s OrgOrganizationSettingsService) UpdateOrgDefaultPlatform(ctx context.Context, request *OrgDefaultPlatformUpdateRequest) (*OrgDefaultPlatformResponse, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5946,7 +6653,7 @@ func (s OrgOrganizationSettingsService) SetOrganizationDefaultPlatform(ctx conte
 		return nil, nil, fmt.Errorf("devin: request is required")
 	}
 	path := "/v3beta1/organizations/" + url.PathEscape(s.scope.orgID) + "/default-platform"
-	result := new(UndocumentedJSON)
+	result := new(OrgDefaultPlatformResponse)
 	response, err := s.scope.client.Do(ctx, "PUT", path, nil, request, result)
 	if err != nil {
 		return nil, response, err
@@ -5954,18 +6661,18 @@ func (s OrgOrganizationSettingsService) SetOrganizationDefaultPlatform(ctx conte
 	return result, response, nil
 }
 
-// OrgUsersOrgListOrganizationIDPUsersOptions configures query parameters for OrgListOrganizationIDPUsers.
-type OrgUsersOrgListOrganizationIDPUsersOptions struct {
+// OrgUsersListOrganizationIDPUsersOptions configures query parameters for ListOrganizationIDPUsers.
+type OrgUsersListOrganizationIDPUsersOptions struct {
 	Extra url.Values // Additional query parameters; typed fields take precedence.
 	After *string
 	First *int64
 	Email *string
 }
 
-// OrgListOrganizationIDPUsers List Organization IDP Group Users.
+// ListOrganizationIDPUsers List Organization IDP Group Users.
 // See https://docs.devin.ai/api-reference/v3/users/list-organization-idp-users.
 // This endpoint is part of the beta API and may change.
-func (s OrgUsersService) OrgListOrganizationIDPUsers(ctx context.Context, opts *OrgUsersOrgListOrganizationIDPUsersOptions) (*OrgListOrganizationIDPUsersResponse, *Response, error) {
+func (s OrgUsersService) ListOrganizationIDPUsers(ctx context.Context, opts *OrgUsersListOrganizationIDPUsersOptions) (*PaginatedResponseIDPGroupUser, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -5985,7 +6692,7 @@ func (s OrgUsersService) OrgListOrganizationIDPUsers(ctx context.Context, opts *
 			query.Set("email", *opts.Email)
 		}
 	}
-	result := new(OrgListOrganizationIDPUsersResponse)
+	result := new(PaginatedResponseIDPGroupUser)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -6004,7 +6711,7 @@ type OrgUsersListOptions struct {
 // List List Organization Users.
 // See https://docs.devin.ai/api-reference/v3/users/list-organization-users.
 // This endpoint is part of the beta API and may change.
-func (s OrgUsersService) List(ctx context.Context, opts *OrgUsersListOptions) (*OrgListOrganizationUsersResponse, *Response, error) {
+func (s OrgUsersService) List(ctx context.Context, opts *OrgUsersListOptions) (*PaginatedResponseUser, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -6024,7 +6731,7 @@ func (s OrgUsersService) List(ctx context.Context, opts *OrgUsersListOptions) (*
 			query.Set("email", *opts.Email)
 		}
 	}
-	result := new(OrgListOrganizationUsersResponse)
+	result := new(PaginatedResponseUser)
 	response, err := s.scope.client.Do(ctx, "GET", path, query, nil, result)
 	if err != nil {
 		return nil, response, err
@@ -6035,7 +6742,7 @@ func (s OrgUsersService) List(ctx context.Context, opts *OrgUsersListOptions) (*
 // Get Get Organization User.
 // See https://docs.devin.ai/api-reference/v3/users/get-organization-user.
 // This endpoint is part of the beta API and may change.
-func (s OrgUsersService) Get(ctx context.Context, userID string) (*OrgGetOrganizationUserResponse, *Response, error) {
+func (s OrgUsersService) Get(ctx context.Context, userID string) (*UserWithIDPRoles, *Response, error) {
 	if s.scope.orgID == "" {
 		return nil, nil, fmt.Errorf("devin: organization ID is required")
 	}
@@ -6043,7 +6750,7 @@ func (s OrgUsersService) Get(ctx context.Context, userID string) (*OrgGetOrganiz
 		return nil, nil, fmt.Errorf("devin: user_id is required")
 	}
 	path := "/v3beta1/organizations/" + url.PathEscape(s.scope.orgID) + "/members/users/" + url.PathEscape(userID)
-	result := new(OrgGetOrganizationUserResponse)
+	result := new(UserWithIDPRoles)
 	response, err := s.scope.client.Do(ctx, "GET", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err

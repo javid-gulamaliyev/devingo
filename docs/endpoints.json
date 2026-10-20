@@ -942,10 +942,59 @@
   },
   {
     "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans/{scan_id}",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_get_code_scan_v3_enterprise_organizations__org_id__code_scans__scan_id__get",
+    "title": "Get Code Scan"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans/{scan_id}/auto-scan",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_delete_auto_scan_schedule_v3_enterprise_organizations__org_id__code_scans__scan_id__auto_scan_delete",
+    "title": "Delete Auto-Scan Schedule"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans/{scan_id}/auto-scan",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_create_auto_scan_schedule_v3_enterprise_organizations__org_id__code_scans__scan_id__auto_scan_post",
+    "title": "Create Auto-Scan Schedule"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans/{scan_id}/effort",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_update_code_scan_effort_v3_enterprise_organizations__org_id__code_scans__scan_id__effort_put",
+    "title": "Update Code Scan Effort"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans/{scan_id}/findings/remediate",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_remediate_code_scan_findings_v3_enterprise_organizations__org_id__code_scans__scan_id__findings_remediate_post",
+    "title": "Remediate Code Scan Findings"
+  },
+  {
+    "version": "v3",
     "method": "POST",
     "path": "/v3/enterprise/organizations/{org_id}/code-scans/{scan_id}/findings/{finding_id}/remediate",
     "source": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-remediate",
     "title": "Remediate Code Scan Finding (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans/{scan_id}/profile",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_switch_code_scan_profile_v3_enterprise_organizations__org_id__code_scans__scan_id__profile_put",
+    "title": "Switch Code Scan Profile"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans/{scan_id}/scan-new-commits",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_scan_new_commits_v3_enterprise_organizations__org_id__code_scans__scan_id__scan_new_commits_post",
+    "title": "Scan New Commits"
   },
   {
     "version": "v3",
@@ -1475,10 +1524,59 @@
   },
   {
     "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/code-scans/{scan_id}",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_get_code_scan_v3_organizations__org_id__code_scans__scan_id__get",
+    "title": "Get Code Scan"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/code-scans/{scan_id}/auto-scan",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_delete_auto_scan_schedule_v3_organizations__org_id__code_scans__scan_id__auto_scan_delete",
+    "title": "Delete Auto-Scan Schedule"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/code-scans/{scan_id}/auto-scan",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_create_auto_scan_schedule_v3_organizations__org_id__code_scans__scan_id__auto_scan_post",
+    "title": "Create Auto-Scan Schedule"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/organizations/{org_id}/code-scans/{scan_id}/effort",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_update_code_scan_effort_v3_organizations__org_id__code_scans__scan_id__effort_put",
+    "title": "Update Code Scan Effort"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/code-scans/{scan_id}/findings/remediate",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_remediate_code_scan_findings_v3_organizations__org_id__code_scans__scan_id__findings_remediate_post",
+    "title": "Remediate Code Scan Findings"
+  },
+  {
+    "version": "v3",
     "method": "POST",
     "path": "/v3/organizations/{org_id}/code-scans/{scan_id}/findings/{finding_id}/remediate",
     "source": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-remediate",
     "title": "Remediate Code Scan Finding (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/organizations/{org_id}/code-scans/{scan_id}/profile",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_switch_code_scan_profile_v3_organizations__org_id__code_scans__scan_id__profile_put",
+    "title": "Switch Code Scan Profile"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/code-scans/{scan_id}/scan-new-commits",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_scan_new_commits_v3_organizations__org_id__code_scans__scan_id__scan_new_commits_post",
+    "title": "Scan New Commits"
   },
   {
     "version": "v3",
@@ -1867,6 +1965,13 @@
   },
   {
     "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/unarchive",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_unarchive_session_v3_organizations__org_id__sessions__devin_id__unarchive_post",
+    "title": "Unarchive Session"
+  },
+  {
+    "version": "v3",
     "method": "GET",
     "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints",
     "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/list-organizations-blueprints",
@@ -1983,6 +2088,13 @@
     "path": "/v3/self",
     "source": "https://docs.devin.ai/api-reference/v3/self/self",
     "title": "Get Self"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3beta1/ai-gateway/metrics",
+    "source": "https://docs.devin.ai/v3-openapi.json#handle_get_ai_gateway_metrics_v3beta1_ai_gateway_metrics_get",
+    "title": "Query AI Gateway Metrics"
   },
   {
     "version": "v3",
