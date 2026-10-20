@@ -1,0 +1,23 @@
+client.go
+  s_598e27b507d34c::t_fc170893beb7ba 10,39-49,235-236,255-262,327-329,419-421,424,438
+client_test.go
+  s_598e27b507d34c::t_8bfa24aff21686 7,9,345-384
+errors.go
+  s_598e27b507d34c::t_fa965b8b6f0114 8,29-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "59f3fd9391979c2f75f954252b6788e622889de0",
+  "prompts": {},
+  "sessions": {
+    "s_598e27b507d34c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "77047a69-f126-4fd0-ae5f-5422017055e5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Javid Gulamaliyev <javidgulamaliyev@commonroom.io>"
+    }
+  }
+}
