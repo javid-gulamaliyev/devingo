@@ -34,6 +34,12 @@ var freeTextKeys = map[string]bool{
 	"structured_output": true, "improved_prompt": true, "feedback": true,
 }
 
+// Keys whose values are a repository's name or path.
+var repoKeys = map[string]bool{
+	"repo": true, "repos": true, "repo_name": true, "repo_names": true, "repo_full_name": true,
+	"repository": true, "repository_path": true, "full_name": true, "provider_repository_id": true,
+}
+
 var (
 	prefixedID = regexp.MustCompile(`\b(devin|org|user|playbook|note|folder|secret|automation|schedule|blueprint|build|scan|finding|profile|attachment|att|repo|event|apikey|apk|cog|su|service-user|team|group|idp)[-_][A-Za-z0-9]{6,}\b`)
 	uuidLike   = regexp.MustCompile(`\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b`)
@@ -48,12 +54,18 @@ func (r *redactor) Value(key string, v any) any {
 	switch v := v.(type) {
 	case map[string]any:
 		out := make(map[string]any, len(v))
-		for k, child := range v {
+		// Sorted, so placeholders are numbered the same on every recording.
+		keys := make([]string, 0, len(v))
+		for k := range v {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
 			if k == "structured_output" {
-				out[k] = r.prose(child)
+				out[k] = r.prose(v[k])
 				continue
 			}
-			out[k] = r.Value(k, child)
+			out[k] = r.Value(k, v[k])
 		}
 		return out
 	case []any:
@@ -63,7 +75,12 @@ func (r *redactor) Value(key string, v any) any {
 		}
 		return out
 	case string:
-		if freeTextKeys[key] {
+		switch {
+		case repoKeys[key] || strings.Contains(key, "repo") && v != "":
+			return r.stable("repo", v, "example/repo-%d")
+		case key == "end_cursor" || key == "after":
+			return r.stable("cursor", v, "cursor-%d") // cursors can encode internal IDs
+		case freeTextKeys[key]:
 			return r.text(v)
 		}
 		return r.identifiers(v)
@@ -137,6 +154,10 @@ func (r *redactor) identifiers(s string) string {
 	})
 	s = prefixedID.ReplaceAllStringFunc(s, func(m string) string {
 		prefix := prefixedID.FindStringSubmatch(m)[1]
+		// An ID carries a digit; "user_request" or "org_admin" is a word.
+		if !strings.ContainsAny(m[len(prefix):], "0123456789") {
+			return m
+		}
 		sep := m[len(prefix) : len(prefix)+1]
 		return r.stable(prefix, m, prefix+sep+"%012d")
 	})
@@ -180,19 +201,24 @@ func TestRedactorRemovesIdentifiersAndProse(t *testing.T) {
 	  "pull_requests": [{"pr_url": "https://github.com/acme-corp/secret-repo/pull/12", "pr_state": "open"}],
 	  "download": "https://files.devin.ai/a.png?X-Amz-Signature=deadbeef&X-Amz-Credential=AKIA",
 	  "structured_output": {"answer": "Yes, ship it", "n": 3},
-	  "items": [{"message": "## Plan\n- step **one**", "event_id": "event-abcdef123456", "source": "devin"}]
+	  "items": [{"message": "## Plan\n- step **one**", "event_id": "event-abcdef123456", "source": "devin"}],
+	  "status_detail": "user_request",
+	  "role_id": "org_admin",
+	  "repo_full_name": "jane-doe/secret-project",
+	  "repo_path": "jane-doe/secret-project",
+	  "end_cursor": "djE6Z2l0LWNvbm5lY3Rpb24tY2Mx"
 	}`
 	out, err := r.JSON([]byte(in))
 	if err != nil {
 		t.Fatal(err)
 	}
 	got := string(out)
-	for _, leak := range []string{"0123456789abcdef", "ab12cd34ef56", "jane.doe", "acme", "secret-repo", "X-Amz", "deadbeef", "AKIA", "ship it", "step", "abcdef123456", "Fix login"} {
+	for _, leak := range []string{"0123456789abcdef", "ab12cd34ef56", "jane.doe", "jane-doe", "secret-project", "djE6", "acme", "secret-repo", "X-Amz", "deadbeef", "AKIA", "ship it", "step", "abcdef123456", "Fix login"} {
 		if strings.Contains(got, leak) {
 			t.Errorf("redacted output still contains %q:\n%s", leak, got)
 		}
 	}
-	for _, kept := range []string{`"status": "running"`, `"source": "devin"`, `"e2e"`, `"pr_state": "open"`, "## ", "- ", "**", "github.com/example/repo-1/pull/12", `"n": 3`} {
+	for _, kept := range []string{`"status_detail": "user_request"`, `"role_id": "org_admin"`, `"status": "running"`, `"source": "devin"`, `"e2e"`, `"pr_state": "open"`, "## ", "- ", "**", "github.com/example/repo-", "/pull/12", `"n": 3`} {
 		if !strings.Contains(got, kept) {
 			t.Errorf("redacted output lost %q:\n%s", kept, got)
 		}
@@ -212,7 +238,7 @@ func TestRedactorRemovesIdentifiersAndProse(t *testing.T) {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
-	if len(keys) != 11 {
+	if len(keys) != 16 {
 		t.Errorf("keys changed: %v", keys)
 	}
 }

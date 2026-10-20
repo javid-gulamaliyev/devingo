@@ -460,7 +460,8 @@ func TestLiveCatalog(t *testing.T) {
 			return v, err
 		}},
 		{"prreviews.list", func() (any, error) {
-			v, _, err := env.org.PRReviews.List(ctx, &devin.OrgPRReviewsListOptions{})
+			// There's no listing every review; it's looked up by pull request.
+			v, _, err := env.org.PRReviews.List(ctx, &devin.OrgPRReviewsListOptions{PRURL: "https://github.com/octocat/Hello-World/pull/1"})
 			return v, err
 		}},
 		{"codescans.list", func() (any, error) {
