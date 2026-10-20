@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -338,5 +340,45 @@ func TestClientOptionsValidation(t *testing.T) {
 	}
 	if _, err := NewClient(" "); err == nil {
 		t.Fatal("accepted empty token")
+	}
+}
+
+func TestClientReturnsRetryAfterLongerThanPolicy(t *testing.T) {
+	var calls atomic.Int32
+	server := newTestServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls.Add(1)
+		w.Header().Set("Retry-After", "60")
+		w.WriteHeader(http.StatusTooManyRequests)
+	}))
+	c := testClient(t, server, WithRetryPolicy(RetryPolicy{MaxAttempts: 3, BaseDelay: time.Millisecond, MaxDelay: 2 * time.Millisecond}))
+	_, err := c.Do(context.Background(), http.MethodGet, "/x", nil, nil, nil)
+	var apiErr *APIError
+	if !errors.As(err, &apiErr) || apiErr.StatusCode != http.StatusTooManyRequests || apiErr.RetryAfter != time.Minute {
+		t.Fatalf("err = %v (%+v)", err, apiErr)
+	}
+	if calls.Load() != 1 {
+		t.Fatalf("retried %d times despite a 60s Retry-After", calls.Load()-1)
+	}
+}
+
+func TestClientNeverPrintsToken(t *testing.T) {
+	const token = "cog_canary_secret"
+	c, err := NewClient(token)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var out bytes.Buffer
+	for _, verb := range []string{"%v", "%+v", "%#v", "%s", "%d", "%x", "%q"} {
+		fmt.Fprintf(&out, verb+"\n", c)
+		fmt.Fprintf(&out, verb+"\n", *c)
+		fmt.Fprintf(&out, verb+"\n", struct{ C *Client }{c})
+	}
+	slog.New(slog.NewTextHandler(&out, nil)).Info("x", "client", c, "value", *c)
+	slog.New(slog.NewJSONHandler(&out, nil)).Info("x", "client", c, "value", *c)
+	if strings.Contains(out.String(), token) || strings.Contains(out.String(), fmt.Sprintf("%x", token)) {
+		t.Fatalf("token printed:\n%s", out.String())
+	}
+	if !strings.Contains(out.String(), "[redacted]") {
+		t.Fatalf("redaction marker missing:\n%s", out.String())
 	}
 }

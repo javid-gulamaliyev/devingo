@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 // ErrResponseTooLarge indicates that a response exceeded the configured limit.
@@ -25,6 +26,8 @@ type APIError struct {
 	Details    []any
 	Body       []byte
 	Truncated  bool
+	// RetryAfter is the server's requested pause, from the Retry-After header.
+	RetryAfter time.Duration
 }
 
 func (e *APIError) Error() string {
