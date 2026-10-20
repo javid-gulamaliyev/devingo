@@ -1,0 +1,2138 @@
+{
+  "components": {
+    "schemas": {
+      "CreateANewDevinSessionRequest": {
+        "properties": {
+          "idempotent": {
+            "type": "boolean"
+          },
+          "knowledge_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max_acu_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "playbook_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "secret_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_secrets": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SessionSecretInput"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "structured_output_schema": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unlisted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "type": "object"
+      },
+      "CreateANewDevinSessionResponse": {
+        "properties": {
+          "is_new_session": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "url"
+        ],
+        "type": "object"
+      },
+      "CreateKnowledgeRequest": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "parent_folder_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pinned_repo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "trigger_description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "name",
+          "trigger_description"
+        ],
+        "type": "object"
+      },
+      "CreateKnowledgeResponse": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KnowledgeCreatedBy"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "parent_folder_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pinned_repo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "trigger_description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "created_at",
+          "id",
+          "name",
+          "trigger_description"
+        ],
+        "type": "object"
+      },
+      "CreatePlaybookRequest": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "title"
+        ],
+        "type": "object"
+      },
+      "CreatePlaybookResponse": {
+        "properties": {
+          "access_type": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_by_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_by_user_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "playbook_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_by_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_by_user_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "access_type",
+          "body",
+          "created_at",
+          "created_by_user_id",
+          "created_by_user_name",
+          "org_id",
+          "playbook_id",
+          "status",
+          "title",
+          "updated_at",
+          "updated_by_user_id",
+          "updated_by_user_name"
+        ],
+        "type": "object"
+      },
+      "CreateSecretResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "DeletePlaybookResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "DeleteSecretResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "DownloadAttachmentFilesResponse": {},
+      "FolderResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "GetPlaybookResponse": {
+        "properties": {
+          "access_type": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_by_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_by_user_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "playbook_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_by_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_by_user_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "access_type",
+          "body",
+          "created_at",
+          "created_by_user_id",
+          "created_by_user_name",
+          "org_id",
+          "playbook_id",
+          "status",
+          "title",
+          "updated_at",
+          "updated_by_user_id",
+          "updated_by_user_name"
+        ],
+        "type": "object"
+      },
+      "KnowledgeCreatedBy": {
+        "properties": {
+          "full_name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "KnowledgeResponse": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "created_by": {
+            "properties": {
+              "full_name": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "image_url": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "macro": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "parent_folder_id": {
+            "type": "string"
+          },
+          "pinned_repo": {
+            "type": "string"
+          },
+          "trigger_description": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "ListKnowledgeResponse": {
+        "properties": {
+          "folders": {
+            "items": {
+              "$ref": "#/components/schemas/FolderResponse"
+            },
+            "type": "array"
+          },
+          "knowledge": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeResponse"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "folders",
+          "knowledge"
+        ],
+        "type": "object"
+      },
+      "ListPlaybooksResponse": {
+        "items": {
+          "properties": {
+            "access_type": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "created_at": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "created_by_user_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "created_by_user_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "macro": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "org_id": {
+              "type": "string"
+            },
+            "playbook_id": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "updated_at": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "updated_by_user_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "updated_by_user_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "access_type",
+            "body",
+            "created_at",
+            "created_by_user_id",
+            "created_by_user_name",
+            "org_id",
+            "playbook_id",
+            "status",
+            "title",
+            "updated_at",
+            "updated_by_user_id",
+            "updated_by_user_name"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "ListSecretsResponse": {
+        "items": {
+          "properties": {
+            "created_at": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "key": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": {
+              "enum": [
+                "cookie",
+                "key-value",
+                "dictionary",
+                "totp"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "type"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "ListSessionsResponse": {
+        "properties": {
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/SessionSummary"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "sessions"
+        ],
+        "type": "object"
+      },
+      "PullRequestInfo": {
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "RetrieveDetailsAboutAnExistingSessionResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "messages": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "playbook_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pull_request": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PullRequestInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "status_enum": {
+            "anyOf": [
+              {
+                "enum": [
+                  "working",
+                  "blocked",
+                  "expired",
+                  "finished",
+                  "suspend_requested",
+                  "suspend_requested_frontend",
+                  "resume_requested",
+                  "resume_requested_frontend",
+                  "resumed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "structured_output": {},
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "created_at",
+          "session_id",
+          "status",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "SendAMessageToAnExistingDevinSessionRequest": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "SendAMessageToAnExistingDevinSessionResponse": {
+        "properties": {
+          "detail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "detail"
+        ],
+        "type": "object"
+      },
+      "SessionSecretInput": {
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "sensitive": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "SessionSummary": {
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "playbook_id": {
+            "type": "string"
+          },
+          "pull_request": {
+            "properties": {
+              "url": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "requesting_user_email": {
+            "type": "string"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "snapshot_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "status_enum": {
+            "type": "string"
+          },
+          "structured_output": {},
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "TerminateASessionResponse": {
+        "properties": {
+          "detail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "detail"
+        ],
+        "type": "object"
+      },
+      "UpdateKnowledgeRequest": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "parent_folder_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pinned_repo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "trigger_description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "name",
+          "trigger_description"
+        ],
+        "type": "object"
+      },
+      "UpdateKnowledgeResponse": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KnowledgeCreatedBy"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "parent_folder_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pinned_repo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "trigger_description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "created_at",
+          "id",
+          "name",
+          "trigger_description"
+        ],
+        "type": "object"
+      },
+      "UpdatePlaybookRequest": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "title"
+        ],
+        "type": "object"
+      },
+      "UpdatePlaybookResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "UpdateSessionTagsRequest": {
+        "properties": {
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "tags"
+        ],
+        "type": "object"
+      },
+      "UpdateSessionTagsResponse": {
+        "properties": {
+          "detail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "detail"
+        ],
+        "type": "object"
+      },
+      "UploadFilesForDevinToWorkWithRequest": {
+        "properties": {
+          "file": {
+            "format": "binary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "type": "object"
+      },
+      "UploadFilesForDevinToWorkWithResponse": {
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "title": "Devin v1",
+    "version": "v1"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/attachments": {
+      "post": {
+        "operationId": "UploadFilesForDevinToWorkWith",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadFilesForDevinToWorkWithRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadFilesForDevinToWorkWithResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Upload an attachment",
+        "tags": [
+          "attachments"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/attachments/upload-files-for-devin-to-work-with",
+        "x-response-example": null
+      }
+    },
+    "/v1/attachments/{uuid}/{name}": {
+      "get": {
+        "operationId": "DownloadAttachmentFiles",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadAttachmentFilesResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Download an attachment",
+        "tags": [
+          "attachments"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/attachments/download-attachment-files",
+        "x-redirect": true,
+        "x-response-example": null
+      }
+    },
+    "/v1/knowledge": {
+      "get": {
+        "operationId": "ListKnowledge",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListKnowledgeResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List all knowledge",
+        "tags": [
+          "knowledge"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/knowledge/list-knowledge",
+        "x-response-example": {
+          "folders": [
+            {
+              "created_at": "2023-11-07T05:31:56Z",
+              "description": "\u003cstring\u003e",
+              "id": "\u003cstring\u003e",
+              "name": "\u003cstring\u003e"
+            }
+          ],
+          "knowledge": [
+            {
+              "body": "\u003cstring\u003e",
+              "created_at": "2023-11-07T05:31:56Z",
+              "created_by": {
+                "full_name": "\u003cstring\u003e",
+                "id": "\u003cstring\u003e",
+                "image_url": "\u003cstring\u003e"
+              },
+              "id": "\u003cstring\u003e",
+              "macro": "\u003cstring\u003e",
+              "name": "\u003cstring\u003e",
+              "parent_folder_id": "\u003cstring\u003e",
+              "pinned_repo": "\u003cstring\u003e",
+              "trigger_description": "\u003cstring\u003e"
+            }
+          ]
+        }
+      },
+      "post": {
+        "operationId": "CreateKnowledge",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKnowledgeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateKnowledgeResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Create knowledge entry",
+        "tags": [
+          "knowledge"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/knowledge/create-knowledge",
+        "x-request-example": {
+          "body": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "name": "\u003cstring\u003e",
+          "parent_folder_id": "\u003cstring\u003e",
+          "pinned_repo": "\u003cstring\u003e",
+          "trigger_description": "\u003cstring\u003e"
+        },
+        "x-response-example": {
+          "body": "\u003cstring\u003e",
+          "created_at": "2023-11-07T05:31:56Z",
+          "created_by": {
+            "full_name": "\u003cstring\u003e",
+            "id": "\u003cstring\u003e",
+            "image_url": "\u003cstring\u003e"
+          },
+          "id": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "name": "\u003cstring\u003e",
+          "parent_folder_id": "\u003cstring\u003e",
+          "pinned_repo": "\u003cstring\u003e",
+          "trigger_description": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v1/knowledge/{note_id}": {
+      "delete": {
+        "operationId": "DeleteKnowledge",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "note_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "summary": "Delete knowledge entry",
+        "tags": [
+          "knowledge"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/knowledge/delete-knowledge",
+        "x-response-example": null
+      },
+      "put": {
+        "operationId": "UpdateKnowledge",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "note_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateKnowledgeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateKnowledgeResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Update knowledge entry",
+        "tags": [
+          "knowledge"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/knowledge/update-knowledge",
+        "x-request-example": {
+          "body": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "name": "\u003cstring\u003e",
+          "parent_folder_id": "\u003cstring\u003e",
+          "pinned_repo": "\u003cstring\u003e",
+          "trigger_description": "\u003cstring\u003e"
+        },
+        "x-response-example": {
+          "body": "\u003cstring\u003e",
+          "created_at": "2023-11-07T05:31:56Z",
+          "created_by": {
+            "full_name": "\u003cstring\u003e",
+            "id": "\u003cstring\u003e",
+            "image_url": "\u003cstring\u003e"
+          },
+          "id": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "name": "\u003cstring\u003e",
+          "parent_folder_id": "\u003cstring\u003e",
+          "pinned_repo": "\u003cstring\u003e",
+          "trigger_description": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v1/playbooks": {
+      "get": {
+        "operationId": "ListPlaybooks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPlaybooksResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Playbooks",
+        "tags": [
+          "playbooks"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/playbooks/list-playbooks",
+        "x-response-example": [
+          {
+            "access_type": "\u003cstring\u003e",
+            "body": "\u003cstring\u003e",
+            "created_at": "2023-11-07T05:31:56Z",
+            "created_by_user_id": "\u003cstring\u003e",
+            "created_by_user_name": "\u003cstring\u003e",
+            "macro": "\u003cstring\u003e",
+            "org_id": "\u003cstring\u003e",
+            "playbook_id": "\u003cstring\u003e",
+            "status": "\u003cstring\u003e",
+            "title": "\u003cstring\u003e",
+            "updated_at": "2023-11-07T05:31:56Z",
+            "updated_by_user_id": "\u003cstring\u003e",
+            "updated_by_user_name": "\u003cstring\u003e"
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreatePlaybook",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlaybookRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlaybookResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Create Playbook",
+        "tags": [
+          "playbooks"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/playbooks/create-playbook",
+        "x-request-example": {
+          "body": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "title": "\u003cstring\u003e"
+        },
+        "x-response-example": {
+          "access_type": "\u003cstring\u003e",
+          "body": "\u003cstring\u003e",
+          "created_at": "2023-11-07T05:31:56Z",
+          "created_by_user_id": "\u003cstring\u003e",
+          "created_by_user_name": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "org_id": "\u003cstring\u003e",
+          "playbook_id": "\u003cstring\u003e",
+          "status": "\u003cstring\u003e",
+          "title": "\u003cstring\u003e",
+          "updated_at": "2023-11-07T05:31:56Z",
+          "updated_by_user_id": "\u003cstring\u003e",
+          "updated_by_user_name": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v1/playbooks/{playbook_id}": {
+      "delete": {
+        "operationId": "DeletePlaybook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "playbook_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletePlaybookResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Delete Playbook",
+        "tags": [
+          "playbooks"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/playbooks/delete-playbook",
+        "x-response-example": {
+          "status": "\u003cstring\u003e"
+        }
+      },
+      "get": {
+        "operationId": "GetPlaybook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "playbook_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlaybookResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get Playbook",
+        "tags": [
+          "playbooks"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/playbooks/get-playbook",
+        "x-response-example": {
+          "access_type": "\u003cstring\u003e",
+          "body": "\u003cstring\u003e",
+          "created_at": "2023-11-07T05:31:56Z",
+          "created_by_user_id": "\u003cstring\u003e",
+          "created_by_user_name": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "org_id": "\u003cstring\u003e",
+          "playbook_id": "\u003cstring\u003e",
+          "status": "\u003cstring\u003e",
+          "title": "\u003cstring\u003e",
+          "updated_at": "2023-11-07T05:31:56Z",
+          "updated_by_user_id": "\u003cstring\u003e",
+          "updated_by_user_name": "\u003cstring\u003e"
+        }
+      },
+      "put": {
+        "operationId": "UpdatePlaybook",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "playbook_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlaybookRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlaybookResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Update Playbook",
+        "tags": [
+          "playbooks"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/playbooks/update-playbook",
+        "x-request-example": {
+          "body": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "title": "\u003cstring\u003e"
+        },
+        "x-response-example": {
+          "status": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v1/secrets": {
+      "get": {
+        "operationId": "ListSecrets",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSecretsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List secrets",
+        "tags": [
+          "secrets"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/secrets/list-secrets",
+        "x-response-example": [
+          {
+            "created_at": "2023-11-07T05:31:56Z",
+            "id": "\u003cstring\u003e",
+            "key": "\u003cstring\u003e",
+            "type": "cookie"
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateSecret",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSecretResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Create Secret",
+        "tags": [
+          "secrets"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/secrets/create-secret",
+        "x-response-example": {
+          "id": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v1/secrets/{secret_id}": {
+      "delete": {
+        "operationId": "DeleteSecret",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "secret_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteSecretResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Delete a secret",
+        "tags": [
+          "secrets"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/secrets/delete-secret",
+        "x-response-example": {
+          "message": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v1/sessions": {
+      "get": {
+        "operationId": "ListSessions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "user_email",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSessionsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List sessions",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/sessions/list-sessions",
+        "x-response-example": {
+          "sessions": [
+            {
+              "created_at": "2023-11-07T05:31:56Z",
+              "playbook_id": "\u003cstring\u003e",
+              "pull_request": {
+                "url": "\u003cstring\u003e"
+              },
+              "requesting_user_email": "\u003cstring\u003e",
+              "session_id": "\u003cstring\u003e",
+              "snapshot_id": "\u003cstring\u003e",
+              "status": "\u003cstring\u003e",
+              "status_enum": "working",
+              "structured_output": null,
+              "tags": [
+                "\u003cstring\u003e"
+              ],
+              "title": "\u003cstring\u003e",
+              "updated_at": "2023-11-07T05:31:56Z"
+            }
+          ]
+        }
+      },
+      "post": {
+        "operationId": "CreateANewDevinSession",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateANewDevinSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateANewDevinSessionResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Create a new session",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/sessions/create-a-new-devin-session",
+        "x-request-example": {
+          "idempotent": false,
+          "knowledge_ids": [
+            "\u003cstring\u003e"
+          ],
+          "max_acu_limit": 1,
+          "playbook_id": "\u003cstring\u003e",
+          "prompt": "\u003cstring\u003e",
+          "secret_ids": [
+            "\u003cstring\u003e"
+          ],
+          "session_secrets": [
+            {
+              "key": "\u003cstring\u003e",
+              "sensitive": true,
+              "value": "\u003cstring\u003e"
+            }
+          ],
+          "snapshot_id": "\u003cstring\u003e",
+          "structured_output_schema": {},
+          "tags": [
+            "\u003cstring\u003e"
+          ],
+          "title": "\u003cstring\u003e",
+          "unlisted": false
+        },
+        "x-response-example": {
+          "is_new_session": true,
+          "session_id": "\u003cstring\u003e",
+          "url": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v1/sessions/{session_id}": {
+      "delete": {
+        "operationId": "TerminateASession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TerminateASessionResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Terminate a session",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/sessions/terminate-a-session",
+        "x-response-example": null
+      },
+      "get": {
+        "operationId": "RetrieveDetailsAboutAnExistingSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveDetailsAboutAnExistingSessionResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Retrieve details about an existing session",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/sessions/retrieve-details-about-an-existing-session",
+        "x-response-example": {
+          "created_at": "2023-11-07T05:31:56Z",
+          "messages": [],
+          "playbook_id": "\u003cstring\u003e",
+          "pull_request": {
+            "url": "\u003cstring\u003e"
+          },
+          "session_id": "\u003cstring\u003e",
+          "snapshot_id": "\u003cstring\u003e",
+          "status": "\u003cstring\u003e",
+          "status_enum": "working",
+          "structured_output": null,
+          "tags": [
+            "\u003cstring\u003e"
+          ],
+          "title": "\u003cstring\u003e",
+          "updated_at": "2023-11-07T05:31:56Z"
+        }
+      }
+    },
+    "/v1/sessions/{session_id}/message": {
+      "post": {
+        "operationId": "SendAMessageToAnExistingDevinSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendAMessageToAnExistingDevinSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendAMessageToAnExistingDevinSessionResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Send a message to a session",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/sessions/send-a-message-to-an-existing-devin-session",
+        "x-request-example": {
+          "message": "\u003cstring\u003e"
+        },
+        "x-response-example": null
+      }
+    },
+    "/v1/sessions/{session_id}/tags": {
+      "put": {
+        "operationId": "UpdateSessionTags",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSessionTagsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateSessionTagsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Update session tags",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v1/sessions/update-session-tags",
+        "x-request-example": {
+          "tags": [
+            "\u003cstring\u003e"
+          ]
+        },
+        "x-response-example": null
+      }
+    }
+  }
+}

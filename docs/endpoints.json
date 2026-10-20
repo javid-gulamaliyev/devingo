@@ -1,0 +1,2064 @@
+[
+  {
+    "version": "v1",
+    "method": "POST",
+    "path": "/v1/attachments",
+    "source": "https://docs.devin.ai/api-reference/v1/attachments/upload-files-for-devin-to-work-with",
+    "title": "Upload an attachment"
+  },
+  {
+    "version": "v1",
+    "method": "GET",
+    "path": "/v1/attachments/{uuid}/{name}",
+    "source": "https://docs.devin.ai/api-reference/v1/attachments/download-attachment-files",
+    "title": "Download an attachment"
+  },
+  {
+    "version": "v1",
+    "method": "GET",
+    "path": "/v1/knowledge",
+    "source": "https://docs.devin.ai/api-reference/v1/knowledge/list-knowledge",
+    "title": "List all knowledge"
+  },
+  {
+    "version": "v1",
+    "method": "POST",
+    "path": "/v1/knowledge",
+    "source": "https://docs.devin.ai/api-reference/v1/knowledge/create-knowledge",
+    "title": "Create knowledge entry"
+  },
+  {
+    "version": "v1",
+    "method": "DELETE",
+    "path": "/v1/knowledge/{note_id}",
+    "source": "https://docs.devin.ai/api-reference/v1/knowledge/delete-knowledge",
+    "title": "Delete knowledge entry"
+  },
+  {
+    "version": "v1",
+    "method": "PUT",
+    "path": "/v1/knowledge/{note_id}",
+    "source": "https://docs.devin.ai/api-reference/v1/knowledge/update-knowledge",
+    "title": "Update knowledge entry"
+  },
+  {
+    "version": "v1",
+    "method": "GET",
+    "path": "/v1/playbooks",
+    "source": "https://docs.devin.ai/api-reference/v1/playbooks/list-playbooks",
+    "title": "List Playbooks"
+  },
+  {
+    "version": "v1",
+    "method": "POST",
+    "path": "/v1/playbooks",
+    "source": "https://docs.devin.ai/api-reference/v1/playbooks/create-playbook",
+    "title": "Create Playbook"
+  },
+  {
+    "version": "v1",
+    "method": "DELETE",
+    "path": "/v1/playbooks/{playbook_id}",
+    "source": "https://docs.devin.ai/api-reference/v1/playbooks/delete-playbook",
+    "title": "Delete Playbook"
+  },
+  {
+    "version": "v1",
+    "method": "GET",
+    "path": "/v1/playbooks/{playbook_id}",
+    "source": "https://docs.devin.ai/api-reference/v1/playbooks/get-playbook",
+    "title": "Get Playbook"
+  },
+  {
+    "version": "v1",
+    "method": "PUT",
+    "path": "/v1/playbooks/{playbook_id}",
+    "source": "https://docs.devin.ai/api-reference/v1/playbooks/update-playbook",
+    "title": "Update Playbook"
+  },
+  {
+    "version": "v1",
+    "method": "GET",
+    "path": "/v1/secrets",
+    "source": "https://docs.devin.ai/api-reference/v1/secrets/list-secrets",
+    "title": "List secrets"
+  },
+  {
+    "version": "v1",
+    "method": "POST",
+    "path": "/v1/secrets",
+    "source": "https://docs.devin.ai/api-reference/v1/secrets/create-secret",
+    "title": "Create Secret"
+  },
+  {
+    "version": "v1",
+    "method": "DELETE",
+    "path": "/v1/secrets/{secret_id}",
+    "source": "https://docs.devin.ai/api-reference/v1/secrets/delete-secret",
+    "title": "Delete a secret"
+  },
+  {
+    "version": "v1",
+    "method": "GET",
+    "path": "/v1/sessions",
+    "source": "https://docs.devin.ai/api-reference/v1/sessions/list-sessions",
+    "title": "List sessions"
+  },
+  {
+    "version": "v1",
+    "method": "POST",
+    "path": "/v1/sessions",
+    "source": "https://docs.devin.ai/api-reference/v1/sessions/create-a-new-devin-session",
+    "title": "Create a new session"
+  },
+  {
+    "version": "v1",
+    "method": "DELETE",
+    "path": "/v1/sessions/{session_id}",
+    "source": "https://docs.devin.ai/api-reference/v1/sessions/terminate-a-session",
+    "title": "Terminate a session"
+  },
+  {
+    "version": "v1",
+    "method": "GET",
+    "path": "/v1/sessions/{session_id}",
+    "source": "https://docs.devin.ai/api-reference/v1/sessions/retrieve-details-about-an-existing-session",
+    "title": "Retrieve details about an existing session"
+  },
+  {
+    "version": "v1",
+    "method": "POST",
+    "path": "/v1/sessions/{session_id}/message",
+    "source": "https://docs.devin.ai/api-reference/v1/sessions/send-a-message-to-an-existing-devin-session",
+    "title": "Send a message to a session"
+  },
+  {
+    "version": "v1",
+    "method": "PUT",
+    "path": "/v1/sessions/{session_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v1/sessions/update-session-tags",
+    "title": "Update session tags"
+  },
+  {
+    "version": "v2",
+    "method": "POST",
+    "path": "/beta/v2/enterprise/repositories/bulk-index",
+    "source": "https://docs.devin.ai/api-reference/v2/repositories/bulk-index-repositories",
+    "title": "Bulk Index Repositories"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/beta/v2/enterprise/repositories/{org_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/repositories/get-repository-status",
+    "title": "Get Repository Indexing Status"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/beta/v2/enterprise/user-usage-analysis",
+    "source": "https://docs.devin.ai/api-reference/v2/user-usage/get-user-usage-analysis-beta",
+    "title": "Get User Usage Analysis (Beta)"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/api-keys",
+    "source": "https://docs.devin.ai/api-reference/v2/api-keys/list-enterprise-api-keys",
+    "title": "List API Keys"
+  },
+  {
+    "version": "v2",
+    "method": "POST",
+    "path": "/v2/enterprise/api-keys",
+    "source": "https://docs.devin.ai/api-reference/v2/api-keys/provision-service-key",
+    "title": "Create a Service API Key"
+  },
+  {
+    "version": "v2",
+    "method": "DELETE",
+    "path": "/v2/enterprise/api-keys/{api_key_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/api-keys/revoke-enterprise-api-key",
+    "title": "Revoke API Key"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/audit-logs",
+    "source": "https://docs.devin.ai/api-reference/v2/audit-logs",
+    "title": "Get Audit Logs"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/consumption/cycles",
+    "source": "https://docs.devin.ai/api-reference/v2/consumption/consumption-cycles",
+    "title": "Consumption Cycles"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/consumption/daily",
+    "source": "https://docs.devin.ai/api-reference/v2/consumption/daily-consumption",
+    "title": "Daily Consumption"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/consumption/daily/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/consumption/user-daily-consumption",
+    "title": "User Daily Consumption"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/groups",
+    "source": "https://docs.devin.ai/api-reference/v2/groups/list-enterprise-groups",
+    "title": "List Enterprise Groups"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/groups/{group_name}",
+    "source": "https://docs.devin.ai/api-reference/v2/groups/get-group-details",
+    "title": "Get Group Details"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/hypervisors/health",
+    "source": "https://docs.devin.ai/api-reference/v2/infrastructure/list-enterprise-hypervisors",
+    "title": "List Hypervisors"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/members",
+    "source": "https://docs.devin.ai/api-reference/v2/members/list-enterprise-members",
+    "title": "List Enterprise Members"
+  },
+  {
+    "version": "v2",
+    "method": "POST",
+    "path": "/v2/enterprise/members/invite",
+    "source": "https://docs.devin.ai/api-reference/v2/members/invite-enterprise-members",
+    "title": "Invite Enterprise Members"
+  },
+  {
+    "version": "v2",
+    "method": "DELETE",
+    "path": "/v2/enterprise/members/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/members/delete-enterprise-member",
+    "title": "Delete Enterprise Member"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/members/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/members/get-member-details",
+    "title": "Get Member Details"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/members/{user_id}/organizations",
+    "source": "https://docs.devin.ai/api-reference/v2/members/user-organizations",
+    "title": "User Organizations"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/metrics/prs",
+    "source": "https://docs.devin.ai/api-reference/v2/consumption/pr-metrics",
+    "title": "PR Metrics"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/metrics/searches",
+    "source": "https://docs.devin.ai/api-reference/v2/consumption/searches-metrics",
+    "title": "Searches Metrics"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/metrics/sessions",
+    "source": "https://docs.devin.ai/api-reference/v2/consumption/sessions-metrics",
+    "title": "Sessions Metrics"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/metrics/usage",
+    "source": "https://docs.devin.ai/api-reference/v2/consumption/usage-metrics",
+    "title": "Usage Metrics"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/org-group-limits",
+    "source": "https://docs.devin.ai/api-reference/v2/org-group-limits/get-org-group-limits",
+    "title": "Get Organization Group Limits"
+  },
+  {
+    "version": "v2",
+    "method": "PUT",
+    "path": "/v2/enterprise/org-group-limits",
+    "source": "https://docs.devin.ai/api-reference/v2/org-group-limits/update-org-group-limits",
+    "title": "Update Organization Group Limits"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/organizations",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/list-organizations",
+    "title": "List Organizations"
+  },
+  {
+    "version": "v2",
+    "method": "POST",
+    "path": "/v2/enterprise/organizations",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/create-organization",
+    "title": "Create Organization"
+  },
+  {
+    "version": "v2",
+    "method": "DELETE",
+    "path": "/v2/enterprise/organizations/{org_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/delete-organization",
+    "title": "Delete Organization"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/organizations/{org_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/get-organization-details",
+    "title": "Get Organization Details"
+  },
+  {
+    "version": "v2",
+    "method": "PATCH",
+    "path": "/v2/enterprise/organizations/{org_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/update-organization",
+    "title": "Update Organization"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/organizations/{org_id}/git/connections",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/organization-connections",
+    "title": "Organization Connections"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/organizations/{org_id}/git/permissions",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/organization-permissions",
+    "title": "Organization Permissions"
+  },
+  {
+    "version": "v2",
+    "method": "POST",
+    "path": "/v2/enterprise/organizations/{org_id}/git/permissions",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/add-organization-permissions",
+    "title": "Add Organization Permissions"
+  },
+  {
+    "version": "v2",
+    "method": "DELETE",
+    "path": "/v2/enterprise/organizations/{org_id}/git/permissions/{permission_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/delete-organization-permission",
+    "title": "Delete Organization Permission"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/organizations/{org_id}/groups",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/organization-groups",
+    "title": "Organization Groups"
+  },
+  {
+    "version": "v2",
+    "method": "POST",
+    "path": "/v2/enterprise/organizations/{org_id}/groups",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/add-group-to-organization",
+    "title": "Add Group to Organization"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/organizations/{org_id}/members",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/organization-members",
+    "title": "Organization Members"
+  },
+  {
+    "version": "v2",
+    "method": "POST",
+    "path": "/v2/enterprise/organizations/{org_id}/members",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/add-organization-members",
+    "title": "Add Organization Members"
+  },
+  {
+    "version": "v2",
+    "method": "PATCH",
+    "path": "/v2/enterprise/organizations/{org_id}/members/roles",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/update-organization-member-roles",
+    "title": "Update organization member roles"
+  },
+  {
+    "version": "v2",
+    "method": "DELETE",
+    "path": "/v2/enterprise/organizations/{org_id}/members/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/organizations/remove-user-from-organization",
+    "title": "Remove User from Organization"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/organizations/{org_id}/sessions",
+    "source": "https://docs.devin.ai/api-reference/v2/sessions/list-organization-sessions",
+    "title": "List Organization Sessions"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/organizations/{org_id}/sessions/insights",
+    "source": "https://docs.devin.ai/api-reference/v2/sessions/list-organization-sessions-insights",
+    "title": "List Organization Sessions (Insights)"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/playbooks",
+    "source": "https://docs.devin.ai/api-reference/v2/playbooks/list-playbooks",
+    "title": "List Enterprise Playbooks"
+  },
+  {
+    "version": "v2",
+    "method": "POST",
+    "path": "/v2/enterprise/playbooks",
+    "source": "https://docs.devin.ai/api-reference/v2/playbooks/create-playbook",
+    "title": "Create Enterprise Playbook"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/roles",
+    "source": "https://docs.devin.ai/api-reference/v2/members/list-roles",
+    "title": "List available roles"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/self",
+    "source": "https://docs.devin.ai/api-reference/v2/self/get-self",
+    "title": "Get Self"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/sessions",
+    "source": "https://docs.devin.ai/api-reference/v2/sessions/list-enterprise-sessions",
+    "title": "List Enterprise Sessions"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/sessions/insights",
+    "source": "https://docs.devin.ai/api-reference/v2/sessions/list-enterprise-sessions-insights",
+    "title": "List Enterprise Sessions (Insights)"
+  },
+  {
+    "version": "v2",
+    "method": "GET",
+    "path": "/v2/enterprise/sessions/{session_id}",
+    "source": "https://docs.devin.ai/api-reference/v2/sessions/get-enterprise-session",
+    "title": "Get Enterprise Session"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/audit-logs",
+    "source": "https://docs.devin.ai/api-reference/v3/audit-logs/enterprise-audit-logs",
+    "title": "List Audit Logs"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/code-scans/findings",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-findings",
+    "title": "List Code Scan Findings (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/code-scans/metrics",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-metrics",
+    "title": "Get Code Scan Metrics (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/code-scans/profiles",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-profiles",
+    "title": "List Code Scan Profiles (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/code-scans/profiles/{profile_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-profile",
+    "title": "Get Code Scan Profile (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/code-scans/scans",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-list",
+    "title": "List Code Scans (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/consumption/acu-limits/devin",
+    "source": "https://github.com/CognitionAI/terraform-provider-devin/blob/1adc3294eb3b7202e888400d96c554630bc86673/internal/api/openapi.json#/paths/~1v3~1enterprise~1consumption~1acu-limits~1devin/get",
+    "source_kind": "provider-schema",
+    "title": "Get Devin ACU limits"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/consumption/acu-limits/devin/organizations/{org_id}",
+    "source": "https://github.com/CognitionAI/terraform-provider-devin/blob/1adc3294eb3b7202e888400d96c554630bc86673/internal/api/openapi.json#/paths/~1v3~1enterprise~1consumption~1acu-limits~1devin~1organizations~1{org_id}/delete",
+    "source_kind": "provider-schema",
+    "title": "Delete org Devin ACU limit"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/consumption/acu-limits/devin/organizations/{org_id}",
+    "source": "https://github.com/CognitionAI/terraform-provider-devin/blob/1adc3294eb3b7202e888400d96c554630bc86673/internal/api/openapi.json#/paths/~1v3~1enterprise~1consumption~1acu-limits~1devin~1organizations~1{org_id}/put",
+    "source_kind": "provider-schema",
+    "title": "Set org Devin ACU limit"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/consumption/cycles",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/consumption-cycles",
+    "title": "List Consumption Cycles"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/consumption/daily",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/consumption-daily",
+    "title": "Get Daily Consumption"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/consumption/daily/organizations/{org_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/consumption-daily-organizations",
+    "title": "Get Organization Daily Consumption"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/consumption/daily/service-users/{service_user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/consumption-daily-service-users",
+    "title": "Get Service User Daily Consumption"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/consumption/daily/sessions/{session_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/consumption-daily-sessions",
+    "title": "Get Session Daily Consumption"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/consumption/daily/users/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/consumption-daily-users",
+    "title": "Get User Daily Consumption"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/git-providers/connections",
+    "source": "https://docs.devin.ai/api-reference/v3/git-connections/git-providers-connections",
+    "title": "List Git Connections"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/git-providers/connections/{connection_id}/repositories",
+    "source": "https://docs.devin.ai/api-reference/v3/git-connections/get-git-providers-connection-repositories",
+    "title": "List repositories for a git connection"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/hypervisors",
+    "source": "https://docs.devin.ai/api-reference/v3/hypervisors/hypervisors",
+    "title": "List Hypervisors"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/idp-groups",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/enterprise-idp-groups",
+    "title": "List Account IDP Groups"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/idp-groups",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/post-enterprise-idp-groups",
+    "title": "Register Account IDP Groups"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/idp-groups/{idp_group_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/delete-enterprise-idp-group",
+    "title": "Delete Account IDP Group"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/ip-access-list",
+    "source": "https://docs.devin.ai/api-reference/v3/ip-access-list/clear-ip-access-list",
+    "title": "Clear IP Access List"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/ip-access-list",
+    "source": "https://docs.devin.ai/api-reference/v3/ip-access-list/get-ip-access-list",
+    "title": "Get IP Access List"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/ip-access-list",
+    "source": "https://docs.devin.ai/api-reference/v3/ip-access-list/add-ip-access-list",
+    "title": "Add IPs to IP Access List"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/ip-access-list",
+    "source": "https://docs.devin.ai/api-reference/v3/ip-access-list/replace-ip-access-list",
+    "title": "Replace IP Access List"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/knowledge/folders",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/enterprise-knowledge-folders",
+    "title": "Get knowledge folder structure with note counts."
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/knowledge/notes",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/enterprise-knowledge-notes",
+    "title": "List all notes."
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/knowledge/notes",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/post-enterprise-knowledge-notes",
+    "title": "Create an enterprise-level note"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/knowledge/notes/{note_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/delete-enterprise-knowledge-notes-note-id",
+    "title": "Delete a note"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/knowledge/notes/{note_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/get-enterprise-knowledge-note",
+    "title": "Get a note by ID"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/knowledge/notes/{note_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/put-enterprise-knowledge-notes-note-id",
+    "title": "Update a note"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/members/idp-groups",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/members-idp-groups",
+    "title": "List IDP Groups"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/members/idp-groups/{idp_group_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/delete-members-idp-groups",
+    "title": "Delete IDP Group"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/members/idp-groups/{idp_group_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/get-members-idp-group",
+    "title": "Get IDP Group"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/enterprise/members/idp-groups/{idp_group_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/patch-members-idp-groups",
+    "title": "Update IDP Group"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/members/idp-groups/{idp_group_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/post-members-idp-groups",
+    "title": "Assign IDP Group"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/members/idp-users",
+    "source": "https://docs.devin.ai/api-reference/v3/users/members-idp-users",
+    "title": "List IDP Group Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/members/service-users",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/members-service-users",
+    "title": "List Service Users"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/members/service-users/{service_user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/delete-members-service-users",
+    "title": "Delete Service User"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/members/service-users/{service_user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/get-members-service-user",
+    "title": "Get Service User"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/enterprise/members/service-users/{service_user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/patch-members-service-users",
+    "title": "Update Service User"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/members/service-users/{service_user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/post-members-service-users",
+    "title": "Assign Service User"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/members/users",
+    "source": "https://docs.devin.ai/api-reference/v3/users/members-users",
+    "title": "List Users"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/members/users",
+    "source": "https://docs.devin.ai/api-reference/v3/users/post-members-users",
+    "title": "Invite Users"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/members/users/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/users/delete-members-users",
+    "title": "Delete User"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/members/users/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/users/get-members-user",
+    "title": "Get User"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/enterprise/members/users/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/users/patch-members-users",
+    "title": "Update User"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/metrics/active-users",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/metrics-active-users",
+    "title": "Get Active Users for Custom Date Range"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/metrics/dau",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/metrics-dau",
+    "title": "Get Daily Active Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/metrics/mau",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/metrics-mau",
+    "title": "Get Monthly Active Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/metrics/prs",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/metrics-prs",
+    "title": "Get PR Metrics"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/metrics/searches",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/metrics-searches",
+    "title": "Get Search Metrics"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/metrics/sessions",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/metrics-sessions",
+    "title": "Get Session Metrics"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/metrics/sessions-by-category",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/metrics-sessions-by-category",
+    "title": "Get Session Metrics by Category"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/metrics/usage",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/metrics-usage",
+    "title": "Get Usage Metrics"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/metrics/wau",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/metrics-wau",
+    "title": "Get Weekly Active Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/org-group-limits",
+    "source": "https://docs.devin.ai/api-reference/v3/org-group-limits/get-org-group-limits",
+    "title": "Get Organization Group Limits"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/org-group-limits",
+    "source": "https://docs.devin.ai/api-reference/v3/org-group-limits/update-org-group-limits",
+    "title": "Update Organization Group Limits"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations",
+    "source": "https://docs.devin.ai/api-reference/v3/organizations/organizations",
+    "title": "List Organizations"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations",
+    "source": "https://docs.devin.ai/api-reference/v3/organizations/post-organizations",
+    "title": "Create Organization"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/organizations/delete-organizations",
+    "title": "Delete Organization"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/organizations/get-enterprise-organization",
+    "title": "Get Organization"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/enterprise/organizations/{org_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/organizations/patch-organizations",
+    "title": "Update Organization"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/audit-logs",
+    "source": "https://docs.devin.ai/api-reference/v3/audit-logs/organizations-audit-logs",
+    "title": "List Organization Audit Logs"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-start",
+    "title": "Start Code Scan (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans/ingestion",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-start-ingestion",
+    "title": "Start Ingestion Scan (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/code-scans/{scan_id}/findings/{finding_id}/remediate",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-remediate",
+    "title": "Remediate Code Scan Finding (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}/git-providers/permissions",
+    "source": "https://docs.devin.ai/api-reference/v3/git-permissions/clear-organizations-git-providers-permissions",
+    "title": "Clear Git Permissions"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/git-providers/permissions",
+    "source": "https://docs.devin.ai/api-reference/v3/git-permissions/organizations-git-providers-permissions",
+    "title": "List Git Permissions"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/git-providers/permissions",
+    "source": "https://docs.devin.ai/api-reference/v3/git-permissions/post-organizations-git-providers-permissions",
+    "title": "Create Git Permissions"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/organizations/{org_id}/git-providers/permissions",
+    "source": "https://docs.devin.ai/api-reference/v3/git-permissions/put-organizations-git-providers-permissions",
+    "title": "Replace Git Permissions"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}/git-providers/permissions/{git_permission_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/git-permissions/delete-organizations-git-providers-permissions",
+    "title": "Delete Git Permission"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/enterprise/organizations/{org_id}/git-providers/permissions/{git_permission_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/git-permissions/patch-organizations-git-providers-permissions",
+    "title": "Update Git Permission"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/members/idp-groups",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/list-organizations-members-idp-groups",
+    "title": "List Organization IDP Groups"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}/members/idp-groups/{idp_group_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/delete-organizations-members-idp-groups",
+    "title": "Delete Organization IDP Group"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/members/idp-groups/{idp_group_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/organizations-members-idp-groups",
+    "title": "Get Organization IDP Group"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/enterprise/organizations/{org_id}/members/idp-groups/{idp_group_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/patch-organizations-members-idp-groups",
+    "title": "Update Organization IDP Group"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/members/idp-groups/{idp_group_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/idp-groups/post-organizations-members-idp-groups",
+    "title": "Assign Organization IDP Group"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/members/idp-users",
+    "source": "https://docs.devin.ai/api-reference/v3/users/organizations-members-idp-users",
+    "title": "List Organization IDP Group Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/members/service-users",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/organizations-members-service-users",
+    "title": "List Organization Service Users"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}/members/service-users/{service_user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/delete-organizations-members-service-users",
+    "title": "Delete Organization Service User"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/enterprise/organizations/{org_id}/members/service-users/{service_user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/patch-organizations-members-service-users",
+    "title": "Update Organization Service User"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/members/service-users/{service_user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/post-organizations-members-service-users",
+    "title": "Assign Organization Service User"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/members/users",
+    "source": "https://docs.devin.ai/api-reference/v3/users/organizations-members-users",
+    "title": "List Organization Users"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}/members/users/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/users/delete-organizations-members-users",
+    "title": "Delete Organization User"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/enterprise/organizations/{org_id}/members/users/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/users/patch-organizations-members-users",
+    "title": "Update Organization User"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/members/users/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/users/post-organizations-members-users",
+    "title": "Assign Organization User"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/metrics/usage",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-usage",
+    "title": "Get Organization Usage Metrics"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/tags/delete-organizations-tags",
+    "title": "Clear Organization Tags"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/tags/organizations-tags",
+    "title": "Get Organization Allowed Tags"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/organizations/{org_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/tags/post-organizations-tags",
+    "title": "Append Organization Tags"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/organizations/{org_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/tags/put-organizations-tags",
+    "title": "Replace Organization Allowed Tags"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}/tags/default",
+    "source": "https://docs.devin.ai/api-reference/v3/tags/delete-enterprise-organizations-default-tag",
+    "title": "Clear Organization Default Tag"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/organizations/{org_id}/tags/default",
+    "source": "https://docs.devin.ai/api-reference/v3/tags/get-enterprise-organizations-default-tag",
+    "title": "Get Organization Default Tag"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/organizations/{org_id}/tags/default",
+    "source": "https://docs.devin.ai/api-reference/v3/tags/put-enterprise-organizations-default-tag",
+    "title": "Set Organization Default Tag"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/organizations/{org_id}/tags/{tag}",
+    "source": "https://docs.devin.ai/api-reference/v3/tags/delete-organizations-tags-tag",
+    "title": "Remove Organization Tag"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/playbooks",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/enterprise-playbooks",
+    "title": "List all playbooks."
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/playbooks",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/post-enterprise-playbooks",
+    "title": "Create an enterprise-level playbook"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/playbooks/{playbook_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/delete-enterprise-playbooks-playbook-id",
+    "title": "Delete a playbook"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/playbooks/{playbook_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/get-enterprise-playbook",
+    "title": "Get a playbook by ID."
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/playbooks/{playbook_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/put-enterprise-playbooks-playbook-id",
+    "title": "Update a playbook"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/pr-reviews",
+    "source": "https://docs.devin.ai/api-reference/v3/pr-reviews/get-enterprise-pr-reviews",
+    "title": "Get latest Devin Review status"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/pr-reviews",
+    "source": "https://docs.devin.ai/api-reference/v3/pr-reviews/post-enterprise-pr-reviews",
+    "title": "Trigger Devin Review"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/queue",
+    "source": "https://docs.devin.ai/api-reference/v3/queue/enterprise-queue",
+    "title": "Get Queue"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/roles",
+    "source": "https://docs.devin.ai/api-reference/v3/roles/roles",
+    "title": "List Roles"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/roles/{role_id}",
+    "source": "https://github.com/CognitionAI/terraform-provider-devin/blob/1adc3294eb3b7202e888400d96c554630bc86673/internal/api/openapi.json#/paths/~1v3~1enterprise~1roles~1{role_id}/get",
+    "source_kind": "provider-schema",
+    "title": "Get role"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/sessions",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/enterprise-sessions",
+    "title": "List sessions for account"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/sessions/insights",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/enterprise-sessions-insights",
+    "title": "List sessions with insights"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/sessions/{devin_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session",
+    "title": "Get session details"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/sessions/{devin_id}/attachments",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session-attachments",
+    "title": "List session attachments"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/sessions/{devin_id}/insights",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session-insights",
+    "title": "Get session insights"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/sessions/{devin_id}/insights/generate",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/post-enterprise-session-insights-generate",
+    "title": "Generate session insights"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/sessions/{devin_id}/messages",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session-messages",
+    "title": "List session messages"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/sessions/{devin_id}/messages",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/post-enterprise-sessions-messages",
+    "title": "Send a message to a session"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/sessions/{devin_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-enterprise-session-tags",
+    "title": "Get session tags"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/sessions/{devin_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/post-enterprise-session-tags",
+    "title": "Append session tags"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/sessions/{devin_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/put-enterprise-session-tags",
+    "title": "Replace session tags"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/snapshot-setup/blueprints",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/list-enterprise-blueprints",
+    "title": "List enterprise-tier blueprints"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/snapshot-setup/blueprints",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/post-enterprise-blueprints",
+    "title": "Create the enterprise-tier blueprint"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/snapshot-setup/blueprints/{blueprint_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/delete-enterprise-blueprint",
+    "title": "Delete the enterprise blueprint (soft-delete)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/snapshot-setup/blueprints/{blueprint_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/get-enterprise-blueprint",
+    "title": "Get the enterprise blueprint"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/enterprise/snapshot-setup/blueprints/{blueprint_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/put-enterprise-blueprint",
+    "title": "Replace the enterprise blueprint's YAML contents"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/snapshot-setup/blueprints/{blueprint_id}/contents",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/get-enterprise-blueprint-contents",
+    "title": "Presigned URL for the enterprise blueprint YAML"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/enterprise/snapshot-setup/blueprints/{blueprint_id}/files",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/list-enterprise-blueprint-files",
+    "title": "List enterprise blueprint files"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/enterprise/snapshot-setup/blueprints/{blueprint_id}/files",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/post-enterprise-blueprint-file",
+    "title": "Upload an enterprise blueprint file"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/enterprise/snapshot-setup/blueprints/{blueprint_id}/files/{file_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/delete-enterprise-blueprint-file",
+    "title": "Delete an enterprise blueprint file"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/attachments",
+    "source": "https://docs.devin.ai/api-reference/v3/attachments/post-organizations-attachments",
+    "title": "Upload an attachment"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/attachments/{uuid}/{name}",
+    "source": "https://docs.devin.ai/api-reference/v3/attachments/get-organizations-attachments",
+    "title": "Download an attachment"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/automations",
+    "source": "https://docs.devin.ai/api-reference/v3/automations/organizations-automations",
+    "title": "List automations"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/automations",
+    "source": "https://docs.devin.ai/api-reference/v3/automations/post-organizations-automations",
+    "title": "Create automation"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/automations/schemas",
+    "source": "https://docs.devin.ai/api-reference/v3/automations/get-organizations-automations-schemas",
+    "title": "Get automation event schemas"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/automations/templates",
+    "source": "https://docs.devin.ai/api-reference/v3/automations/get-organizations-automations-templates",
+    "title": "List automation templates"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/automations/{automation_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/automations/delete-organizations-automation",
+    "title": "Delete automation"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/automations/{automation_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/automations/get-organizations-automation",
+    "title": "Get automation"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/organizations/{org_id}/automations/{automation_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/automations/patch-organizations-automation",
+    "title": "Update automation"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/code-scans",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-start",
+    "title": "Start Code Scan (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/code-scans/findings",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-findings",
+    "title": "List Code Scan Findings (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/code-scans/ingestion",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-start-ingestion",
+    "title": "Start Ingestion Scan (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/code-scans/metrics",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-metrics",
+    "title": "Get Code Scan Metrics (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/code-scans/profiles",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-profiles",
+    "title": "List Code Scan Profiles (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/code-scans/profiles/{profile_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-profile",
+    "title": "Get Code Scan Profile (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/code-scans/scans",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-list",
+    "title": "List Code Scans (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/code-scans/{scan_id}/findings/{finding_id}/remediate",
+    "source": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-remediate",
+    "title": "Remediate Code Scan Finding (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/consumption/daily",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/organizations-consumption-daily",
+    "title": "Get Daily Consumption"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/consumption/daily/service-users/{service_user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/organizations-consumption-daily-service-users",
+    "title": "Get Service User Daily Consumption"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/consumption/daily/sessions/{session_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/organizations-consumption-daily-sessions",
+    "title": "Get Session Daily Consumption"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/consumption/daily/users/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/consumption/organizations-consumption-daily-users",
+    "title": "Get User Daily Consumption"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/knowledge/folders",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/organizations-knowledge-folders",
+    "title": "Get knowledge folder structure with note counts."
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/knowledge/notes",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/organizations-knowledge-notes",
+    "title": "List org-level notes"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/knowledge/notes",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/post-organizations-knowledge-notes",
+    "title": "Create an org-level note"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/knowledge/notes/{note_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/delete-organizations-knowledge-notes-note-id",
+    "title": "Delete an org-level note"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/knowledge/notes/{note_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/get-organizations-knowledge-note",
+    "title": "Get an org-level note"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/organizations/{org_id}/knowledge/notes/{note_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/notes/put-organizations-knowledge-notes-note-id",
+    "title": "Update an org-level note"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/metrics/active-users",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-active-users",
+    "title": "Get Active Users for Custom Date Range"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/metrics/dau",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-dau",
+    "title": "Get Daily Active Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/metrics/mau",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-mau",
+    "title": "Get Monthly Active Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/metrics/prs",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-prs",
+    "title": "Get PR Metrics"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/metrics/searches",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-searches",
+    "title": "Get Search Metrics"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/metrics/sessions",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-sessions",
+    "title": "Get Session Metrics"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/metrics/usage",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-usage-org",
+    "title": "Get Usage Metrics"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/metrics/wau",
+    "source": "https://docs.devin.ai/api-reference/v3/metrics/organizations-metrics-wau",
+    "title": "Get Weekly Active Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/playbooks",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/organizations-playbooks",
+    "title": "List org-level playbooks"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/playbooks",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/post-organizations-playbooks",
+    "title": "Create an org-level playbook"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/playbooks/{playbook_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/delete-organizations-playbooks-playbook-id",
+    "title": "Delete an org-level playbook"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/playbooks/{playbook_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/get-organizations-playbook",
+    "title": "Get an organization- or enterprise-level playbook by ID"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/organizations/{org_id}/playbooks/{playbook_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/playbooks/put-organizations-playbooks-playbook-id",
+    "title": "Update an org-level playbook"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/pr-reviews",
+    "source": "https://docs.devin.ai/api-reference/v3/pr-reviews/get-organizations-pr-reviews",
+    "title": "Get latest Devin Review status"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/pr-reviews",
+    "source": "https://docs.devin.ai/api-reference/v3/pr-reviews/post-organizations-pr-reviews",
+    "title": "Trigger Devin Review"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/repositories",
+    "source": "https://docs.devin.ai/api-reference/v3/repositories/list-organizations-repositories",
+    "title": "List repositories available to an organization"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/repositories/indexing",
+    "source": "https://docs.devin.ai/api-reference/v3/repositories/delete-organizations-bulk-remove-repositories",
+    "title": "Bulk remove repositories from indexing"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/repositories/indexing",
+    "source": "https://docs.devin.ai/api-reference/v3/repositories/list-organizations-indexed-repositories",
+    "title": "List indexed repositories"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/organizations/{org_id}/repositories/indexing",
+    "source": "https://docs.devin.ai/api-reference/v3/repositories/put-organizations-bulk-index-repositories",
+    "title": "Bulk index repositories"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/repositories/{repository_path}/indexing",
+    "source": "https://docs.devin.ai/api-reference/v3/repositories/delete-organizations-remove-repository",
+    "title": "Remove a repository from indexing"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/repositories/{repository_path}/indexing",
+    "source": "https://docs.devin.ai/api-reference/v3/repositories/get-organizations-repository-indexing-status",
+    "title": "Get indexing status for a repository"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/organizations/{org_id}/repositories/{repository_path}/indexing",
+    "source": "https://docs.devin.ai/api-reference/v3/repositories/put-organizations-index-repository",
+    "title": "Index a repository"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/repositories/{repository_path}/indexing/branches/{branch_name}",
+    "source": "https://docs.devin.ai/api-reference/v3/repositories/delete-organizations-remove-branch",
+    "title": "Remove a branch from indexing"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/schedules",
+    "source": "https://docs.devin.ai/api-reference/v3/schedules/organizations-schedules",
+    "title": "List schedules"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/schedules",
+    "source": "https://docs.devin.ai/api-reference/v3/schedules/post-organizations-schedules",
+    "title": "Create schedule"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/schedules/{schedule_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/schedules/delete-organizations-schedule",
+    "title": "Delete schedule"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/schedules/{schedule_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/schedules/get-organizations-schedule",
+    "title": "Get schedule"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/organizations/{org_id}/schedules/{schedule_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/schedules/patch-organizations-schedule",
+    "title": "Update schedule"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/secrets",
+    "source": "https://docs.devin.ai/api-reference/v3/secrets/organizations-secrets",
+    "title": "List org-level secrets"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/secrets",
+    "source": "https://docs.devin.ai/api-reference/v3/secrets/post-organizations-secrets",
+    "title": "Create an org-level secret"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/secrets/{secret_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/secrets/delete-organizations-secrets",
+    "title": "Delete an org-level secret"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/sessions",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/organizations-sessions",
+    "title": "List Sessions"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/sessions",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/post-organizations-sessions",
+    "title": "Create Session"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/sessions/insights",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/organizations-sessions-insights",
+    "title": "List sessions with insights"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/delete-organizations-sessions",
+    "title": "Terminate Session"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-organizations-session",
+    "title": "Get Session"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/archive",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/post-organizations-sessions-archive",
+    "title": "Archive Session"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/attachments",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-organizations-session-attachments",
+    "title": "List session attachments"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/insights",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-organizations-session-insights",
+    "title": "Get session insights"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/insights/generate",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/post-organizations-session-insights-generate",
+    "title": "Generate session insights"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/messages",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-organizations-session-messages",
+    "title": "List session messages"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/messages",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/post-organizations-sessions-messages",
+    "title": "Send a message to a session"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/get-organizations-session-tags",
+    "title": "Get session tags"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/post-organizations-session-tags",
+    "title": "Append session tags"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3/organizations/{org_id}/sessions/{devin_id}/tags",
+    "source": "https://docs.devin.ai/api-reference/v3/sessions/put-organizations-session-tags",
+    "title": "Replace session tags"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/list-organizations-blueprints",
+    "title": "List org- and repo-tier blueprints"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/post-organizations-blueprints",
+    "title": "Create an org- or repo-tier blueprint"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints/{blueprint_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/delete-organizations-blueprint",
+    "title": "Soft-delete a blueprint"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints/{blueprint_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/get-organizations-blueprint",
+    "title": "Get a single blueprint"
+  },
+  {
+    "version": "v3",
+    "method": "PATCH",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints/{blueprint_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/patch-organizations-blueprint",
+    "title": "Update a blueprint's contents, position, source and/or commit-build settings"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints/{blueprint_id}/contents",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/get-organizations-blueprint-contents",
+    "title": "Presigned URL for the blueprint's YAML"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints/{blueprint_id}/files",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/list-organizations-blueprint-files",
+    "title": "List blueprint files"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints/{blueprint_id}/files",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/post-organizations-blueprint-file",
+    "title": "Upload a blueprint file"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/blueprints/{blueprint_id}/files/{file_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/delete-organizations-blueprint-file",
+    "title": "Delete a blueprint file"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/builds",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/list-organizations-builds",
+    "title": "List builds for the org"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/builds",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/post-organizations-builds",
+    "title": "Trigger a manual build"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/builds/{build_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/get-organizations-build",
+    "title": "Get a single build"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/builds/{build_id}/cancel",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/post-organizations-build-cancel",
+    "title": "Cancel an in-flight build"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/builds/{build_id}/logs",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/get-organizations-build-logs",
+    "title": "Presigned URL for the build's log file"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/builds/{build_id}/pin",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/delete-organizations-build-pin",
+    "title": "Unpin a build (no-op if not pinned)"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3/organizations/{org_id}/snapshot-setup/builds/{build_id}/pin",
+    "source": "https://docs.devin.ai/api-reference/v3/snapshot-setup/post-organizations-build-pin",
+    "title": "Pin the org to a specific successful build"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3/self",
+    "source": "https://docs.devin.ai/api-reference/v3/self/self",
+    "title": "Get Self"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3beta1/enterprise/guardrail-violations",
+    "source": "https://docs.devin.ai/api-reference/v3/guardrail-violations/enterprise-guardrail-violations",
+    "title": "List Guardrail Violations"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3beta1/enterprise/organizations/{org_id}/guardrail-violations",
+    "source": "https://docs.devin.ai/api-reference/v3/guardrail-violations/organizations-guardrail-violations",
+    "title": "List Organization Guardrail Violations"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3beta1/enterprise/service-users/{service_user_id}/api-keys",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/get-enterprise-service-user-api-keys",
+    "title": "List API keys for service user"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3beta1/enterprise/service-users/{service_user_id}/api-keys",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/post-enterprise-service-user-api-keys",
+    "title": "Create API key for service user"
+  },
+  {
+    "version": "v3",
+    "method": "DELETE",
+    "path": "/v3beta1/enterprise/service-users/{service_user_id}/api-keys/{api_key_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/delete-enterprise-service-user-api-key",
+    "title": "Revoke API key for service user"
+  },
+  {
+    "version": "v3",
+    "method": "POST",
+    "path": "/v3beta1/enterprise/service-users/{service_user_id}/api-keys/{api_key_id}/rotate",
+    "source": "https://docs.devin.ai/api-reference/v3/service-users/rotate-enterprise-service-user-api-key",
+    "title": "Rotate API key for service user"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3beta1/organizations/{org_id}/default-platform",
+    "source": "https://docs.devin.ai/api-reference/v3/organization-settings/get-organization-default-platform",
+    "title": "Get Organization Default Platform (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "PUT",
+    "path": "/v3beta1/organizations/{org_id}/default-platform",
+    "source": "https://docs.devin.ai/api-reference/v3/organization-settings/put-organization-default-platform",
+    "title": "Set Organization Default Platform (Devin API)"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3beta1/organizations/{org_id}/members/idp-users",
+    "source": "https://docs.devin.ai/api-reference/v3/users/list-organization-idp-users",
+    "title": "List Organization IDP Group Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3beta1/organizations/{org_id}/members/users",
+    "source": "https://docs.devin.ai/api-reference/v3/users/list-organization-users",
+    "title": "List Organization Users"
+  },
+  {
+    "version": "v3",
+    "method": "GET",
+    "path": "/v3beta1/organizations/{org_id}/members/users/{user_id}",
+    "source": "https://docs.devin.ai/api-reference/v3/users/get-organization-user",
+    "title": "Get Organization User"
+  }
+]

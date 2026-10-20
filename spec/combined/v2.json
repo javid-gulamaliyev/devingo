@@ -1,0 +1,5480 @@
+{
+  "components": {
+    "schemas": {
+      "ApiKeyResponse": {
+        "properties": {
+          "api_key_value": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_service_key": {
+            "type": "boolean"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "org_name": {
+            "type": "string"
+          },
+          "user_email": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "AuditLogEntry": {
+        "properties": {
+          "audit_log_id": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "EnterpriseAddGroupToOrganizationRequest": {
+        "properties": {
+          "group_name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_name",
+          "role"
+        ],
+        "type": "object"
+      },
+      "EnterpriseAddGroupToOrganizationResponse": {
+        "properties": {
+          "group_name": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_name",
+          "org_id",
+          "role"
+        ],
+        "type": "object"
+      },
+      "EnterpriseAddOrganizationMembersRequest": {
+        "properties": {
+          "group_names": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "org_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "org_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "user_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "org_ids",
+          "user_ids"
+        ],
+        "type": "object"
+      },
+      "EnterpriseAddOrganizationMembersResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseAddOrganizationPermissionsRequest": {
+        "items": {
+          "properties": {
+            "connection_id": {
+              "type": "string"
+            },
+            "group_prefix": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "group_prefix_url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "prefix_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "repo_path": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "repo_url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "connection_id"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "EnterpriseAddOrganizationPermissionsResponse": {
+        "properties": {
+          "permission_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "permission_names": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "permission_ids",
+          "permission_names"
+        ],
+        "type": "object"
+      },
+      "EnterpriseAuditLogsResponse": {
+        "properties": {
+          "audit_logs": {
+            "items": {
+              "$ref": "#/components/schemas/AuditLogEntry"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "audit_logs"
+        ],
+        "type": "object"
+      },
+      "EnterpriseBulkIndexRepositoriesRequest": {
+        "properties": {
+          "org_id": {
+            "type": "string"
+          },
+          "repo_names": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "org_id",
+          "repo_names"
+        ],
+        "type": "object"
+      },
+      "EnterpriseBulkIndexRepositoriesResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseConsumptionCyclesResponse": {
+        "items": {
+          "properties": {
+            "end": {
+              "type": "string"
+            },
+            "start": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "end",
+            "start"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "EnterpriseCreateOrganizationRequest": {
+        "properties": {
+          "acu_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "add_creator_as_member": {
+            "type": "boolean"
+          },
+          "display_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name"
+        ],
+        "type": "object"
+      },
+      "EnterpriseCreateOrganizationResponse": {
+        "properties": {
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max_cycle_acu_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max_session_acu_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "org_admin_count": {
+            "type": "integer"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "org_member_count": {
+            "type": "integer"
+          },
+          "org_name": {
+            "type": "string"
+          },
+          "org_user_count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "created_at",
+          "org_id",
+          "org_name"
+        ],
+        "type": "object"
+      },
+      "EnterpriseCreatePlaybookRequest": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "title"
+        ],
+        "type": "object"
+      },
+      "EnterpriseCreatePlaybookResponse": {
+        "properties": {
+          "access": {
+            "type": "string"
+          },
+          "account_id": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_by_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_by_user_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "macro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "playbook_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_by_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_by_user_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "access",
+          "account_id",
+          "body",
+          "created_at",
+          "created_by_user_id",
+          "created_by_user_name",
+          "playbook_id",
+          "status",
+          "title",
+          "updated_at",
+          "updated_by_user_id",
+          "updated_by_user_name"
+        ],
+        "type": "object"
+      },
+      "EnterpriseDailyConsumptionResponse": {
+        "properties": {
+          "consumption_by_date": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "consumption_by_org_id": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "consumption_by_user": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "total_acus": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "consumption_by_date",
+          "consumption_by_org_id",
+          "total_acus"
+        ],
+        "type": "object"
+      },
+      "EnterpriseDeleteEnterpriseMemberResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseDeleteOrganizationPermissionResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseDeleteOrganizationResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseGetEnterpriseSessionResponse": {
+        "properties": {
+          "acus_consumed": {
+            "type": "number"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "initial_user_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "pull_requests": {
+            "items": {
+              "$ref": "#/components/schemas/SessionPullRequest"
+            },
+            "type": "array"
+          },
+          "session_analysis": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SessionAnalysisData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "new",
+              "claimed",
+              "running",
+              "exit",
+              "error",
+              "suspended",
+              "resuming"
+            ],
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "acus_consumed",
+          "created_at",
+          "initial_user_message",
+          "org_id",
+          "pull_requests",
+          "session_analysis",
+          "session_id",
+          "status",
+          "tags",
+          "updated_at",
+          "url"
+        ],
+        "type": "object"
+      },
+      "EnterpriseGetGroupDetailsResponse": {
+        "properties": {
+          "group_name": {
+            "type": "string"
+          },
+          "org_count": {
+            "type": "integer"
+          },
+          "role_by_org_id": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "group_name",
+          "org_count",
+          "role_by_org_id"
+        ],
+        "type": "object"
+      },
+      "EnterpriseGetOrgGroupLimitsResponse": {
+        "properties": {
+          "groups": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "groups"
+        ],
+        "type": "object"
+      },
+      "EnterpriseGetOrganizationDetailsResponse": {
+        "properties": {
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max_cycle_acu_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max_session_acu_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "org_admin_count": {
+            "type": "integer"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "org_member_count": {
+            "type": "integer"
+          },
+          "org_name": {
+            "type": "string"
+          },
+          "org_user_count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "created_at",
+          "org_id",
+          "org_name"
+        ],
+        "type": "object"
+      },
+      "EnterpriseGetRepositoryStatusResponse": {
+        "items": {
+          "properties": {
+            "indexing_enabled": {
+              "type": "boolean"
+            },
+            "latest_completed_search_index_job": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RepoIndexJobResponse"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "latest_completed_wiki_index_job": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RepoIndexJobResponse"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "latest_index": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RepoIndexJobResponse"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "indexing_enabled",
+            "latest_completed_search_index_job",
+            "latest_completed_wiki_index_job",
+            "latest_index",
+            "name"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "EnterpriseGetSelfResponse": {
+        "properties": {
+          "api_key_id": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "api_key_id",
+          "org_id",
+          "user_email",
+          "user_id"
+        ],
+        "type": "object"
+      },
+      "EnterpriseGetUserUsageAnalysisBetaResponse": {},
+      "EnterpriseGroupResponse": {
+        "properties": {
+          "group_name": {
+            "type": "string"
+          },
+          "org_count": {
+            "type": "number"
+          },
+          "role_by_org_id": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "EnterpriseInviteEnterpriseMembersRequest": {
+        "properties": {
+          "emails": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "emails"
+        ],
+        "type": "object"
+      },
+      "EnterpriseInviteEnterpriseMembersResponse": {
+        "properties": {
+          "invited_count": {
+            "type": "integer"
+          },
+          "invitee_user_id_to_email": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "invited_count",
+          "invitee_user_id_to_email"
+        ],
+        "type": "object"
+      },
+      "EnterpriseListEnterpriseApiKeysResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ApiKeyResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseListEnterpriseGroupsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EnterpriseGroupResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseListEnterpriseHypervisorsResponse": {
+        "items": {
+          "properties": {
+            "hypervisor_id": {
+              "type": "string"
+            },
+            "seconds_since_report": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "status": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "hypervisor_id",
+            "status"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "EnterpriseListEnterpriseMembersResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EnterpriseUserResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseListEnterpriseSessionsInsightsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SessionDetailResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseListEnterpriseSessionsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SessionResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseListOrganizationSessionsInsightsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SessionDetailResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseListOrganizationSessionsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SessionResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseListOrganizationsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OrganizationResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseListPlaybooksResponse": {
+        "items": {
+          "properties": {
+            "access": {
+              "type": "string"
+            },
+            "account_id": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "created_at": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "created_by_user_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "created_by_user_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "macro": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "playbook_id": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "updated_at": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "updated_by_user_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "updated_by_user_name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "access",
+            "account_id",
+            "body",
+            "created_at",
+            "created_by_user_id",
+            "created_by_user_name",
+            "playbook_id",
+            "status",
+            "title",
+            "updated_at",
+            "updated_by_user_id",
+            "updated_by_user_name"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "EnterpriseListRolesResponse": {
+        "items": {
+          "properties": {
+            "role_id": {
+              "type": "string"
+            },
+            "role_name": {
+              "type": "string"
+            },
+            "role_type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "role_id",
+            "role_name",
+            "role_type"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "EnterpriseOrganizationConnectionsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GitConnectionResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseOrganizationGroupsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OrganizationGroupResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseOrganizationMembersResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserOrgResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseOrganizationPermissionsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GitPermissionResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterprisePrMetricsResponse": {
+        "properties": {
+          "prs_closed": {
+            "type": "integer"
+          },
+          "prs_merged": {
+            "type": "integer"
+          },
+          "prs_opened": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "prs_closed",
+          "prs_merged",
+          "prs_opened"
+        ],
+        "type": "object"
+      },
+      "EnterpriseProvisionServiceKeyRequest": {
+        "properties": {
+          "org_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "org_id"
+        ],
+        "type": "object"
+      },
+      "EnterpriseProvisionServiceKeyResponse": {
+        "properties": {
+          "api_key": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "api_key",
+          "org_id"
+        ],
+        "type": "object"
+      },
+      "EnterpriseRemoveUserFromOrganizationResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseRevokeEnterpriseApiKeyResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseSearchesMetricsResponse": {
+        "properties": {
+          "searches_count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "searches_count"
+        ],
+        "type": "object"
+      },
+      "EnterpriseSessionsMetricsResponse": {
+        "properties": {
+          "sessions_count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sessions_count"
+        ],
+        "type": "object"
+      },
+      "EnterpriseUpdateOrgGroupLimitsRequest": {
+        "properties": {
+          "groups": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "groups"
+        ],
+        "type": "object"
+      },
+      "EnterpriseUpdateOrgGroupLimitsResponse": {
+        "properties": {
+          "groups": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "groups"
+        ],
+        "type": "object"
+      },
+      "EnterpriseUpdateOrganizationMemberRolesRequest": {
+        "properties": {
+          "role_id": {
+            "type": "string"
+          },
+          "user_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "role_id",
+          "user_ids"
+        ],
+        "type": "object"
+      },
+      "EnterpriseUpdateOrganizationMemberRolesResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseUpdateOrganizationRequest": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max_acu_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseUpdateOrganizationResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnterpriseUsageMetricsResponse": {
+        "properties": {
+          "prs_closed": {
+            "type": "integer"
+          },
+          "prs_merged": {
+            "type": "integer"
+          },
+          "prs_opened": {
+            "type": "integer"
+          },
+          "searches_count": {
+            "type": "integer"
+          },
+          "sessions_count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "prs_closed",
+          "prs_merged",
+          "prs_opened",
+          "searches_count",
+          "sessions_count"
+        ],
+        "type": "object"
+      },
+      "EnterpriseUserDailyConsumptionResponse": {
+        "properties": {
+          "consumption_by_date": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "consumption_by_org_id": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "total_acus": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "consumption_by_date",
+          "consumption_by_org_id",
+          "total_acus"
+        ],
+        "type": "object"
+      },
+      "EnterpriseUserOrganizationsResponse": {
+        "properties": {
+          "has_more": {
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserOrgResponse"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_more",
+          "items",
+          "limit",
+          "skip",
+          "total"
+        ],
+        "type": "object"
+      },
+      "EnterpriseUserResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "enterprise_role": {
+            "type": "string"
+          },
+          "last_login": {
+            "type": "string"
+          },
+          "login_count": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "saml_id": {
+            "type": "string"
+          },
+          "searches_created_count": {
+            "type": "number"
+          },
+          "sessions_created_count": {
+            "type": "number"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "GitConnectionResponse": {
+        "properties": {
+          "connection_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "GitPermissionResponse": {
+        "properties": {
+          "group_prefix": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "permission_id": {
+            "type": "string"
+          },
+          "prefix_path": {
+            "type": "string"
+          },
+          "repo_path": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "OrganizationGroupResponse": {
+        "properties": {
+          "group_name": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "OrganizationResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "max_cycle_acu_limit": {
+            "type": "number"
+          },
+          "max_session_acu_limit": {
+            "type": "number"
+          },
+          "org_admin_count": {
+            "type": "number"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "org_member_count": {
+            "type": "number"
+          },
+          "org_name": {
+            "type": "string"
+          },
+          "org_user_count": {
+            "type": "number"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "RepoIndexJobResponse": {
+        "properties": {
+          "commit": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "job_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "SessionAnalysisData": {
+        "properties": {
+          "action_items": {
+            "items": {},
+            "type": "array"
+          },
+          "issues": {
+            "items": {},
+            "type": "array"
+          },
+          "suggested_prompt": {
+            "properties": {
+              "feedback_items": {
+                "items": {
+                  "properties": {
+                    "details": {
+                      "type": "string"
+                    },
+                    "excerpt": {
+                      "type": "string"
+                    },
+                    "issue_id": {
+                      "type": "string"
+                    },
+                    "summary": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "original_prompt": {
+                "type": "string"
+              },
+              "suggested_prompt": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "timeline": {
+            "items": {},
+            "type": "array"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "SessionDetailResponse": {
+        "properties": {
+          "acus_consumed": {
+            "type": "number"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "initial_user_message": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "pull_requests": {
+            "items": {
+              "properties": {
+                "state": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "session_analysis": {
+            "properties": {
+              "action_items": {
+                "items": {},
+                "type": "array"
+              },
+              "issues": {
+                "items": {},
+                "type": "array"
+              },
+              "suggested_prompt": {
+                "properties": {
+                  "feedback_items": {
+                    "items": {
+                      "properties": {
+                        "details": {
+                          "type": "string"
+                        },
+                        "excerpt": {
+                          "type": "string"
+                        },
+                        "issue_id": {
+                          "type": "string"
+                        },
+                        "summary": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "original_prompt": {
+                    "type": "string"
+                  },
+                  "suggested_prompt": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "timeline": {
+                "items": {},
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "SessionPullRequest": {
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "SessionResponse": {
+        "properties": {
+          "acus_consumed": {
+            "type": "number"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "pull_requests": {
+            "items": {
+              "properties": {
+                "state": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      },
+      "UndocumentedJSON": {
+        "description": "A response whose structure is not available in the captured documentation. Preserves any JSON value."
+      },
+      "UserOrgResponse": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "enterprise_role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "org_name": {
+            "type": "string"
+          },
+          "org_role": {
+            "type": "string"
+          },
+          "org_role_name": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "x-example-derived-fields": true
+      }
+    }
+  },
+  "info": {
+    "title": "Devin v2",
+    "version": "v2"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/beta/v2/enterprise/repositories/bulk-index": {
+      "post": {
+        "operationId": "EnterpriseBulkIndexRepositories",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseBulkIndexRepositoriesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseBulkIndexRepositoriesResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Bulk Index Repositories",
+        "tags": [
+          "repositories"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/repositories/bulk-index-repositories",
+        "x-request-example": {
+          "org_id": "\u003cstring\u003e",
+          "repo_names": [
+            "\u003cstring\u003e"
+          ]
+        },
+        "x-response-example": {
+          "status": "success"
+        }
+      }
+    },
+    "/beta/v2/enterprise/repositories/{org_id}": {
+      "get": {
+        "operationId": "EnterpriseGetRepositoryStatus",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseGetRepositoryStatusResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get Repository Indexing Status",
+        "tags": [
+          "repositories"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/repositories/get-repository-status",
+        "x-response-example": [
+          {
+            "indexing_enabled": true,
+            "latest_completed_search_index_job": {
+              "commit": "\u003cstring\u003e",
+              "created_at": "2023-11-07T05:31:56Z",
+              "job_id": "\u003cstring\u003e",
+              "status": "failed"
+            },
+            "latest_completed_wiki_index_job": {
+              "commit": "\u003cstring\u003e",
+              "created_at": "2023-11-07T05:31:56Z",
+              "job_id": "\u003cstring\u003e",
+              "status": "failed"
+            },
+            "latest_index": {
+              "commit": "\u003cstring\u003e",
+              "created_at": "2023-11-07T05:31:56Z",
+              "job_id": "\u003cstring\u003e",
+              "status": "failed"
+            },
+            "name": "\u003cstring\u003e"
+          }
+        ]
+      }
+    },
+    "/beta/v2/enterprise/user-usage-analysis": {
+      "get": {
+        "operationId": "EnterpriseGetUserUsageAnalysisBeta",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseGetUserUsageAnalysisBetaResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get User Usage Analysis (Beta)",
+        "tags": [
+          "user-usage"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/user-usage/get-user-usage-analysis-beta",
+        "x-response-example": null
+      }
+    },
+    "/v2/enterprise/api-keys": {
+      "get": {
+        "operationId": "EnterpriseListEnterpriseApiKeys",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListEnterpriseApiKeysResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List API Keys",
+        "tags": [
+          "api-keys"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/api-keys/list-enterprise-api-keys",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "api_key_value": "\u003cstring\u003e",
+              "created_at": "\u003cstring\u003e",
+              "id": "\u003cstring\u003e",
+              "is_service_key": true,
+              "org_id": "\u003cstring\u003e",
+              "org_name": "\u003cstring\u003e",
+              "user_email": "\u003cstring\u003e",
+              "user_id": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      },
+      "post": {
+        "operationId": "EnterpriseProvisionServiceKey",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseProvisionServiceKeyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseProvisionServiceKeyResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Create a Service API Key",
+        "tags": [
+          "api-keys"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/api-keys/provision-service-key",
+        "x-request-example": {
+          "org_id": "\u003cstring\u003e"
+        },
+        "x-response-example": {
+          "api_key": "\u003cstring\u003e",
+          "org_id": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v2/enterprise/api-keys/{api_key_id}": {
+      "delete": {
+        "operationId": "EnterpriseRevokeEnterpriseApiKey",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "api_key_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseRevokeEnterpriseApiKeyResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Revoke API Key",
+        "tags": [
+          "api-keys"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/api-keys/revoke-enterprise-api-key",
+        "x-response-example": {
+          "status": "success"
+        }
+      }
+    },
+    "/v2/enterprise/audit-logs": {
+      "get": {
+        "operationId": "EnterpriseAuditLogs",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseAuditLogsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get Audit Logs",
+        "tags": [
+          "v2"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/audit-logs",
+        "x-response-example": {
+          "audit_logs": [
+            {
+              "audit_log_id": "\u003cstring\u003e"
+            }
+          ]
+        }
+      }
+    },
+    "/v2/enterprise/consumption/cycles": {
+      "get": {
+        "operationId": "EnterpriseConsumptionCycles",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseConsumptionCyclesResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Consumption Cycles",
+        "tags": [
+          "consumption"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/consumption/consumption-cycles",
+        "x-response-example": [
+          {
+            "end": "2023-11-07T05:31:56Z",
+            "start": "2023-11-07T05:31:56Z"
+          }
+        ]
+      }
+    },
+    "/v2/enterprise/consumption/daily": {
+      "get": {
+        "operationId": "EnterpriseDailyConsumption",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseDailyConsumptionResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Daily Consumption",
+        "tags": [
+          "consumption"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/consumption/daily-consumption",
+        "x-response-example": {
+          "consumption_by_date": {},
+          "consumption_by_org_id": {},
+          "consumption_by_user": {},
+          "total_acus": 123
+        }
+      }
+    },
+    "/v2/enterprise/consumption/daily/{user_id}": {
+      "get": {
+        "operationId": "EnterpriseUserDailyConsumption",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseUserDailyConsumptionResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "User Daily Consumption",
+        "tags": [
+          "consumption"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/consumption/user-daily-consumption",
+        "x-response-example": {
+          "consumption_by_date": {},
+          "consumption_by_org_id": {},
+          "total_acus": 123
+        }
+      }
+    },
+    "/v2/enterprise/groups": {
+      "get": {
+        "operationId": "EnterpriseListEnterpriseGroups",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListEnterpriseGroupsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Enterprise Groups",
+        "tags": [
+          "groups"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/groups/list-enterprise-groups",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "group_name": "\u003cstring\u003e",
+              "org_count": 123,
+              "role_by_org_id": {}
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      }
+    },
+    "/v2/enterprise/groups/{group_name}": {
+      "get": {
+        "operationId": "EnterpriseGetGroupDetails",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseGetGroupDetailsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get Group Details",
+        "tags": [
+          "groups"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/groups/get-group-details",
+        "x-response-example": {
+          "group_name": "\u003cstring\u003e",
+          "org_count": 123,
+          "role_by_org_id": {}
+        }
+      }
+    },
+    "/v2/enterprise/hypervisors/health": {
+      "get": {
+        "operationId": "EnterpriseListEnterpriseHypervisors",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListEnterpriseHypervisorsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Hypervisors",
+        "tags": [
+          "infrastructure"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/infrastructure/list-enterprise-hypervisors",
+        "x-response-example": [
+          {
+            "hypervisor_id": "\u003cstring\u003e",
+            "seconds_since_report": 123,
+            "status": "\u003cstring\u003e"
+          }
+        ]
+      }
+    },
+    "/v2/enterprise/members": {
+      "get": {
+        "operationId": "EnterpriseListEnterpriseMembers",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "email",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListEnterpriseMembersResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Enterprise Members",
+        "tags": [
+          "members"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/members/list-enterprise-members",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "created_at": "2023-11-07T05:31:56Z",
+              "email": "\u003cstring\u003e",
+              "enterprise_role": "\u003cstring\u003e",
+              "last_login": "2023-11-07T05:31:56Z",
+              "login_count": 123,
+              "name": "\u003cstring\u003e",
+              "saml_id": "\u003cstring\u003e",
+              "searches_created_count": 0,
+              "sessions_created_count": 0,
+              "user_id": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      }
+    },
+    "/v2/enterprise/members/invite": {
+      "post": {
+        "operationId": "EnterpriseInviteEnterpriseMembers",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseInviteEnterpriseMembersRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseInviteEnterpriseMembersResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Invite Enterprise Members",
+        "tags": [
+          "members"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/members/invite-enterprise-members",
+        "x-request-example": {
+          "emails": [
+            "jsmith@example.com"
+          ]
+        },
+        "x-response-example": {
+          "invited_count": 123,
+          "invitee_user_id_to_email": {},
+          "status": "success"
+        }
+      }
+    },
+    "/v2/enterprise/members/{user_id}": {
+      "delete": {
+        "operationId": "EnterpriseDeleteEnterpriseMember",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseDeleteEnterpriseMemberResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Delete Enterprise Member",
+        "tags": [
+          "members"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/members/delete-enterprise-member",
+        "x-response-example": {
+          "status": "success"
+        }
+      },
+      "get": {
+        "operationId": "getGetMemberDetails",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UndocumentedJSON"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Member Details",
+        "tags": [
+          "Members"
+        ],
+        "x-contract-gap": "The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.",
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/members/get-member-details"
+      }
+    },
+    "/v2/enterprise/members/{user_id}/organizations": {
+      "get": {
+        "operationId": "EnterpriseUserOrganizations",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseUserOrganizationsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "User Organizations",
+        "tags": [
+          "members"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/members/user-organizations",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "email": "\u003cstring\u003e",
+              "enterprise_role": "\u003cstring\u003e",
+              "name": "\u003cstring\u003e",
+              "org_id": "\u003cstring\u003e",
+              "org_name": "\u003cstring\u003e",
+              "org_role": "\u003cstring\u003e",
+              "org_role_name": "\u003cstring\u003e",
+              "user_id": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      }
+    },
+    "/v2/enterprise/metrics/prs": {
+      "get": {
+        "operationId": "EnterprisePrMetrics",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "user_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterprisePrMetricsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "PR Metrics",
+        "tags": [
+          "consumption"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/consumption/pr-metrics",
+        "x-response-example": {
+          "prs_closed": 123,
+          "prs_merged": 123,
+          "prs_opened": 123
+        }
+      }
+    },
+    "/v2/enterprise/metrics/searches": {
+      "get": {
+        "operationId": "EnterpriseSearchesMetrics",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "user_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseSearchesMetricsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Searches Metrics",
+        "tags": [
+          "consumption"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/consumption/searches-metrics",
+        "x-response-example": {
+          "searches_count": 123
+        }
+      }
+    },
+    "/v2/enterprise/metrics/sessions": {
+      "get": {
+        "operationId": "EnterpriseSessionsMetrics",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "user_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseSessionsMetricsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Sessions Metrics",
+        "tags": [
+          "consumption"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/consumption/sessions-metrics",
+        "x-response-example": {
+          "sessions_count": 123
+        }
+      }
+    },
+    "/v2/enterprise/metrics/usage": {
+      "get": {
+        "operationId": "EnterpriseUsageMetrics",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "user_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseUsageMetricsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Usage Metrics",
+        "tags": [
+          "consumption"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/consumption/usage-metrics",
+        "x-response-example": {
+          "prs_closed": 123,
+          "prs_merged": 123,
+          "prs_opened": 123,
+          "searches_count": 123,
+          "sessions_count": 123
+        }
+      }
+    },
+    "/v2/enterprise/org-group-limits": {
+      "get": {
+        "operationId": "EnterpriseGetOrgGroupLimits",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseGetOrgGroupLimitsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get Organization Group Limits",
+        "tags": [
+          "org-group-limits"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/org-group-limits/get-org-group-limits",
+        "x-response-example": {
+          "groups": {}
+        }
+      },
+      "put": {
+        "operationId": "EnterpriseUpdateOrgGroupLimits",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseUpdateOrgGroupLimitsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseUpdateOrgGroupLimitsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Update Organization Group Limits",
+        "tags": [
+          "org-group-limits"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/org-group-limits/update-org-group-limits",
+        "x-request-example": {
+          "groups": {}
+        },
+        "x-response-example": {
+          "groups": {}
+        }
+      }
+    },
+    "/v2/enterprise/organizations": {
+      "get": {
+        "operationId": "EnterpriseListOrganizations",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListOrganizationsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Organizations",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/list-organizations",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "created_at": "2023-11-07T05:31:56Z",
+              "max_cycle_acu_limit": 123,
+              "max_session_acu_limit": 123,
+              "org_admin_count": 0,
+              "org_id": "\u003cstring\u003e",
+              "org_member_count": 0,
+              "org_name": "\u003cstring\u003e",
+              "org_user_count": 0
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      },
+      "post": {
+        "operationId": "EnterpriseCreateOrganization",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseCreateOrganizationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseCreateOrganizationResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Create Organization",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/create-organization",
+        "x-request-example": {
+          "acu_limit": 123,
+          "add_creator_as_member": true,
+          "display_name": "\u003cstring\u003e"
+        },
+        "x-response-example": {
+          "created_at": "2023-11-07T05:31:56Z",
+          "max_cycle_acu_limit": 123,
+          "max_session_acu_limit": 123,
+          "org_admin_count": 0,
+          "org_id": "\u003cstring\u003e",
+          "org_member_count": 0,
+          "org_name": "\u003cstring\u003e",
+          "org_user_count": 0
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}": {
+      "delete": {
+        "operationId": "EnterpriseDeleteOrganization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseDeleteOrganizationResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Delete Organization",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/delete-organization",
+        "x-response-example": {
+          "status": "success"
+        }
+      },
+      "get": {
+        "operationId": "EnterpriseGetOrganizationDetails",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseGetOrganizationDetailsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get Organization Details",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/get-organization-details",
+        "x-response-example": {
+          "created_at": "2023-11-07T05:31:56Z",
+          "max_cycle_acu_limit": 123,
+          "max_session_acu_limit": 123,
+          "org_admin_count": 0,
+          "org_id": "\u003cstring\u003e",
+          "org_member_count": 0,
+          "org_name": "\u003cstring\u003e",
+          "org_user_count": 0
+        }
+      },
+      "patch": {
+        "operationId": "EnterpriseUpdateOrganization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseUpdateOrganizationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseUpdateOrganizationResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Update Organization",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/update-organization",
+        "x-request-example": {
+          "display_name": "\u003cstring\u003e",
+          "max_acu_limit": 123
+        },
+        "x-response-example": {
+          "status": "success"
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}/git/connections": {
+      "get": {
+        "operationId": "EnterpriseOrganizationConnections",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseOrganizationConnectionsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Organization Connections",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/organization-connections",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "connection_id": "\u003cstring\u003e",
+              "created_at": "2023-11-07T05:31:56Z",
+              "host": "\u003cstring\u003e",
+              "name": "\u003cstring\u003e",
+              "type": "github_token"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}/git/permissions": {
+      "get": {
+        "operationId": "EnterpriseOrganizationPermissions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseOrganizationPermissionsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Organization Permissions",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/organization-permissions",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "group_prefix": "\u003cstring\u003e",
+              "host": "\u003cstring\u003e",
+              "permission_id": "\u003cstring\u003e",
+              "prefix_path": "\u003cstring\u003e",
+              "repo_path": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      },
+      "post": {
+        "operationId": "EnterpriseAddOrganizationPermissions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseAddOrganizationPermissionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseAddOrganizationPermissionsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Add Organization Permissions",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/add-organization-permissions",
+        "x-request-example": [
+          {
+            "connection_id": "\u003cstring\u003e",
+            "group_prefix": [
+              "\u003cstring\u003e"
+            ],
+            "group_prefix_url": "\u003cstring\u003e",
+            "prefix_path": "\u003cstring\u003e",
+            "repo_path": [
+              "\u003cstring\u003e"
+            ],
+            "repo_url": "\u003cstring\u003e"
+          }
+        ],
+        "x-response-example": {
+          "permission_ids": [
+            "\u003cstring\u003e"
+          ],
+          "permission_names": {},
+          "status": "success"
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}/git/permissions/{permission_id}": {
+      "delete": {
+        "operationId": "EnterpriseDeleteOrganizationPermission",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "permission_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseDeleteOrganizationPermissionResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Delete Organization Permission",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/delete-organization-permission",
+        "x-response-example": {
+          "status": "success"
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}/groups": {
+      "get": {
+        "operationId": "EnterpriseOrganizationGroups",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseOrganizationGroupsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Organization Groups",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/organization-groups",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "group_name": "\u003cstring\u003e",
+              "org_id": "\u003cstring\u003e",
+              "role": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      },
+      "post": {
+        "operationId": "EnterpriseAddGroupToOrganization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseAddGroupToOrganizationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseAddGroupToOrganizationResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Add Group to Organization",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/add-group-to-organization",
+        "x-request-example": {
+          "group_name": "\u003cstring\u003e",
+          "role": "\u003cstring\u003e"
+        },
+        "x-response-example": {
+          "group_name": "\u003cstring\u003e",
+          "org_id": "\u003cstring\u003e",
+          "role": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}/members": {
+      "get": {
+        "operationId": "EnterpriseOrganizationMembers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseOrganizationMembersResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Organization Members",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/organization-members",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "email": "\u003cstring\u003e",
+              "enterprise_role": "\u003cstring\u003e",
+              "name": "\u003cstring\u003e",
+              "org_id": "\u003cstring\u003e",
+              "org_name": "\u003cstring\u003e",
+              "org_role": "\u003cstring\u003e",
+              "org_role_name": "\u003cstring\u003e",
+              "user_id": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      },
+      "post": {
+        "operationId": "EnterpriseAddOrganizationMembers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseAddOrganizationMembersRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseAddOrganizationMembersResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Add Organization Members",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/add-organization-members",
+        "x-request-example": {
+          "group_names": [
+            "\u003cstring\u003e"
+          ],
+          "org_ids": [
+            "\u003cstring\u003e"
+          ],
+          "org_role": "\u003cstring\u003e",
+          "user_ids": [
+            "\u003cstring\u003e"
+          ]
+        },
+        "x-response-example": {
+          "status": "success"
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}/members/roles": {
+      "patch": {
+        "operationId": "EnterpriseUpdateOrganizationMemberRoles",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseUpdateOrganizationMemberRolesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseUpdateOrganizationMemberRolesResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Update organization member roles",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/update-organization-member-roles",
+        "x-request-example": {
+          "role_id": "\u003cstring\u003e",
+          "user_ids": [
+            "\u003cstring\u003e"
+          ]
+        },
+        "x-response-example": {
+          "status": "success"
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}/members/{user_id}": {
+      "delete": {
+        "operationId": "EnterpriseRemoveUserFromOrganization",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseRemoveUserFromOrganizationResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Remove User from Organization",
+        "tags": [
+          "organizations"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/organizations/remove-user-from-organization",
+        "x-response-example": {
+          "status": "success"
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}/sessions": {
+      "get": {
+        "operationId": "EnterpriseListOrganizationSessions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_date_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_date_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "updated_date_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "updated_date_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "user_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "session_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListOrganizationSessionsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Organization Sessions",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/sessions/list-organization-sessions",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "acus_consumed": 123,
+              "created_at": "2023-11-07T05:31:56Z",
+              "org_id": "\u003cstring\u003e",
+              "pull_requests": [
+                {
+                  "state": "\u003cstring\u003e",
+                  "url": "\u003cstring\u003e"
+                }
+              ],
+              "session_id": "\u003cstring\u003e",
+              "status": "new",
+              "tags": [
+                "\u003cstring\u003e"
+              ],
+              "title": "\u003cstring\u003e",
+              "updated_at": "2023-11-07T05:31:56Z",
+              "url": "\u003cstring\u003e",
+              "user_id": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      }
+    },
+    "/v2/enterprise/organizations/{org_id}/sessions/insights": {
+      "get": {
+        "operationId": "EnterpriseListOrganizationSessionsInsights",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_date_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_date_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "updated_date_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "updated_date_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "user_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "session_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListOrganizationSessionsInsightsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Organization Sessions (Insights)",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/sessions/list-organization-sessions-insights",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "acus_consumed": 123,
+              "created_at": "2023-11-07T05:31:56Z",
+              "initial_user_message": "\u003cstring\u003e",
+              "org_id": "\u003cstring\u003e",
+              "pull_requests": [
+                {
+                  "state": "\u003cstring\u003e",
+                  "url": "\u003cstring\u003e"
+                }
+              ],
+              "session_analysis": {
+                "action_items": [],
+                "issues": [],
+                "suggested_prompt": {
+                  "feedback_items": [
+                    {
+                      "details": "\u003cstring\u003e",
+                      "excerpt": "\u003cstring\u003e",
+                      "issue_id": "\u003cstring\u003e",
+                      "summary": "\u003cstring\u003e"
+                    }
+                  ],
+                  "original_prompt": "\u003cstring\u003e",
+                  "suggested_prompt": "\u003cstring\u003e"
+                },
+                "timeline": []
+              },
+              "session_id": "\u003cstring\u003e",
+              "status": "new",
+              "tags": [
+                "\u003cstring\u003e"
+              ],
+              "title": "\u003cstring\u003e",
+              "updated_at": "2023-11-07T05:31:56Z",
+              "url": "\u003cstring\u003e",
+              "user_id": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      }
+    },
+    "/v2/enterprise/playbooks": {
+      "get": {
+        "operationId": "EnterpriseListPlaybooks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListPlaybooksResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Enterprise Playbooks",
+        "tags": [
+          "playbooks"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/playbooks/list-playbooks",
+        "x-response-example": [
+          {
+            "access": "\u003cstring\u003e",
+            "account_id": "\u003cstring\u003e",
+            "body": "\u003cstring\u003e",
+            "created_at": "2023-11-07T05:31:56Z",
+            "created_by_user_id": "\u003cstring\u003e",
+            "created_by_user_name": "\u003cstring\u003e",
+            "macro": "\u003cstring\u003e",
+            "playbook_id": "\u003cstring\u003e",
+            "status": "\u003cstring\u003e",
+            "title": "\u003cstring\u003e",
+            "updated_at": "2023-11-07T05:31:56Z",
+            "updated_by_user_id": "\u003cstring\u003e",
+            "updated_by_user_name": "\u003cstring\u003e"
+          }
+        ]
+      },
+      "post": {
+        "operationId": "EnterpriseCreatePlaybook",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseCreatePlaybookRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseCreatePlaybookResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Create Enterprise Playbook",
+        "tags": [
+          "playbooks"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/playbooks/create-playbook",
+        "x-request-example": {
+          "body": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "title": "\u003cstring\u003e"
+        },
+        "x-response-example": {
+          "access": "\u003cstring\u003e",
+          "account_id": "\u003cstring\u003e",
+          "body": "\u003cstring\u003e",
+          "created_at": "2023-11-07T05:31:56Z",
+          "created_by_user_id": "\u003cstring\u003e",
+          "created_by_user_name": "\u003cstring\u003e",
+          "macro": "\u003cstring\u003e",
+          "playbook_id": "\u003cstring\u003e",
+          "status": "\u003cstring\u003e",
+          "title": "\u003cstring\u003e",
+          "updated_at": "2023-11-07T05:31:56Z",
+          "updated_by_user_id": "\u003cstring\u003e",
+          "updated_by_user_name": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v2/enterprise/roles": {
+      "get": {
+        "operationId": "EnterpriseListRoles",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListRolesResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List available roles",
+        "tags": [
+          "members"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/members/list-roles",
+        "x-response-example": [
+          {
+            "role_id": "\u003cstring\u003e",
+            "role_name": "\u003cstring\u003e",
+            "role_type": "\u003cstring\u003e"
+          }
+        ]
+      }
+    },
+    "/v2/enterprise/self": {
+      "get": {
+        "operationId": "EnterpriseGetSelf",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseGetSelfResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get Self",
+        "tags": [
+          "self"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/self/get-self",
+        "x-response-example": {
+          "api_key_id": "\u003cstring\u003e",
+          "org_id": "\u003cstring\u003e",
+          "user_email": "\u003cstring\u003e",
+          "user_id": "\u003cstring\u003e"
+        }
+      }
+    },
+    "/v2/enterprise/sessions": {
+      "get": {
+        "operationId": "EnterpriseListEnterpriseSessions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_date_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_date_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "updated_date_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "updated_date_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "user_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "session_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListEnterpriseSessionsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Enterprise Sessions",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/sessions/list-enterprise-sessions",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "acus_consumed": 123,
+              "created_at": "2023-11-07T05:31:56Z",
+              "org_id": "\u003cstring\u003e",
+              "pull_requests": [
+                {
+                  "state": "\u003cstring\u003e",
+                  "url": "\u003cstring\u003e"
+                }
+              ],
+              "session_id": "\u003cstring\u003e",
+              "status": "new",
+              "tags": [
+                "\u003cstring\u003e"
+              ],
+              "title": "\u003cstring\u003e",
+              "updated_at": "2023-11-07T05:31:56Z",
+              "url": "\u003cstring\u003e",
+              "user_id": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      }
+    },
+    "/v2/enterprise/sessions/insights": {
+      "get": {
+        "operationId": "EnterpriseListEnterpriseSessionsInsights",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_date_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_date_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "updated_date_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "updated_date_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "org_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "user_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "session_ids",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseListEnterpriseSessionsInsightsResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List Enterprise Sessions (Insights)",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/sessions/list-enterprise-sessions-insights",
+        "x-response-example": {
+          "has_more": true,
+          "items": [
+            {
+              "acus_consumed": 123,
+              "created_at": "2023-11-07T05:31:56Z",
+              "initial_user_message": "\u003cstring\u003e",
+              "org_id": "\u003cstring\u003e",
+              "pull_requests": [
+                {
+                  "state": "\u003cstring\u003e",
+                  "url": "\u003cstring\u003e"
+                }
+              ],
+              "session_analysis": {
+                "action_items": [],
+                "issues": [],
+                "suggested_prompt": {
+                  "feedback_items": [
+                    {
+                      "details": "\u003cstring\u003e",
+                      "excerpt": "\u003cstring\u003e",
+                      "issue_id": "\u003cstring\u003e",
+                      "summary": "\u003cstring\u003e"
+                    }
+                  ],
+                  "original_prompt": "\u003cstring\u003e",
+                  "suggested_prompt": "\u003cstring\u003e"
+                },
+                "timeline": []
+              },
+              "session_id": "\u003cstring\u003e",
+              "status": "new",
+              "tags": [
+                "\u003cstring\u003e"
+              ],
+              "title": "\u003cstring\u003e",
+              "updated_at": "2023-11-07T05:31:56Z",
+              "url": "\u003cstring\u003e",
+              "user_id": "\u003cstring\u003e"
+            }
+          ],
+          "limit": 123,
+          "next_cursor": 123,
+          "skip": 123,
+          "total": 123
+        }
+      }
+    },
+    "/v2/enterprise/sessions/{session_id}": {
+      "get": {
+        "operationId": "EnterpriseGetEnterpriseSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseGetEnterpriseSessionResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get Enterprise Session",
+        "tags": [
+          "sessions"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/sessions/get-enterprise-session",
+        "x-response-example": {
+          "acus_consumed": 123,
+          "created_at": "2023-11-07T05:31:56Z",
+          "initial_user_message": "\u003cstring\u003e",
+          "org_id": "\u003cstring\u003e",
+          "pull_requests": [
+            {
+              "state": "\u003cstring\u003e",
+              "url": "\u003cstring\u003e"
+            }
+          ],
+          "session_analysis": {
+            "action_items": [],
+            "issues": [],
+            "suggested_prompt": {
+              "feedback_items": [
+                {
+                  "details": "\u003cstring\u003e",
+                  "excerpt": "\u003cstring\u003e",
+                  "issue_id": "\u003cstring\u003e",
+                  "summary": "\u003cstring\u003e"
+                }
+              ],
+              "original_prompt": "\u003cstring\u003e",
+              "suggested_prompt": "\u003cstring\u003e"
+            },
+            "timeline": []
+          },
+          "session_id": "\u003cstring\u003e",
+          "status": "new",
+          "tags": [
+            "\u003cstring\u003e"
+          ],
+          "title": "\u003cstring\u003e",
+          "updated_at": "2023-11-07T05:31:56Z",
+          "url": "\u003cstring\u003e",
+          "user_id": "\u003cstring\u003e"
+        }
+      }
+    }
+  }
+}

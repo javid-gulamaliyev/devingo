@@ -1,0 +1,211 @@
+[
+  {
+    "path": "/v1/attachments",
+    "http_method": "POST",
+    "operation_id": "UploadFilesForDevinToWorkWith",
+    "scope": "global",
+    "service": "Attachments",
+    "method": "Upload",
+    "request_type": "devin.Upload",
+    "response_type": "UploadFilesForDevinToWorkWithResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/attachments/upload-files-for-devin-to-work-with"
+  },
+  {
+    "path": "/v1/attachments/{uuid}/{name}",
+    "http_method": "GET",
+    "operation_id": "DownloadAttachmentFiles",
+    "scope": "global",
+    "service": "Attachments",
+    "method": "Download",
+    "response_type": "string",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/attachments/download-attachment-files",
+    "redirect": true
+  },
+  {
+    "path": "/v1/knowledge",
+    "http_method": "GET",
+    "operation_id": "ListKnowledge",
+    "scope": "global",
+    "service": "Knowledge",
+    "method": "List",
+    "response_type": "ListKnowledgeResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/knowledge/list-knowledge"
+  },
+  {
+    "path": "/v1/knowledge",
+    "http_method": "POST",
+    "operation_id": "CreateKnowledge",
+    "scope": "global",
+    "service": "Knowledge",
+    "method": "Create",
+    "request_type": "CreateKnowledgeRequest",
+    "response_type": "CreateKnowledgeResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/knowledge/create-knowledge"
+  },
+  {
+    "path": "/v1/knowledge/{note_id}",
+    "http_method": "PUT",
+    "operation_id": "UpdateKnowledge",
+    "scope": "global",
+    "service": "Knowledge",
+    "method": "Update",
+    "request_type": "UpdateKnowledgeRequest",
+    "response_type": "UpdateKnowledgeResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/knowledge/update-knowledge"
+  },
+  {
+    "path": "/v1/knowledge/{note_id}",
+    "http_method": "DELETE",
+    "operation_id": "DeleteKnowledge",
+    "scope": "global",
+    "service": "Knowledge",
+    "method": "Delete",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/knowledge/delete-knowledge"
+  },
+  {
+    "path": "/v1/playbooks",
+    "http_method": "GET",
+    "operation_id": "ListPlaybooks",
+    "scope": "global",
+    "service": "Playbooks",
+    "method": "List",
+    "response_type": "ListPlaybooksResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/playbooks/list-playbooks"
+  },
+  {
+    "path": "/v1/playbooks",
+    "http_method": "POST",
+    "operation_id": "CreatePlaybook",
+    "scope": "global",
+    "service": "Playbooks",
+    "method": "Create",
+    "request_type": "CreatePlaybookRequest",
+    "response_type": "CreatePlaybookResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/playbooks/create-playbook"
+  },
+  {
+    "path": "/v1/playbooks/{playbook_id}",
+    "http_method": "GET",
+    "operation_id": "GetPlaybook",
+    "scope": "global",
+    "service": "Playbooks",
+    "method": "Get",
+    "response_type": "GetPlaybookResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/playbooks/get-playbook"
+  },
+  {
+    "path": "/v1/playbooks/{playbook_id}",
+    "http_method": "PUT",
+    "operation_id": "UpdatePlaybook",
+    "scope": "global",
+    "service": "Playbooks",
+    "method": "Update",
+    "request_type": "UpdatePlaybookRequest",
+    "response_type": "UpdatePlaybookResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/playbooks/update-playbook"
+  },
+  {
+    "path": "/v1/playbooks/{playbook_id}",
+    "http_method": "DELETE",
+    "operation_id": "DeletePlaybook",
+    "scope": "global",
+    "service": "Playbooks",
+    "method": "Delete",
+    "response_type": "DeletePlaybookResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/playbooks/delete-playbook"
+  },
+  {
+    "path": "/v1/secrets",
+    "http_method": "GET",
+    "operation_id": "ListSecrets",
+    "scope": "global",
+    "service": "Secrets",
+    "method": "List",
+    "response_type": "ListSecretsResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/secrets/list-secrets"
+  },
+  {
+    "path": "/v1/secrets",
+    "http_method": "POST",
+    "operation_id": "CreateSecret",
+    "scope": "global",
+    "service": "Secrets",
+    "method": "Create",
+    "response_type": "CreateSecretResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/secrets/create-secret"
+  },
+  {
+    "path": "/v1/secrets/{secret_id}",
+    "http_method": "DELETE",
+    "operation_id": "DeleteSecret",
+    "scope": "global",
+    "service": "Secrets",
+    "method": "Delete",
+    "response_type": "DeleteSecretResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/secrets/delete-secret"
+  },
+  {
+    "path": "/v1/sessions",
+    "http_method": "GET",
+    "operation_id": "ListSessions",
+    "scope": "global",
+    "service": "Sessions",
+    "method": "List",
+    "response_type": "ListSessionsResponse",
+    "options_type": "GlobalSessionsListOptions",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/sessions/list-sessions"
+  },
+  {
+    "path": "/v1/sessions",
+    "http_method": "POST",
+    "operation_id": "CreateANewDevinSession",
+    "scope": "global",
+    "service": "Sessions",
+    "method": "Create",
+    "request_type": "CreateANewDevinSessionRequest",
+    "response_type": "CreateANewDevinSessionResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/sessions/create-a-new-devin-session"
+  },
+  {
+    "path": "/v1/sessions/{session_id}",
+    "http_method": "GET",
+    "operation_id": "RetrieveDetailsAboutAnExistingSession",
+    "scope": "global",
+    "service": "Sessions",
+    "method": "Get",
+    "response_type": "RetrieveDetailsAboutAnExistingSessionResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/sessions/retrieve-details-about-an-existing-session"
+  },
+  {
+    "path": "/v1/sessions/{session_id}",
+    "http_method": "DELETE",
+    "operation_id": "TerminateASession",
+    "scope": "global",
+    "service": "Sessions",
+    "method": "Delete",
+    "response_type": "TerminateASessionResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/sessions/terminate-a-session"
+  },
+  {
+    "path": "/v1/sessions/{session_id}/message",
+    "http_method": "POST",
+    "operation_id": "SendAMessageToAnExistingDevinSession",
+    "scope": "global",
+    "service": "Sessions",
+    "method": "SendAMessageToAnExistingDevinSession",
+    "request_type": "SendAMessageToAnExistingDevinSessionRequest",
+    "response_type": "SendAMessageToAnExistingDevinSessionResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/sessions/send-a-message-to-an-existing-devin-session"
+  },
+  {
+    "path": "/v1/sessions/{session_id}/tags",
+    "http_method": "PUT",
+    "operation_id": "UpdateSessionTags",
+    "scope": "global",
+    "service": "Sessions",
+    "method": "UpdateSessionTags",
+    "request_type": "UpdateSessionTagsRequest",
+    "response_type": "UpdateSessionTagsResponse",
+    "doc_url": "https://docs.devin.ai/api-reference/v1/sessions/update-session-tags"
+  }
+]

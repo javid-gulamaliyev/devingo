@@ -1,0 +1,578 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Devin supplemental schemas for indexed but inaccessible pages",
+    "version": "3.0.0",
+    "description": "Endpoint wrappers for official Devin documentation pages whose detailed schemas could not be read. Unavailable response contracts are represented as open JSON with explicit x-contract-gap annotations."
+  },
+  "paths": {
+    "/v2/enterprise/members/{user_id}": {
+      "get": {
+        "operationId": "getGetMemberDetails",
+        "summary": "Get Member Details",
+        "tags": [
+          "Members"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v2/members/get-member-details",
+        "x-contract-gap": "The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UndocumentedJSON"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/enterprise/code-scans/profiles": {
+      "get": {
+        "operationId": "getListCodeScanProfiles",
+        "summary": "List Code Scan Profiles",
+        "tags": [
+          "CodeScans"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-profiles",
+        "x-contract-gap": "The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.",
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "name": "first",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 100
+            }
+          },
+          {
+            "name": "org_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UndocumentedJSON"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/enterprise/organizations/{org_id}/code-scans/ingestion": {
+      "post": {
+        "operationId": "postStartIngestionScan(Enterprise)",
+        "summary": "Start Ingestion Scan (Enterprise)",
+        "tags": [
+          "CodeScans"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-start-ingestion",
+        "x-contract-gap": "The docs list these request fields and require profile_id, but the full schema page is inaccessible. Exactly one of repo_name or repos is required; cross-field constraints are documented in the operation description.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UndocumentedJSON"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartEnterpriseIngestionScanRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/organizations/{org_id}/code-scans/findings": {
+      "get": {
+        "operationId": "getListCodeScanFindings(Organization)",
+        "summary": "List Code Scan Findings (Organization)",
+        "tags": [
+          "CodeScans"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-findings",
+        "x-contract-gap": "The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scan_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "name": "first",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UndocumentedJSON"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/organizations/{org_id}/code-scans/metrics": {
+      "get": {
+        "operationId": "getGetCodeScanMetrics(Organization)",
+        "summary": "Get Code Scan Metrics (Organization)",
+        "tags": [
+          "CodeScans"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-metrics",
+        "x-contract-gap": "The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "time_after",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Unix timestamp in seconds (UTC); required."
+          },
+          {
+            "name": "time_before",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Unix timestamp in seconds (UTC); required."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UndocumentedJSON"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/organizations/{org_id}/code-scans/profiles/{profile_id}": {
+      "get": {
+        "operationId": "getGetCodeScanProfile(Organization)",
+        "summary": "Get Code Scan Profile (Organization)",
+        "tags": [
+          "CodeScans"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-profile",
+        "x-contract-gap": "The official endpoint page is indexed in Devin llms-full.txt, but its detailed schema page is inaccessible to the current reader; undocumented fields are intentionally unconstrained.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "profile_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UndocumentedJSON"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/organizations/{org_id}/code-scans/ingestion": {
+      "post": {
+        "operationId": "postStartIngestionScan(Organization)",
+        "summary": "Start Ingestion Scan (Organization)",
+        "tags": [
+          "CodeScans"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-start-ingestion",
+        "x-contract-gap": "The docs list these request fields and require profile_id, but the full schema page is inaccessible. Exactly one of repo_name or repos is required; cross-field constraints are documented in the operation description.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UndocumentedJSON"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartOrganizationIngestionScanRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3beta1/organizations/{org_id}/default-platform": {
+      "put": {
+        "operationId": "putSetOrganizationDefaultPlatform",
+        "summary": "Set Organization Default Platform",
+        "tags": [
+          "OrganizationSettings"
+        ],
+        "x-doc-url": "https://docs.devin.ai/api-reference/v3/organization-settings/put-organization-default-platform",
+        "x-contract-gap": "The official llms-full page specifies a required JSON object; send at most one of platform or outpost_pool_id, or an empty object to clear. Response schema remains unconstrained because the endpoint detail page is inaccessible.",
+        "parameters": [
+          {
+            "name": "org_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UndocumentedJSON"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetOrganizationDefaultPlatformRequest"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UndocumentedJSON": {
+        "description": "A response whose structure is not available in the captured documentation. Preserves any JSON value."
+      },
+      "StartEnterpriseIngestionScanRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "repo_name": {
+            "type": "string"
+          },
+          "repos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "repo_name": {
+                  "type": "string"
+                },
+                "host": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "repo_name"
+              ],
+              "additionalProperties": true
+            },
+            "maxItems": 200
+          },
+          "profile_id": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "attachment_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "effort": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "deep"
+            ],
+            "default": "normal"
+          },
+          "platform": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "profile_id"
+        ]
+      },
+      "StartOrganizationIngestionScanRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "repo_name": {
+            "type": "string"
+          },
+          "repos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "repo_name": {
+                  "type": "string"
+                },
+                "host": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "repo_name"
+              ],
+              "additionalProperties": true
+            },
+            "maxItems": 200
+          },
+          "profile_id": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "attachment_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "effort": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "deep"
+            ],
+            "default": "normal"
+          },
+          "platform": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "profile_id"
+        ]
+      },
+      "SetOrganizationDefaultPlatformRequest": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outpost_pool_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}
