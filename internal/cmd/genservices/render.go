@@ -10,13 +10,13 @@ import (
 	"strings"
 	"unicode"
 
-	"devingo/internal/codegen"
+	"github.com/javid-gulamaliyev/devingo/internal/codegen"
 )
 
 func render(endpoints []*endpoint, cfg config) ([]byte, error) {
 	imports := map[string]string{"context": "context"}
 	if cfg.Legacy != "" {
-		imports["devingo"] = "devin"
+		imports["github.com/javid-gulamaliyev/devingo"] = "devin"
 	}
 	groups := map[string]map[string]bool{"org": {}, "enterprise": {}, "global": {}}
 	for _, ep := range endpoints {

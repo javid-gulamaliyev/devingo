@@ -10357,6 +10357,23 @@
         "title": "SecretResponse",
         "type": "object"
       },
+      "SelfResponse": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/ServiceUserSelf"
+          },
+          {
+            "$ref": "#/components/schemas/PatUserSelf"
+          },
+          {
+            "$ref": "#/components/schemas/DevinBrainUserSelf"
+          },
+          {
+            "$ref": "#/components/schemas/WindsurfSessionUserSelf"
+          }
+        ],
+        "title": "Response Handle Get Self V3 Self Get"
+      },
       "ServiceUser": {
         "properties": {
           "deleted_at": {
@@ -40429,21 +40446,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/ServiceUserSelf"
-                    },
-                    {
-                      "$ref": "#/components/schemas/PatUserSelf"
-                    },
-                    {
-                      "$ref": "#/components/schemas/DevinBrainUserSelf"
-                    },
-                    {
-                      "$ref": "#/components/schemas/WindsurfSessionUserSelf"
-                    }
-                  ],
-                  "title": "Response Handle Get Self V3 Self Get"
+                  "$ref": "#/components/schemas/SelfResponse"
                 }
               }
             },

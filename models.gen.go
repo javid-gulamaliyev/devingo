@@ -5812,6 +5812,128 @@ type SecretResponse struct {
 	UpdatedBy Optional[string] `json:"updated_by,omitempty"`
 }
 
+// OpenAPI schema SelfResponse.
+type SelfResponse struct{ raw json.RawMessage }
+
+// MarshalJSON writes the union's stored JSON value.
+func (value SelfResponse) MarshalJSON() ([]byte, error) {
+	if len(value.raw) == 0 {
+		return []byte("null"), nil
+	}
+	if !json.Valid(value.raw) {
+		return nil, errors.New("invalid SelfResponse union JSON")
+	}
+	return append([]byte(nil), value.raw...), nil
+}
+
+// UnmarshalJSON stores a copy of the input JSON value.
+func (value *SelfResponse) UnmarshalJSON(data []byte) error {
+	if value == nil {
+		return errors.New("cannot unmarshal SelfResponse into a nil receiver")
+	}
+	if !json.Valid(data) {
+		return errors.New("invalid SelfResponse union JSON")
+	}
+	value.raw = append(value.raw[:0], data...)
+	return nil
+}
+
+// NewSelfResponseServiceUserSelf constructs the union from a ServiceUserSelf value.
+func NewSelfResponseServiceUserSelf(value ServiceUserSelf) (SelfResponse, error) {
+	raw, err := json.Marshal(value)
+	if err != nil {
+		return SelfResponse{}, err
+	}
+	return SelfResponse{raw: raw}, nil
+}
+
+// AsServiceUserSelf decodes the stored JSON as ServiceUserSelf. It does not identify a oneOf variant
+// when multiple object variants can accept the same JSON shape.
+func (value SelfResponse) AsServiceUserSelf() (ServiceUserSelf, bool) {
+	if len(value.raw) == 0 || bytes.Equal(bytes.TrimSpace(value.raw), []byte("null")) {
+		var zero ServiceUserSelf
+		return zero, false
+	}
+	var result ServiceUserSelf
+	if err := json.Unmarshal(value.raw, &result); err != nil {
+		var zero ServiceUserSelf
+		return zero, false
+	}
+	return result, true
+}
+
+// NewSelfResponsePatUserSelf constructs the union from a PatUserSelf value.
+func NewSelfResponsePatUserSelf(value PatUserSelf) (SelfResponse, error) {
+	raw, err := json.Marshal(value)
+	if err != nil {
+		return SelfResponse{}, err
+	}
+	return SelfResponse{raw: raw}, nil
+}
+
+// AsPatUserSelf decodes the stored JSON as PatUserSelf. It does not identify a oneOf variant
+// when multiple object variants can accept the same JSON shape.
+func (value SelfResponse) AsPatUserSelf() (PatUserSelf, bool) {
+	if len(value.raw) == 0 || bytes.Equal(bytes.TrimSpace(value.raw), []byte("null")) {
+		var zero PatUserSelf
+		return zero, false
+	}
+	var result PatUserSelf
+	if err := json.Unmarshal(value.raw, &result); err != nil {
+		var zero PatUserSelf
+		return zero, false
+	}
+	return result, true
+}
+
+// NewSelfResponseDevinBrainUserSelf constructs the union from a DevinBrainUserSelf value.
+func NewSelfResponseDevinBrainUserSelf(value DevinBrainUserSelf) (SelfResponse, error) {
+	raw, err := json.Marshal(value)
+	if err != nil {
+		return SelfResponse{}, err
+	}
+	return SelfResponse{raw: raw}, nil
+}
+
+// AsDevinBrainUserSelf decodes the stored JSON as DevinBrainUserSelf. It does not identify a oneOf variant
+// when multiple object variants can accept the same JSON shape.
+func (value SelfResponse) AsDevinBrainUserSelf() (DevinBrainUserSelf, bool) {
+	if len(value.raw) == 0 || bytes.Equal(bytes.TrimSpace(value.raw), []byte("null")) {
+		var zero DevinBrainUserSelf
+		return zero, false
+	}
+	var result DevinBrainUserSelf
+	if err := json.Unmarshal(value.raw, &result); err != nil {
+		var zero DevinBrainUserSelf
+		return zero, false
+	}
+	return result, true
+}
+
+// NewSelfResponseWindsurfSessionUserSelf constructs the union from a WindsurfSessionUserSelf value.
+func NewSelfResponseWindsurfSessionUserSelf(value WindsurfSessionUserSelf) (SelfResponse, error) {
+	raw, err := json.Marshal(value)
+	if err != nil {
+		return SelfResponse{}, err
+	}
+	return SelfResponse{raw: raw}, nil
+}
+
+// AsWindsurfSessionUserSelf decodes the stored JSON as WindsurfSessionUserSelf. It does not identify a oneOf variant
+// when multiple object variants can accept the same JSON shape.
+func (value SelfResponse) AsWindsurfSessionUserSelf() (WindsurfSessionUserSelf, bool) {
+	if len(value.raw) == 0 || bytes.Equal(bytes.TrimSpace(value.raw), []byte("null")) {
+		var zero WindsurfSessionUserSelf
+		return zero, false
+	}
+	var result WindsurfSessionUserSelf
+	if err := json.Unmarshal(value.raw, &result); err != nil {
+		var zero WindsurfSessionUserSelf
+		return zero, false
+	}
+	return result, true
+}
+
 // OpenAPI schema ServiceUser.
 type ServiceUser struct {
 	// JSON field "deleted_at".

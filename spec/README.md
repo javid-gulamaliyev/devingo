@@ -5,24 +5,16 @@ does not download schemas, and does not contact Devin.
 
 ## Sources
 
-- [Devin API overview](https://docs.devin.ai/api-reference/overview) and
-  [documentation index](https://docs.devin.ai/llms.txt), inspected October 20, 2026.
-- `v3.openapi.json`: the published OpenAPI subset in
-  [CognitionAI/terraform-provider-devin](https://github.com/CognitionAI/terraform-provider-devin/blob/1adc3294eb3b7202e888400d96c554630bc86673/internal/api/openapi.json).
-  This is a provider-focused subset, not the complete Devin API specification.
-  Its Apache 2.0 license is retained in `LICENSE.provider`; blob provenance is
-  recorded in `provenance.json`.
-- `v1.documentation.openapi.json`, `v2.documentation.openapi.json`,
-  `v3.documentation.openapi.json`, `sessions.openapi.json`, and
-  `missing.openapi.json`: locally assembled contracts from the official endpoint
-  references. These files are not official OpenAPI releases. Operation source
-  URLs are recorded alongside the contracts and in `docs/endpoints.json`.
+- `v3.openapi.json`: Devin's official v3 OpenAPI document,
+  [docs.devin.ai/v3-openapi.json](https://docs.devin.ai/v3-openapi.json),
+  downloaded unmodified on October 20, 2026. Its SHA-256 is in `provenance.json`.
+  It is the only v3 input.
+- `v1.documentation.openapi.json`, `v2.documentation.openapi.json`, and
+  `missing.openapi.json`: contracts assembled from the official v1 and v2
+  endpoint reference pages. These are not official OpenAPI releases. Operation
+  source URLs are recorded alongside the contracts and in `docs/endpoints.json`.
 - `combined/v1.json`, `combined/v2.json`, `combined/v3.json`: deterministic merged
   generator inputs. Do not edit these files directly.
-
-The official index links complete OpenAPI downloads, but those downloads were
-inaccessible in the implementation environment. The accessible provider schema
-and endpoint reference pages were used instead.
 
 ## Fidelity and known limitations
 

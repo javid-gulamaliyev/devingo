@@ -15,7 +15,7 @@ import (
 	"strings"
 	"unicode"
 
-	"devingo/internal/codegen"
+	"github.com/javid-gulamaliyev/devingo/internal/codegen"
 )
 
 type document struct {

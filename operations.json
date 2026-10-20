@@ -2445,7 +2445,7 @@
     "scope": "global",
     "service": "Client",
     "method": "Self",
-    "response_type": "ServiceUserSelf",
+    "response_type": "SelfResponse",
     "doc_url": "https://docs.devin.ai/api-reference/v3/self/self"
   },
   {

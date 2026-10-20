@@ -7489,9 +7489,9 @@ func (s OrgSnapshotSetupService) UnpinOrgBuild(ctx context.Context, buildID stri
 
 // Self Get Self.
 // See https://docs.devin.ai/api-reference/v3/self/self.
-func (c *Client) Self(ctx context.Context) (*ServiceUserSelf, *Response, error) {
+func (c *Client) Self(ctx context.Context) (*SelfResponse, *Response, error) {
 	path := "/v3/self"
-	result := new(ServiceUserSelf)
+	result := new(SelfResponse)
 	response, err := c.Do(ctx, "GET", path, nil, nil, result)
 	if err != nil {
 		return nil, response, err

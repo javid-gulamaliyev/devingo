@@ -4,8 +4,8 @@ package v1
 
 import (
 	"context"
-	devin "devingo"
 	"fmt"
+	devin "github.com/javid-gulamaliyev/devingo"
 	url "net/url"
 	"strconv"
 )

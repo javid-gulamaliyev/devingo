@@ -3,8 +3,8 @@
 package v2
 
 import (
-	devin "devingo"
 	"encoding/json"
+	devin "github.com/javid-gulamaliyev/devingo"
 )
 
 // OpenAPI schema APIKeyResponse.

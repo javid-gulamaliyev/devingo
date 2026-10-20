@@ -17,10 +17,10 @@ import (
 	"strings"
 	"testing"
 
-	devin "devingo"
-	"devingo/internal/codegen"
-	"devingo/v1"
-	"devingo/v2"
+	devin "github.com/javid-gulamaliyev/devingo"
+	"github.com/javid-gulamaliyev/devingo/internal/codegen"
+	"github.com/javid-gulamaliyev/devingo/v1"
+	"github.com/javid-gulamaliyev/devingo/v2"
 )
 
 type contractTransport func(*http.Request) (*http.Response, error)

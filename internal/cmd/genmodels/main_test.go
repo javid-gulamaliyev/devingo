@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"devingo/internal/codegen"
+	"github.com/javid-gulamaliyev/devingo/internal/codegen"
 )
 
 func TestGoNameInitialisms(t *testing.T) {
@@ -157,11 +157,11 @@ func TestOpenObject(t *testing.T) {
 
 func TestGenerateSupportImport(t *testing.T) {
 	spec := []byte(`{"components":{"schemas":{"Thing":{"type":"object","properties":{"name":{"type":"string","nullable":true}}}}}}`)
-	got, err := generate(spec, "legacy", "devingo")
+	got, err := generate(spec, "legacy", "github.com/javid-gulamaliyev/devingo")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !bytes.Contains(got, []byte(`devin "devingo"`)) || !bytes.Contains(got, []byte("devin.Optional[string]")) {
+	if !bytes.Contains(got, []byte(`devin "github.com/javid-gulamaliyev/devingo"`)) || !bytes.Contains(got, []byte("devin.Optional[string]")) {
 		t.Fatalf("support import not applied:\n%s", got)
 	}
 }

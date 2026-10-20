@@ -8,7 +8,7 @@ import (
 	"iter"
 	"os"
 
-	devin "devingo"
+	devin "github.com/javid-gulamaliyev/devingo"
 )
 
 func ExampleOptional() {
