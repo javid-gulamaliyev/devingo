@@ -1,0 +1,93 @@
+internal/cmd/genindex/main.go
+  s_ac6cf9e3a717cd::t_609d78197dc59d 68
+  s_ac6cf9e3a717cd::t_be5408ae4054d6 65-67
+  s_ac6cf9e3a717cd::t_dbcb1bb9711179 69
+.gitignore
+  s_ac6cf9e3a717cd::t_72f8c52ae9fcc4 1-4
+client_test.go
+  s_ac6cf9e3a717cd::t_d11816d85390bf 1-342
+contracts_test.go
+  s_ac6cf9e3a717cd::t_6999369b2b2b03 1-429
+doc.go
+  s_ac6cf9e3a717cd::t_ebf3d6b5e84ff9 1-19
+docs/API.md
+  s_ac6cf9e3a717cd::t_b8ac4ac7b996c8 1-314
+docs/PLAN.md
+  s_ac6cf9e3a717cd::t_64b75d3c318800 1-21
+docs/endpoints.json
+  s_ac6cf9e3a717cd::t_66ccab8c5b3659 1-2064
+example_test.go
+  s_ac6cf9e3a717cd::t_6deae4c6e41da3 1-97
+internal/cmd/genmodels/main.go
+  s_6b7a19dd612428::t_b696f2a0691eaf 1-708
+internal/cmd/genservices/main_test.go
+  s_ac6cf9e3a717cd::t_814c7929a59b40 1-98
+internal/cmd/mergespec/main_test.go
+  s_6b7a19dd612428::t_ba5717e62b0ed8 1-155
+models.gen.go
+  s_ac6cf9e3a717cd::t_e390865a05d43d 1-6548
+operations.json
+  s_ac6cf9e3a717cd::t_08929373960451 1-2403
+pagination_test.go
+  s_ac6cf9e3a717cd::t_58c09f0b11d0a2 1-185
+pointer.go
+  s_ac6cf9e3a717cd::t_d4f5a708c6adfb 1-4
+services.gen.go
+  s_ac6cf9e3a717cd::t_0b8b8b215508ad 1-6052
+spec/LICENSE.provider
+  s_ac6cf9e3a717cd::t_9f48e19fa59967 1-201
+spec/combined/v1.json
+  s_ac6cf9e3a717cd::t_696e5caa5b06dc 1-2138
+spec/combined/v2.json
+  s_ac6cf9e3a717cd::t_10a7d614f135e3 1-5480
+spec/combined/v3.json
+  s_ac6cf9e3a717cd::t_7f49f69ec6ccaf 1-31567
+spec/missing.openapi.json
+  s_ac6cf9e3a717cd::t_1673d333820046 1-578
+spec/sessions.openapi.json
+  s_ac6cf9e3a717cd::t_0d3ac4ca3b9c7a 1-4540
+spec/v1.documentation.openapi.json
+  s_ac6cf9e3a717cd::t_5145a117e5e944 1-2138
+spec/v2.documentation.openapi.json
+  s_ac6cf9e3a717cd::t_d5cc53072d02ce 1-5446
+spec/v3.documentation.openapi.json
+  s_ac6cf9e3a717cd::t_234f5e4f73e2ee 1-8071
+spec/v3.openapi.json
+  s_ac6cf9e3a717cd::t_cb0be7564a58e5 1-18401
+v1/models.gen.go
+  s_ac6cf9e3a717cd::t_50cb640eefe806 1-500
+v1/operations.json
+  s_ac6cf9e3a717cd::t_358792968eda53 1-211
+v1/services.gen.go
+  s_ac6cf9e3a717cd::t_a7458e31ad8b4e 1-370
+v2/models.gen.go
+  s_ac6cf9e3a717cd::t_bf9989d3026c61 1-1018
+v2/operations.json
+  s_ac6cf9e3a717cd::t_9cf9adf299fc00 1-513
+v2/services.gen.go
+  s_ac6cf9e3a717cd::t_2b5b620caf9b8d 1-1448
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "5b4af20dc274b2fee41de0e0e251e2020250ea8a",
+  "prompts": {},
+  "sessions": {
+    "s_6b7a19dd612428": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe2d1254-fa51-49e4-9039-672da71a1eb3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Javid Gulamaliyev <javidgulamaliyev@commonroom.io>"
+    },
+    "s_ac6cf9e3a717cd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a159e8-5f55-7fc1-84ca-978a2e676792",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Javid Gulamaliyev <javidgulamaliyev@commonroom.io>"
+    }
+  }
+}
