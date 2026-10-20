@@ -86,6 +86,7 @@ type endpoint struct {
 	Multipart    bool
 	Redirect     bool
 	HasResponse  bool
+	PageItem     string // item type when the operation returns a cursor page
 }
 
 type config struct {
@@ -243,6 +244,13 @@ func collectEndpoints(doc *document, cfg config) ([]*endpoint, error) {
 				}
 				ep.ResponseType, ep.HasResponse = responseTypeName, hasResponse
 			}
+			if cfg.Legacy == "" {
+				pageItem, err := pageItemType(ep, doc.Components.Schemas, cfg)
+				if err != nil {
+					return nil, fmt.Errorf("%s %s: %w", method, path, err)
+				}
+				ep.PageItem = pageItem
+			}
 			for _, match := range pathVariableRE.FindAllStringSubmatch(path, -1) {
 				name := match[1]
 				if name == "org_id" && ep.Scope == "org" {
@@ -313,6 +321,32 @@ func expandQueryObject(p parameter, schemas map[string]*schema) ([]parameter, er
 		params = append(params, parameter{Name: name, In: "query", Required: required[name], Schema: &property})
 	}
 	return params, nil
+}
+
+// pageItemType returns the item type of a cursor-paginated operation: one that
+// takes an optional "after" cursor and returns a PaginatedResponse model.
+func pageItemType(ep *endpoint, schemas map[string]*schema, cfg config) (string, error) {
+	if !ep.HasResponse || ep.Redirect || !strings.HasPrefix(ep.ResponseType, "PaginatedResponse") {
+		return "", nil
+	}
+	cursor := false
+	for _, p := range ep.QueryParams {
+		cursor = cursor || (p.Name == "after" && !p.Required && queryKind(p.Schema) == "string")
+	}
+	if !cursor {
+		return "", nil
+	}
+	for name, model := range schemas {
+		if codegen.GoName(name) != ep.ResponseType {
+			continue
+		}
+		var items schema
+		if err := json.Unmarshal(model.Properties["items"], &items); err != nil || items.Type != "array" {
+			return "", fmt.Errorf("page model %s has no items array", name)
+		}
+		return schemaType(items.Items, cfg), nil
+	}
+	return "", fmt.Errorf("page model %s not found", ep.ResponseType)
 }
 
 func sortedKeys[V any](values map[string]V) []string {

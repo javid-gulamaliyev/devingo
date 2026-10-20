@@ -3,8 +3,11 @@ package devin
 import (
 	"context"
 	"errors"
+	"io"
 	"iter"
+	"net/http"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -181,5 +184,34 @@ func TestIterateStateIsIndependent(t *testing.T) {
 	second, secondErrs := collect(seq)
 	if !reflect.DeepEqual(first, []int{1, 2}) || !reflect.DeepEqual(second, []int{3, 4}) || len(firstErrs) != 0 || len(secondErrs) != 0 {
 		t.Fatalf("first = %v (%v), second = %v (%v)", first, firstErrs, second, secondErrs)
+	}
+}
+
+func TestGeneratedPagerWalksCursors(t *testing.T) {
+	var queries []string
+	server := newTestServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		queries = append(queries, r.URL.RawQuery)
+		switch r.URL.Query().Get("after") {
+		case "":
+			_, _ = io.WriteString(w, `{"items":[{"event_id":"e1"},{"event_id":"e2"}],"has_next_page":true,"end_cursor":"c1"}`)
+		case "c1":
+			_, _ = io.WriteString(w, `{"items":[{"event_id":"e3"}],"has_next_page":false,"end_cursor":null}`)
+		default:
+			t.Errorf("unexpected cursor %q", r.URL.Query().Get("after"))
+		}
+	}))
+	sessions := testClient(t, server).Organization("org-1").Sessions
+	var got []string
+	for message, err := range sessions.GetSessionMessagesAll(context.Background(), "devin-1", &OrgSessionsGetSessionMessagesOptions{First: Ptr(int64(2))}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, message.EventID)
+	}
+	if strings.Join(got, ",") != "e1,e2,e3" {
+		t.Fatalf("items = %v", got)
+	}
+	if len(queries) != 2 || queries[0] != "first=2" || queries[1] != "after=c1&first=2" {
+		t.Fatalf("queries = %q", queries)
 	}
 }

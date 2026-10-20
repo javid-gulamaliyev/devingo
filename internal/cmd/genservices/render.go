@@ -29,6 +29,9 @@ func render(endpoints []*endpoint, cfg config) ([]byte, error) {
 		if len(ep.PathParams) > 0 || ep.Scope == "org" || ep.Multipart || (ep.Operation.RequestBody != nil && ep.Operation.RequestBody.Required) {
 			imports["fmt"] = "fmt"
 		}
+		if ep.PageItem != "" {
+			imports["iter"] = "iter"
+		}
 		if strings.Contains(ep.RequestType, "json.RawMessage") || strings.Contains(ep.ResponseType, "json.RawMessage") {
 			imports["encoding/json"] = "json"
 		}
@@ -74,6 +77,9 @@ func render(endpoints []*endpoint, cfg config) ([]byte, error) {
 		}
 		if err := emitMethod(&source, ep, cfg); err != nil {
 			return nil, fmt.Errorf("%s %s: %w", ep.HTTPMethod, ep.Path, err)
+		}
+		if ep.PageItem != "" {
+			emitPager(&source, ep)
 		}
 	}
 	formatted, err := format.Source(source.Bytes())
@@ -246,6 +252,32 @@ func lowerName(name string) string {
 		return result + "Value"
 	}
 	return result
+}
+
+// emitPager writes an All method that walks every page of a cursor-paginated
+// list through Iterate, so callers range over items instead of cursors.
+func emitPager(out *bytes.Buffer, ep *endpoint) {
+	options := optionsType(ep)
+	params := []string{"ctx context.Context"}
+	call := []string{"ctx"}
+	for _, p := range ep.PathParams {
+		name := lowerName(safeFieldName(p.Name))
+		params = append(params, name+" string")
+		call = append(call, name)
+	}
+	params = append(params, "opts *"+options)
+	call = append(call, "&next")
+	fmt.Fprintf(out, "// %sAll iterates over every item %s returns, fetching pages as the loop\n// needs them. opts.After, when set, is the starting cursor.\n", ep.Method, ep.Method)
+	fmt.Fprintf(out, "func (s %s) %sAll(%s) iter.Seq2[%s, error] {\n", serviceType(ep.Scope, ep.Service), ep.Method, strings.Join(params, ", "), ep.PageItem)
+	fmt.Fprintf(out, "\tvar base %s\n\tif opts != nil { base = *opts }\n", options)
+	out.WriteString("\tstart := ListOptions{}\n\tif base.After != nil { start.After = *base.After }\n")
+	fmt.Fprintf(out, "\treturn Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[%s], error) {\n", ep.PageItem)
+	out.WriteString("\t\tnext := base\n\t\tif page.After != \"\" { next.After = &page.After }\n")
+	fmt.Fprintf(out, "\t\tresult, _, err := s.%s(%s)\n", ep.Method, strings.Join(call, ", "))
+	out.WriteString("\t\tif err != nil || result == nil { return nil, err }\n")
+	out.WriteString("\t\tvar cursor *string\n\t\tif value, ok := result.EndCursor.Get(); ok { cursor = &value }\n")
+	fmt.Fprintf(out, "\t\treturn &Page[%s]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil\n", ep.PageItem)
+	out.WriteString("\t}, start)\n}\n\n")
 }
 
 func emitMethod(out *bytes.Buffer, ep *endpoint, cfg config) error {

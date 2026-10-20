@@ -5,6 +5,7 @@ package devin
 import (
 	"context"
 	"fmt"
+	"iter"
 	url "net/url"
 	"strconv"
 )
@@ -274,6 +275,34 @@ func (s EnterpriseAuditLogsService) List(ctx context.Context, opts *EnterpriseAu
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseAuditLogsService) ListAll(ctx context.Context, opts *EnterpriseAuditLogsListOptions) iter.Seq2[AuditLogResponse, error] {
+	var base EnterpriseAuditLogsListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[AuditLogResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[AuditLogResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseCodeScansListCodeScanFindingsOptions configures query parameters for ListCodeScanFindings.
 type EnterpriseCodeScansListCodeScanFindingsOptions struct {
 	Extra         url.Values // Additional query parameters; typed fields take precedence.
@@ -357,6 +386,34 @@ func (s EnterpriseCodeScansService) ListCodeScanFindings(ctx context.Context, op
 	return result, response, nil
 }
 
+// ListCodeScanFindingsAll iterates over every item ListCodeScanFindings returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseCodeScansService) ListCodeScanFindingsAll(ctx context.Context, opts *EnterpriseCodeScansListCodeScanFindingsOptions) iter.Seq2[CodeScanFindingResponse, error] {
+	var base EnterpriseCodeScansListCodeScanFindingsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[CodeScanFindingResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListCodeScanFindings(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[CodeScanFindingResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseCodeScansGetCodeScanMetricsOptions configures query parameters for GetCodeScanMetrics.
 type EnterpriseCodeScansGetCodeScanMetricsOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
@@ -432,6 +489,34 @@ func (s EnterpriseCodeScansService) ListCodeScanProfiles(ctx context.Context, op
 	return result, response, nil
 }
 
+// ListCodeScanProfilesAll iterates over every item ListCodeScanProfiles returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseCodeScansService) ListCodeScanProfilesAll(ctx context.Context, opts *EnterpriseCodeScansListCodeScanProfilesOptions) iter.Seq2[CodeScanProfileSummaryResponse, error] {
+	var base EnterpriseCodeScansListCodeScanProfilesOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[CodeScanProfileSummaryResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListCodeScanProfiles(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[CodeScanProfileSummaryResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // GetCodeScanProfile Get Code Scan Profile.
 // See https://docs.devin.ai/api-reference/v3/code-scans/enterprise-code-scans-profile.
 func (s EnterpriseCodeScansService) GetCodeScanProfile(ctx context.Context, profileID string) (*CodeScanProfileDetailResponse, *Response, error) {
@@ -497,6 +582,34 @@ func (s EnterpriseCodeScansService) ListCodeScans(ctx context.Context, opts *Ent
 	return result, response, nil
 }
 
+// ListCodeScansAll iterates over every item ListCodeScans returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseCodeScansService) ListCodeScansAll(ctx context.Context, opts *EnterpriseCodeScansListCodeScansOptions) iter.Seq2[CodeScanResponse, error] {
+	var base EnterpriseCodeScansListCodeScansOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[CodeScanResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListCodeScans(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[CodeScanResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseACULimitsGetDevinACULimitsOptions configures query parameters for GetDevinACULimits.
 type EnterpriseACULimitsGetDevinACULimitsOptions struct {
 	Extra url.Values // Additional query parameters; typed fields take precedence.
@@ -526,6 +639,34 @@ func (s EnterpriseACULimitsService) GetDevinACULimits(ctx context.Context, opts 
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// GetDevinACULimitsAll iterates over every item GetDevinACULimits returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseACULimitsService) GetDevinACULimitsAll(ctx context.Context, opts *EnterpriseACULimitsGetDevinACULimitsOptions) iter.Seq2[ACULimitResponse, error] {
+	var base EnterpriseACULimitsGetDevinACULimitsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[ACULimitResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetDevinACULimits(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[ACULimitResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // SetOrgDevinACULimit Set org-level Devin ACU limit.
@@ -580,6 +721,34 @@ func (s EnterpriseConsumptionService) GetConsumptionCycles(ctx context.Context, 
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// GetConsumptionCyclesAll iterates over every item GetConsumptionCycles returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseConsumptionService) GetConsumptionCyclesAll(ctx context.Context, opts *EnterpriseConsumptionGetConsumptionCyclesOptions) iter.Seq2[ConsumptionCycle, error] {
+	var base EnterpriseConsumptionGetConsumptionCyclesOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[ConsumptionCycle], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetConsumptionCycles(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[ConsumptionCycle]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // EnterpriseConsumptionGetConsumptionDailyOptions configures query parameters for GetConsumptionDaily.
@@ -780,6 +949,34 @@ func (s EnterpriseGitConnectionsService) GetGitConnections(ctx context.Context, 
 	return result, response, nil
 }
 
+// GetGitConnectionsAll iterates over every item GetGitConnections returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseGitConnectionsService) GetGitConnectionsAll(ctx context.Context, opts *EnterpriseGitConnectionsGetGitConnectionsOptions) iter.Seq2[GitConnectionResponse, error] {
+	var base EnterpriseGitConnectionsGetGitConnectionsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[GitConnectionResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetGitConnections(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[GitConnectionResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseGitConnectionsListGitConnectionRepositoriesOptions configures query parameters for ListGitConnectionRepositories.
 type EnterpriseGitConnectionsListGitConnectionRepositoriesOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
@@ -818,6 +1015,34 @@ func (s EnterpriseGitConnectionsService) ListGitConnectionRepositories(ctx conte
 	return result, response, nil
 }
 
+// ListGitConnectionRepositoriesAll iterates over every item ListGitConnectionRepositories returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseGitConnectionsService) ListGitConnectionRepositoriesAll(ctx context.Context, connectionID string, opts *EnterpriseGitConnectionsListGitConnectionRepositoriesOptions) iter.Seq2[GitConnectionRepositoryResponse, error] {
+	var base EnterpriseGitConnectionsListGitConnectionRepositoriesOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[GitConnectionRepositoryResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListGitConnectionRepositories(ctx, connectionID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[GitConnectionRepositoryResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseHypervisorsListOptions configures query parameters for List.
 type EnterpriseHypervisorsListOptions struct {
 	Extra  url.Values // Additional query parameters; typed fields take precedence.
@@ -853,6 +1078,34 @@ func (s EnterpriseHypervisorsService) List(ctx context.Context, opts *Enterprise
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseHypervisorsService) ListAll(ctx context.Context, opts *EnterpriseHypervisorsListOptions) iter.Seq2[HypervisorResponse, error] {
+	var base EnterpriseHypervisorsListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[HypervisorResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[HypervisorResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseIDPGroupsListOptions configures query parameters for List.
 type EnterpriseIDPGroupsListOptions struct {
 	Extra url.Values // Additional query parameters; typed fields take precedence.
@@ -882,6 +1135,34 @@ func (s EnterpriseIDPGroupsService) List(ctx context.Context, opts *EnterpriseID
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseIDPGroupsService) ListAll(ctx context.Context, opts *EnterpriseIDPGroupsListOptions) iter.Seq2[IDPGroupResponse, error] {
+	var base EnterpriseIDPGroupsListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[IDPGroupResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[IDPGroupResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // Create Register Account IDP Groups.
@@ -1027,6 +1308,34 @@ func (s EnterpriseNotesService) List(ctx context.Context, opts *EnterpriseNotesL
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseNotesService) ListAll(ctx context.Context, opts *EnterpriseNotesListOptions) iter.Seq2[KnowledgeNoteResponse, error] {
+	var base EnterpriseNotesListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[KnowledgeNoteResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[KnowledgeNoteResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // Create Create an enterprise-level note.
 // See https://docs.devin.ai/api-reference/v3/notes/post-enterprise-knowledge-notes.
 func (s EnterpriseNotesService) Create(ctx context.Context, request *KnowledgeNoteCreateRequest) (*KnowledgeNoteResponse, *Response, error) {
@@ -1119,6 +1428,34 @@ func (s EnterpriseIDPGroupsService) ListEnterpriseIDPGroups(ctx context.Context,
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListEnterpriseIDPGroupsAll iterates over every item ListEnterpriseIDPGroups returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseIDPGroupsService) ListEnterpriseIDPGroupsAll(ctx context.Context, opts *EnterpriseIDPGroupsListEnterpriseIDPGroupsOptions) iter.Seq2[IDPGroup, error] {
+	var base EnterpriseIDPGroupsListEnterpriseIDPGroupsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[IDPGroup], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListEnterpriseIDPGroups(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[IDPGroup]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // Get Get IDP Group.
@@ -1222,6 +1559,34 @@ func (s EnterpriseUsersService) ListEnterpriseIDPUsers(ctx context.Context, opts
 	return result, response, nil
 }
 
+// ListEnterpriseIDPUsersAll iterates over every item ListEnterpriseIDPUsers returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseUsersService) ListEnterpriseIDPUsersAll(ctx context.Context, opts *EnterpriseUsersListEnterpriseIDPUsersOptions) iter.Seq2[IDPGroupUser, error] {
+	var base EnterpriseUsersListEnterpriseIDPUsersOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[IDPGroupUser], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListEnterpriseIDPUsers(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[IDPGroupUser]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseServiceUsersListOptions configures query parameters for List.
 type EnterpriseServiceUsersListOptions struct {
 	Extra           url.Values // Additional query parameters; typed fields take precedence.
@@ -1255,6 +1620,34 @@ func (s EnterpriseServiceUsersService) List(ctx context.Context, opts *Enterpris
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseServiceUsersService) ListAll(ctx context.Context, opts *EnterpriseServiceUsersListOptions) iter.Seq2[ServiceUser, error] {
+	var base EnterpriseServiceUsersListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[ServiceUser], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[ServiceUser]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // Get Get Service User.
@@ -1356,6 +1749,34 @@ func (s EnterpriseUsersService) List(ctx context.Context, opts *EnterpriseUsersL
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseUsersService) ListAll(ctx context.Context, opts *EnterpriseUsersListOptions) iter.Seq2[EnterpriseUser, error] {
+	var base EnterpriseUsersListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[EnterpriseUser], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[EnterpriseUser]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // Create Invite Users.
@@ -1874,6 +2295,34 @@ func (s EnterpriseOrganizationsService) List(ctx context.Context, opts *Enterpri
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseOrganizationsService) ListAll(ctx context.Context, opts *EnterpriseOrganizationsListOptions) iter.Seq2[OrganizationResponse, error] {
+	var base EnterpriseOrganizationsListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[OrganizationResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[OrganizationResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // Create Create Organization.
 // See https://docs.devin.ai/api-reference/v3/organizations/post-organizations.
 func (s EnterpriseOrganizationsService) Create(ctx context.Context, request *OrganizationCreateRequest) (*OrganizationResponse, *Response, error) {
@@ -1985,6 +2434,34 @@ func (s EnterpriseAuditLogsService) GetOrgAuditLogs(ctx context.Context, orgID s
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// GetOrgAuditLogsAll iterates over every item GetOrgAuditLogs returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseAuditLogsService) GetOrgAuditLogsAll(ctx context.Context, orgID string, opts *EnterpriseAuditLogsGetOrgAuditLogsOptions) iter.Seq2[AuditLogResponse, error] {
+	var base EnterpriseAuditLogsGetOrgAuditLogsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[AuditLogResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetOrgAuditLogs(ctx, orgID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[AuditLogResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // Create Start Code Scan.
@@ -2211,6 +2688,34 @@ func (s EnterpriseGitPermissionsService) GetOrganizationGitPermissions(ctx conte
 	return result, response, nil
 }
 
+// GetOrganizationGitPermissionsAll iterates over every item GetOrganizationGitPermissions returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseGitPermissionsService) GetOrganizationGitPermissionsAll(ctx context.Context, orgID string, opts *EnterpriseGitPermissionsGetOrganizationGitPermissionsOptions) iter.Seq2[GitPermissionResponse, error] {
+	var base EnterpriseGitPermissionsGetOrganizationGitPermissionsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[GitPermissionResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetOrganizationGitPermissions(ctx, orgID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[GitPermissionResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // BulkCreateOrganizationGitPermissions Create Git Permissions.
 // See https://docs.devin.ai/api-reference/v3/git-permissions/post-organizations-git-providers-permissions.
 func (s EnterpriseGitPermissionsService) BulkCreateOrganizationGitPermissions(ctx context.Context, orgID string, request *GitPermissionBulkCreateRequest) (*[]GitPermissionResponse, *Response, error) {
@@ -2335,6 +2840,34 @@ func (s EnterpriseIDPGroupsService) ListOrganizationIDPGroups(ctx context.Contex
 	return result, response, nil
 }
 
+// ListOrganizationIDPGroupsAll iterates over every item ListOrganizationIDPGroups returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseIDPGroupsService) ListOrganizationIDPGroupsAll(ctx context.Context, orgID string, opts *EnterpriseIDPGroupsListOrganizationIDPGroupsOptions) iter.Seq2[IDPGroup, error] {
+	var base EnterpriseIDPGroupsListOrganizationIDPGroupsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[IDPGroup], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListOrganizationIDPGroups(ctx, orgID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[IDPGroup]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // GetOrganizationIDPGroup Get Organization IDP Group.
 // See https://docs.devin.ai/api-reference/v3/idp-groups/organizations-members-idp-groups.
 func (s EnterpriseIDPGroupsService) GetOrganizationIDPGroup(ctx context.Context, orgID string, idpGroupName string) (*IDPGroup, *Response, error) {
@@ -2451,6 +2984,34 @@ func (s EnterpriseUsersService) ListOrganizationIDPUsers(ctx context.Context, or
 	return result, response, nil
 }
 
+// ListOrganizationIDPUsersAll iterates over every item ListOrganizationIDPUsers returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseUsersService) ListOrganizationIDPUsersAll(ctx context.Context, orgID string, opts *EnterpriseUsersListOrganizationIDPUsersOptions) iter.Seq2[IDPGroupUser, error] {
+	var base EnterpriseUsersListOrganizationIDPUsersOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[IDPGroupUser], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListOrganizationIDPUsers(ctx, orgID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[IDPGroupUser]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseServiceUsersListOrganizationServiceUsersOptions configures query parameters for ListOrganizationServiceUsers.
 type EnterpriseServiceUsersListOrganizationServiceUsersOptions struct {
 	Extra           url.Values // Additional query parameters; typed fields take precedence.
@@ -2487,6 +3048,34 @@ func (s EnterpriseServiceUsersService) ListOrganizationServiceUsers(ctx context.
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListOrganizationServiceUsersAll iterates over every item ListOrganizationServiceUsers returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseServiceUsersService) ListOrganizationServiceUsersAll(ctx context.Context, orgID string, opts *EnterpriseServiceUsersListOrganizationServiceUsersOptions) iter.Seq2[ServiceUser, error] {
+	var base EnterpriseServiceUsersListOrganizationServiceUsersOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[ServiceUser], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListOrganizationServiceUsers(ctx, orgID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[ServiceUser]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // AssignOrganizationServiceUserRole Assign Organization Service User.
@@ -2585,6 +3174,34 @@ func (s EnterpriseUsersService) ListOrganizationUsers(ctx context.Context, orgID
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListOrganizationUsersAll iterates over every item ListOrganizationUsers returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseUsersService) ListOrganizationUsersAll(ctx context.Context, orgID string, opts *EnterpriseUsersListOrganizationUsersOptions) iter.Seq2[User, error] {
+	var base EnterpriseUsersListOrganizationUsersOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[User], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListOrganizationUsers(ctx, orgID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[User]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // AssignOrganizationUserRole Assign Organization User.
@@ -2844,6 +3461,34 @@ func (s EnterprisePlaybooksService) List(ctx context.Context, opts *EnterprisePl
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterprisePlaybooksService) ListAll(ctx context.Context, opts *EnterprisePlaybooksListOptions) iter.Seq2[PlaybookResponse, error] {
+	var base EnterprisePlaybooksListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[PlaybookResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[PlaybookResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // Create Create an enterprise-level playbook.
 // See https://docs.devin.ai/api-reference/v3/playbooks/post-enterprise-playbooks.
 func (s EnterprisePlaybooksService) Create(ctx context.Context, request *PlaybookCreateRequest) (*PlaybookResponse, *Response, error) {
@@ -3000,6 +3645,34 @@ func (s EnterpriseRolesService) List(ctx context.Context, opts *EnterpriseRolesL
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseRolesService) ListAll(ctx context.Context, opts *EnterpriseRolesListOptions) iter.Seq2[Role, error] {
+	var base EnterpriseRolesListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[Role], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[Role]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // Get Get Role.
 // See https://github.com/CognitionAI/terraform-provider-devin/blob/1adc3294eb3b7202e888400d96c554630bc86673/internal/api/openapi.json#/paths/~1v3~1enterprise~1roles~1{role_id}/get.
 func (s EnterpriseRolesService) Get(ctx context.Context, roleID string) (*RoleDetailResponse, *Response, error) {
@@ -3142,6 +3815,34 @@ func (s EnterpriseSessionsService) List(ctx context.Context, opts *EnterpriseSes
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseSessionsService) ListAll(ctx context.Context, opts *EnterpriseSessionsListOptions) iter.Seq2[SessionResponse, error] {
+	var base EnterpriseSessionsListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[SessionResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[SessionResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseSessionsGetAccountSessionsInsightsOptions configures query parameters for GetAccountSessionsInsights.
 type EnterpriseSessionsGetAccountSessionsInsightsOptions struct {
 	Extra              url.Values // Additional query parameters; typed fields take precedence.
@@ -3267,6 +3968,34 @@ func (s EnterpriseSessionsService) GetAccountSessionsInsights(ctx context.Contex
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// GetAccountSessionsInsightsAll iterates over every item GetAccountSessionsInsights returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseSessionsService) GetAccountSessionsInsightsAll(ctx context.Context, opts *EnterpriseSessionsGetAccountSessionsInsightsOptions) iter.Seq2[SessionInsightsResponse, error] {
+	var base EnterpriseSessionsGetAccountSessionsInsightsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[SessionInsightsResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetAccountSessionsInsights(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[SessionInsightsResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // EnterpriseSessionsGetOptions configures query parameters for Get.
@@ -3425,6 +4154,34 @@ func (s EnterpriseSessionsService) GetAccountSessionMessages(ctx context.Context
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// GetAccountSessionMessagesAll iterates over every item GetAccountSessionMessages returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseSessionsService) GetAccountSessionMessagesAll(ctx context.Context, devinID string, opts *EnterpriseSessionsGetAccountSessionMessagesOptions) iter.Seq2[SessionMessage, error] {
+	var base EnterpriseSessionsGetAccountSessionMessagesOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[SessionMessage], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetAccountSessionMessages(ctx, devinID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[SessionMessage]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // EnterpriseSessionsPostAccountSessionMessageOptions configures query parameters for PostAccountSessionMessage.
@@ -3797,6 +4554,34 @@ func (s OrgAutomationsService) List(ctx context.Context, opts *OrgAutomationsLis
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgAutomationsService) ListAll(ctx context.Context, opts *OrgAutomationsListOptions) iter.Seq2[AutomationResponse, error] {
+	var base OrgAutomationsListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[AutomationResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[AutomationResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // Create Create automation.
 // See https://docs.devin.ai/api-reference/v3/automations/post-organizations-automations.
 func (s OrgAutomationsService) Create(ctx context.Context, request *AutomationCreateRequest) (*AutomationResponse, *Response, error) {
@@ -4014,6 +4799,34 @@ func (s OrgCodeScansService) ListCodeScanFindings(ctx context.Context, opts *Org
 	return result, response, nil
 }
 
+// ListCodeScanFindingsAll iterates over every item ListCodeScanFindings returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgCodeScansService) ListCodeScanFindingsAll(ctx context.Context, opts *OrgCodeScansListCodeScanFindingsOptions) iter.Seq2[CodeScanFindingResponse, error] {
+	var base OrgCodeScansListCodeScanFindingsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[CodeScanFindingResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListCodeScanFindings(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[CodeScanFindingResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // StartIngestionScan Start Ingestion Scan.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-start-ingestion.
 func (s OrgCodeScansService) StartIngestionScan(ctx context.Context, request *StartIngestionScanRequest) (*CodeScanResponse, *Response, error) {
@@ -4099,6 +4912,34 @@ func (s OrgCodeScansService) ListCodeScanProfiles(ctx context.Context, opts *Org
 	return result, response, nil
 }
 
+// ListCodeScanProfilesAll iterates over every item ListCodeScanProfiles returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgCodeScansService) ListCodeScanProfilesAll(ctx context.Context, opts *OrgCodeScansListCodeScanProfilesOptions) iter.Seq2[CodeScanProfileSummaryResponse, error] {
+	var base OrgCodeScansListCodeScanProfilesOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[CodeScanProfileSummaryResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListCodeScanProfiles(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[CodeScanProfileSummaryResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // GetCodeScanProfile Get Code Scan Profile.
 // See https://docs.devin.ai/api-reference/v3/code-scans/organizations-code-scans-profile.
 func (s OrgCodeScansService) GetCodeScanProfile(ctx context.Context, profileID string) (*CodeScanProfileDetailResponse, *Response, error) {
@@ -4161,6 +5002,34 @@ func (s OrgCodeScansService) ListCodeScans(ctx context.Context, opts *OrgCodeSca
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListCodeScansAll iterates over every item ListCodeScans returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgCodeScansService) ListCodeScansAll(ctx context.Context, opts *OrgCodeScansListCodeScansOptions) iter.Seq2[CodeScanResponse, error] {
+	var base OrgCodeScansListCodeScansOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[CodeScanResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListCodeScans(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[CodeScanResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // Get Get Code Scan.
@@ -4521,6 +5390,34 @@ func (s OrgNotesService) List(ctx context.Context, opts *OrgNotesListOptions) (*
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgNotesService) ListAll(ctx context.Context, opts *OrgNotesListOptions) iter.Seq2[KnowledgeNoteResponse, error] {
+	var base OrgNotesListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[KnowledgeNoteResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[KnowledgeNoteResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // Create Create an org-level note.
@@ -4969,6 +5866,34 @@ func (s OrgPlaybooksService) List(ctx context.Context, opts *OrgPlaybooksListOpt
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgPlaybooksService) ListAll(ctx context.Context, opts *OrgPlaybooksListOptions) iter.Seq2[PlaybookResponse, error] {
+	var base OrgPlaybooksListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[PlaybookResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[PlaybookResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // Create Create an org-level playbook.
 // See https://docs.devin.ai/api-reference/v3/playbooks/post-organizations-playbooks.
 func (s OrgPlaybooksService) Create(ctx context.Context, request *PlaybookCreateRequest) (*PlaybookResponse, *Response, error) {
@@ -5156,6 +6081,34 @@ func (s OrgRepositoriesService) List(ctx context.Context, opts *OrgRepositoriesL
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgRepositoriesService) ListAll(ctx context.Context, opts *OrgRepositoriesListOptions) iter.Seq2[RepositoryResponse, error] {
+	var base OrgRepositoriesListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[RepositoryResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[RepositoryResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // OrgRepositoriesListIndexedRepositoriesOptions configures query parameters for ListIndexedRepositories.
 type OrgRepositoriesListIndexedRepositoriesOptions struct {
 	Extra      url.Values // Additional query parameters; typed fields take precedence.
@@ -5192,6 +6145,34 @@ func (s OrgRepositoriesService) ListIndexedRepositories(ctx context.Context, opt
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListIndexedRepositoriesAll iterates over every item ListIndexedRepositories returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgRepositoriesService) ListIndexedRepositoriesAll(ctx context.Context, opts *OrgRepositoriesListIndexedRepositoriesOptions) iter.Seq2[RepositoryIndexingResponse, error] {
+	var base OrgRepositoriesListIndexedRepositoriesOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[RepositoryIndexingResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListIndexedRepositories(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[RepositoryIndexingResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // BulkIndexRepositories Bulk index repositories.
@@ -5452,6 +6433,34 @@ func (s OrgSecretsService) List(ctx context.Context, opts *OrgSecretsListOptions
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgSecretsService) ListAll(ctx context.Context, opts *OrgSecretsListOptions) iter.Seq2[SecretResponse, error] {
+	var base OrgSecretsListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[SecretResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[SecretResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // Create Create an org-level secret.
 // See https://docs.devin.ai/api-reference/v3/secrets/post-organizations-secrets.
 func (s OrgSecretsService) Create(ctx context.Context, request *SecretCreateRequest) (*SecretResponse, *Response, error) {
@@ -5611,6 +6620,34 @@ func (s OrgSessionsService) List(ctx context.Context, opts *OrgSessionsListOptio
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgSessionsService) ListAll(ctx context.Context, opts *OrgSessionsListOptions) iter.Seq2[SessionResponse, error] {
+	var base OrgSessionsListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[SessionResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[SessionResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // OrgSessionsCreateOptions configures query parameters for Create.
 type OrgSessionsCreateOptions struct {
 	Extra   url.Values // Additional query parameters; typed fields take precedence.
@@ -5765,6 +6802,34 @@ func (s OrgSessionsService) GetSessionsInsights(ctx context.Context, opts *OrgSe
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// GetSessionsInsightsAll iterates over every item GetSessionsInsights returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgSessionsService) GetSessionsInsightsAll(ctx context.Context, opts *OrgSessionsGetSessionsInsightsOptions) iter.Seq2[SessionInsightsResponse, error] {
+	var base OrgSessionsGetSessionsInsightsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[SessionInsightsResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetSessionsInsights(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[SessionInsightsResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // Get Get Session.
@@ -5925,6 +6990,34 @@ func (s OrgSessionsService) GetSessionMessages(ctx context.Context, devinID stri
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// GetSessionMessagesAll iterates over every item GetSessionMessages returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgSessionsService) GetSessionMessagesAll(ctx context.Context, devinID string, opts *OrgSessionsGetSessionMessagesOptions) iter.Seq2[SessionMessage, error] {
+	var base OrgSessionsGetSessionMessagesOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[SessionMessage], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetSessionMessages(ctx, devinID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[SessionMessage]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // PostMessage Send a message to a session.
@@ -6260,6 +7353,34 @@ func (s OrgSnapshotSetupService) ListOrgBuilds(ctx context.Context, opts *OrgSna
 	return result, response, nil
 }
 
+// ListOrgBuildsAll iterates over every item ListOrgBuilds returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgSnapshotSetupService) ListOrgBuildsAll(ctx context.Context, opts *OrgSnapshotSetupListOrgBuildsOptions) iter.Seq2[Build, error] {
+	var base OrgSnapshotSetupListOrgBuildsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[Build], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListOrgBuilds(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[Build]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // TriggerOrgBuild Trigger a manual build.
 // See https://docs.devin.ai/api-reference/v3/snapshot-setup/post-organizations-builds.
 func (s OrgSnapshotSetupService) TriggerOrgBuild(ctx context.Context, request *TriggerBuildBody) (*Build, *Response, error) {
@@ -6480,6 +7601,34 @@ func (s EnterpriseGuardrailViolationsService) List(ctx context.Context, opts *En
 	return result, response, nil
 }
 
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseGuardrailViolationsService) ListAll(ctx context.Context, opts *EnterpriseGuardrailViolationsListOptions) iter.Seq2[GuardrailViolationResponse, error] {
+	var base EnterpriseGuardrailViolationsListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[GuardrailViolationResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[GuardrailViolationResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // EnterpriseGuardrailViolationsGetOrgGuardrailViolationsOptions configures query parameters for GetOrgGuardrailViolations.
 type EnterpriseGuardrailViolationsGetOrgGuardrailViolationsOptions struct {
 	Extra       url.Values // Additional query parameters; typed fields take precedence.
@@ -6533,6 +7682,34 @@ func (s EnterpriseGuardrailViolationsService) GetOrgGuardrailViolations(ctx cont
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// GetOrgGuardrailViolationsAll iterates over every item GetOrgGuardrailViolations returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s EnterpriseGuardrailViolationsService) GetOrgGuardrailViolationsAll(ctx context.Context, orgID string, opts *EnterpriseGuardrailViolationsGetOrgGuardrailViolationsOptions) iter.Seq2[GuardrailViolationResponse, error] {
+	var base EnterpriseGuardrailViolationsGetOrgGuardrailViolationsOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[GuardrailViolationResponse], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.GetOrgGuardrailViolations(ctx, orgID, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[GuardrailViolationResponse]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // EnterpriseServiceUserAPIKeysListServiceUserAPIKeysOptions configures query parameters for ListServiceUserAPIKeys.
@@ -6700,6 +7877,34 @@ func (s OrgUsersService) ListOrganizationIDPUsers(ctx context.Context, opts *Org
 	return result, response, nil
 }
 
+// ListOrganizationIDPUsersAll iterates over every item ListOrganizationIDPUsers returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgUsersService) ListOrganizationIDPUsersAll(ctx context.Context, opts *OrgUsersListOrganizationIDPUsersOptions) iter.Seq2[IDPGroupUser, error] {
+	var base OrgUsersListOrganizationIDPUsersOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[IDPGroupUser], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.ListOrganizationIDPUsers(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[IDPGroupUser]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
+}
+
 // OrgUsersListOptions configures query parameters for List.
 type OrgUsersListOptions struct {
 	Extra url.Values // Additional query parameters; typed fields take precedence.
@@ -6737,6 +7942,34 @@ func (s OrgUsersService) List(ctx context.Context, opts *OrgUsersListOptions) (*
 		return nil, response, err
 	}
 	return result, response, nil
+}
+
+// ListAll iterates over every item List returns, fetching pages as the loop
+// needs them. opts.After, when set, is the starting cursor.
+func (s OrgUsersService) ListAll(ctx context.Context, opts *OrgUsersListOptions) iter.Seq2[User, error] {
+	var base OrgUsersListOptions
+	if opts != nil {
+		base = *opts
+	}
+	start := ListOptions{}
+	if base.After != nil {
+		start.After = *base.After
+	}
+	return Iterate(ctx, func(ctx context.Context, page ListOptions) (*Page[User], error) {
+		next := base
+		if page.After != "" {
+			next.After = &page.After
+		}
+		result, _, err := s.List(ctx, &next)
+		if err != nil || result == nil {
+			return nil, err
+		}
+		var cursor *string
+		if value, ok := result.EndCursor.Get(); ok {
+			cursor = &value
+		}
+		return &Page[User]{Items: result.Items, HasNextPage: result.HasNextPage != nil && *result.HasNextPage, EndCursor: cursor}, nil
+	}, start)
 }
 
 // Get Get Organization User.
