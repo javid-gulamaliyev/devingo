@@ -1,22 +1,14 @@
 # Devin Go client
 
-A standard-library-only Go client for Devin's API. It includes the current v3 API and separately typed v1 and v2 packages. The generated services and models come from the checked-in OpenAPI contracts; see [spec/README.md](spec/README.md) for their sources and provenance.
+A standard-library-only Go client for Devin's API. The root package covers the v3 API, generated from Devin's [official OpenAPI document](https://docs.devin.ai/v3-openapi.json); the v1 and v2 packages are kept for reference and are deprecated upstream. See [spec/README.md](spec/README.md) for sources and provenance.
 
-The [API index](docs/API.md) lists 294 operations: 226 in v3 (including beta routes), 20 in v1, and 48 in v2. Some detailed schemas were unavailable: those parts preserve raw JSON and have explicit [contract limitations](spec/README.md#fidelity-and-known-limitations).
-
-The module path in this checkout is the local placeholder `devingo`. Import the root package as `devin`:
+The [API index](docs/API.md) lists 310 operations: 242 in v3 (including beta routes), 20 in v1, and 48 in v2. Every cursor-paginated list also has an `…All` method that ranges over its items. Timestamps in responses are Unix seconds.
 
 ```go
-import devin "devingo"
+import devin "github.com/javid-gulamaliyev/devingo"
 ```
 
-For another local module, add a replacement while developing:
-
-```go
-require devingo v0.0.0
-
-replace devingo => ../devingo
-```
+To develop against a local checkout, add it to a Go workspace (`go work use ../devingo`).
 
 ## Create and retrieve a session
 

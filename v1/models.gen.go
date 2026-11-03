@@ -3,8 +3,8 @@
 package v1
 
 import (
-	devin "devingo"
 	"encoding/json"
+	devin "github.com/javid-gulamaliyev/devingo"
 )
 
 // OpenAPI schema CreateANewDevinSessionRequest.

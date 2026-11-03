@@ -6,15 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"iter"
-	"net/url"
 	"os"
-	"strconv"
 
-	devin "devingo"
+	devin "github.com/javid-gulamaliyev/devingo"
 )
 
 func ExampleOptional() {
-	request := devin.CreateSessionRequest{
+	request := devin.SessionCreateRequest{
 		Prompt:    "Review this pull request.",
 		Resumable: devin.Ptr(false),
 		Title:     devin.Null[string](),
@@ -34,7 +32,7 @@ func ExampleClient_sessions() {
 	}
 	ctx := context.Background()
 	sessions := client.Organization(os.Getenv("DEVIN_ORG_ID")).Sessions
-	created, _, err := sessions.Create(ctx, &devin.CreateSessionRequest{
+	created, _, err := sessions.Create(ctx, &devin.SessionCreateRequest{
 		Prompt: "Summarize the open issues in this repository.",
 	}, nil)
 	if err != nil {
@@ -54,14 +52,14 @@ func ExampleClient_sessions() {
 // cursor iterator. Real callers can range over the returned sequence lazily.
 func sessionPages(ctx context.Context, client *devin.Client, orgID string, first int) iter.Seq2[devin.SessionResponse, error] {
 	return devin.Iterate(ctx, func(ctx context.Context, opts devin.ListOptions) (*devin.Page[devin.SessionResponse], error) {
-		query := make(url.Values)
+		list := devin.OrgSessionsListOptions{}
 		if opts.First > 0 {
-			query.Set("first", strconv.Itoa(opts.First))
+			list.First = devin.Ptr(int64(opts.First))
 		}
 		if opts.After != "" {
-			query.Set("after", opts.After)
+			list.After = devin.Ptr(opts.After)
 		}
-		result, _, err := client.Organization(orgID).Sessions.List(ctx, &devin.OrgSessionsListOptions{Extra: query})
+		result, _, err := client.Organization(orgID).Sessions.List(ctx, &list)
 		if err != nil {
 			return nil, err
 		}

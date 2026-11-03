@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"devingo/internal/codegen"
+	"github.com/javid-gulamaliyev/devingo/internal/codegen"
 )
 
 type document struct {

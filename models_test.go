@@ -7,13 +7,13 @@ import (
 )
 
 func TestGeneratedSessionRequestOptionalStates(t *testing.T) {
-	request := CreateSessionRequest{
+	request := SessionCreateRequest{
 		Prompt:                 "run this",
 		BypassApproval:         Value(false),
 		MaxACULimit:            Value(int64(0)),
 		Tags:                   Value([]string{}),
 		AttachmentURLs:         Null[[]string](),
-		DevinMode:              Value(CreateSessionRequestDevinMode("future-mode")),
+		DevinMode:              Value(SessionCreateRequestDevinMode("future-mode")),
 		StructuredOutputSchema: Value(map[string]json.RawMessage{"deep": json.RawMessage(`{"nested":[1,true]}`)}),
 	}
 	encoded, err := json.Marshal(request)
@@ -47,7 +47,7 @@ func TestGeneratedSessionRequestOptionalStates(t *testing.T) {
 	if _, exists := object["title"]; exists {
 		t.Fatal("unset optional title was emitted")
 	}
-	var decoded CreateSessionRequest
+	var decoded SessionCreateRequest
 	if err := json.Unmarshal(encoded, &decoded); err != nil {
 		t.Fatal(err)
 	}

@@ -17,10 +17,10 @@ import (
 	"strings"
 	"testing"
 
-	devin "devingo"
-	"devingo/internal/codegen"
-	"devingo/v1"
-	"devingo/v2"
+	devin "github.com/javid-gulamaliyev/devingo"
+	"github.com/javid-gulamaliyev/devingo/internal/codegen"
+	"github.com/javid-gulamaliyev/devingo/v1"
+	"github.com/javid-gulamaliyev/devingo/v2"
 )
 
 type contractTransport func(*http.Request) (*http.Response, error)
@@ -44,6 +44,31 @@ type contractSpec struct {
 	Components struct {
 		Schemas map[string]map[string]any `json:"schemas"`
 	} `json:"components"`
+}
+
+// queryParameters lists an operation's query parameters as they appear on the
+// URL: a parameter whose schema is an object contributes one entry per property.
+func (s *contractSpec) queryParameters(parameters []any) []map[string]any {
+	var out []map[string]any
+	for _, raw := range parameters {
+		param := raw.(map[string]any)
+		if param["in"] != "query" {
+			continue
+		}
+		schema, _ := param["schema"].(map[string]any)
+		if ref, ok := schema["$ref"].(string); ok {
+			schema = s.Components.Schemas[strings.TrimPrefix(ref, "#/components/schemas/")]
+		}
+		properties, _ := schema["properties"].(map[string]any)
+		if len(properties) == 0 {
+			out = append(out, param)
+			continue
+		}
+		for name, property := range properties {
+			out = append(out, map[string]any{"name": name, "in": "query", "schema": property})
+		}
+	}
+	return out
 }
 
 func readContractJSON(t *testing.T, path string, out any) {
@@ -198,11 +223,7 @@ func checkOperation(t *testing.T, version string, spec *contractSpec, operation 
 	}
 	if operation.OptionsType != "" {
 		arg := reflect.New(method.Type().In(len(args)).Elem())
-		for _, raw := range parameters {
-			param := raw.(map[string]any)
-			if param["in"] != "query" {
-				continue
-			}
+		for _, param := range spec.queryParameters(parameters) {
 			name := param["name"].(string)
 			field := arg.Elem().FieldByName(codegen.GoName(name))
 			if !field.IsValid() {

@@ -153,3 +153,32 @@ func TestRunRejectsUnresolvedReferences(t *testing.T) {
 	files := baseFiles(emptyDocument(map[string]any{"/v1/items": op}, nil), emptyDocument(nil, nil), emptyDocument(nil, nil), emptyDocument(nil, nil), emptyDocument(nil, nil), emptyDocument(nil, nil))
 	withFixture(t, files, "unresolved model Missing")
 }
+
+func TestHoistUnionResponses(t *testing.T) {
+	union := object{"anyOf": []any{
+		map[string]any{"$ref": "#/components/schemas/A"},
+		map[string]any{"$ref": "#/components/schemas/B"},
+	}}
+	single := object{"anyOf": []any{map[string]any{"$ref": "#/components/schemas/A"}, map[string]any{"type": "null"}}}
+	media := func(s object) object {
+		return object{"200": map[string]any{"content": map[string]any{"application/json": map[string]any{"schema": s}}}}
+	}
+	paths := object{
+		"/v3/self":  object{"get": map[string]any{"responses": media(union)}},
+		"/v3/thing": object{"get": map[string]any{"responses": media(single)}},
+	}
+	schemas := object{}
+	if err := hoistUnionResponses(paths, schemas); err != nil {
+		t.Fatal(err)
+	}
+	if schemas["SelfResponse"] == nil || len(schemas) != 1 {
+		t.Fatalf("schemas = %v", schemas)
+	}
+	got := paths["/v3/self"].(object)["get"].(map[string]any)["responses"].(object)["200"].(map[string]any)["content"].(map[string]any)["application/json"].(map[string]any)["schema"]
+	if ref := got.(object)["$ref"]; ref != "#/components/schemas/SelfResponse" {
+		t.Fatalf("schema = %v", got)
+	}
+	if err := hoistUnionResponses(object{"/v3/self": object{"get": map[string]any{"responses": media(union)}}}, schemas); err == nil {
+		t.Fatal("a taken name was reused")
+	}
+}

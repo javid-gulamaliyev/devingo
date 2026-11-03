@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"math/rand"
 	"net"
 	"net/http"
@@ -33,6 +34,17 @@ type Client struct {
 	userAgent        string
 	retryPolicy      RetryPolicy
 	maxResponseBytes int64
+}
+
+// Format prints the client without its token, whatever the verb, so a client
+// that ends up in a log line or an error message does not leak credentials.
+func (c Client) Format(f fmt.State, _ rune) {
+	fmt.Fprintf(f, "devin.Client{baseURL: %s, token: [redacted]}", c.baseURL)
+}
+
+// LogValue keeps the token out of log/slog output.
+func (c Client) LogValue() slog.Value {
+	return slog.GroupValue(slog.String("base_url", c.baseURL.String()), slog.String("token", "[redacted]"))
 }
 
 // Option configures a Client during construction.
@@ -220,7 +232,8 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 		resp, err := c.httpClient.Do(req)
 		if err != nil {
 			if attempt < attempts && ctx.Err() == nil && retryableTransportError(err) {
-				if err := waitForRetry(ctx, c.retryDelay(attempt, nil)); err != nil {
+				delay, _ := c.retryDelay(attempt, nil)
+				if err := waitForRetry(ctx, delay); err != nil {
 					return nil, err
 				}
 				continue
@@ -239,12 +252,15 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 			response.RequestID = resp.Header.Get("X-Devin-Request-ID")
 		}
 		if attempt < attempts && retryableStatus(resp.StatusCode) {
-			delay := c.retryDelay(attempt, resp)
-			_ = resp.Body.Close()
-			if err := waitForRetry(ctx, delay); err != nil {
-				return nil, err
+			// A server that asks for a longer pause than the policy allows gets
+			// its answer back, so the caller can honour Retry-After itself.
+			if delay, ok := c.retryDelay(attempt, resp); ok {
+				_ = resp.Body.Close()
+				if err := waitForRetry(ctx, delay); err != nil {
+					return nil, err
+				}
+				continue
 			}
-			continue
 		}
 		return c.readResponse(response, method, path, out)
 	}
@@ -308,7 +324,9 @@ func (c *Client) readResponse(response *Response, method, path string, out any) 
 		if truncated {
 			body = body[:maxErrorBodyBytes]
 		}
-		return response, decodeAPIError(response.StatusCode, method, path, response.RequestID, body, truncated)
+		apiErr := decodeAPIError(response.StatusCode, method, path, response.RequestID, body, truncated)
+		apiErr.RetryAfter = response.RetryAfter
+		return response, apiErr
 	}
 	if writer, ok := out.(io.Writer); ok {
 		if c.maxResponseBytes == 0 {
@@ -398,13 +416,12 @@ func parseRetryAfterValue(value string, now time.Time) (time.Duration, bool) {
 	return 0, false
 }
 
-func (c *Client) retryDelay(attempt int, response *http.Response) time.Duration {
+// retryDelay returns how long to wait before the next attempt. It reports
+// false when the response's Retry-After is longer than the policy's MaxDelay.
+func (c *Client) retryDelay(attempt int, response *http.Response) (time.Duration, bool) {
 	if response != nil {
 		if delay, ok := parseRetryAfterValue(response.Header.Get("Retry-After"), time.Now()); ok {
-			if delay > c.retryPolicy.MaxDelay {
-				return c.retryPolicy.MaxDelay
-			}
-			return delay
+			return delay, delay <= c.retryPolicy.MaxDelay
 		}
 	}
 	ceiling := c.retryPolicy.BaseDelay
@@ -418,7 +435,7 @@ func (c *Client) retryDelay(attempt int, response *http.Response) time.Duration 
 	if ceiling > c.retryPolicy.MaxDelay {
 		ceiling = c.retryPolicy.MaxDelay
 	}
-	return ceiling/2 + time.Duration(rand.Int63n(int64(ceiling-ceiling/2)+1))
+	return ceiling/2 + time.Duration(rand.Int63n(int64(ceiling-ceiling/2)+1)), true
 }
 
 func waitForRetry(ctx context.Context, delay time.Duration) error {
